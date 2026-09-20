@@ -1,0 +1,856 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[italian,english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multicol}
+
+% ── Colori brand ─────────────────────────────────────────────────────────────
+\definecolor{nutrigreen}{RGB}{46,125,50}
+\definecolor{nutrilightgreen}{RGB}{232,245,233}
+\definecolor{nutridark}{RGB}{28,28,28}
+\definecolor{nutrigray}{RGB}{117,117,117}
+\definecolor{nutriaccent}{RGB}{56,142,60}
+
+% ── Margini pagina ────────────────────────────────────────────────────────────
+\setlength{\headheight}{30pt}
+\geometry{left=2.5cm, right=2.5cm, top=2.8cm, bottom=2.5cm}
+
+% ── Intestazione ─────────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{nutrigray}Sezione 4 --- Guida all'utilizzo dell'applicazione}
+\fancyhead[R]{\small\color{nutrigray}\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{nutrigreen}\leaders\hrule height \headrulewidth\hfill}}
+
+% ── Contatore passi ───────────────────────────────────────────────────────────
+\newcounter{passo}[subsection]
+\newcommand{\passaggio}[1]{%
+    \stepcounter{passo}%
+    \subsubsection*{\color{nutriaccent}Passaggio \thesubsection.\thepasso\ ---\ #1}%
+}
+
+% ── Box informativo verde ─────────────────────────────────────────────────────
+\newmdenv[
+  backgroundcolor=nutrilightgreen,
+  linecolor=nutrigreen,
+  linewidth=1.5pt,
+  roundcorner=5pt,
+  innertopmargin=8pt,
+  innerbottommargin=8pt,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  skipabove=8pt,
+  skipbelow=8pt
+]{infobox}
+
+% ── Etichetta grassetto verde ─────────────────────────────────────────────────
+\newcommand{\labelgreen}[1]{\medskip\noindent{\color{nutriaccent}\textbf{#1}}\par\smallskip}
+
+% ── Suggerimento corsivo ──────────────────────────────────────────────────────
+\newcommand{\suggerimento}[1]{%
+  \smallskip\noindent\textit{\color{nutrigray}#1}\par\smallskip%
+}
+
+% ── Variabile per cartella immagini (utile per traduzioni) ───────────────────
+\newcommand{\imgdir}{immagini_ita}
+
+% ── Immagine centrata con didascalia ─────────────────────────────────────────
+\newcommand{\schermata}[3][0.38\textwidth]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=#1]{\imgdir/#2}
+    \caption{\small\color{nutrigray}#3}
+  \end{figure}%
+}
+
+% ── Due schermate affiancate ──────────────────────────────────────────────────
+\newcommand{\dueschermate}[4]{%
+  \begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.42\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#1}
+      \caption{\small\color{nutrigray}#2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.42\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#3}
+      \caption{\small\color{nutrigray}#4}
+    \end{subfigure}
+  \end{figure}%
+}
+
+% ── Tre schermate affiancate ──────────────────────────────────────────────────
+\newcommand{\treschermate}[6]{%
+  \begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.30\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#1}
+      \caption{\small\color{nutrigray}#2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.30\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#3}
+      \caption{\small\color{nutrigray}#4}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.30\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#5}
+      \caption{\small\color{nutrigray}#6}
+    \end{subfigure}
+  \end{figure}%
+}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+% ════════════════════════════════════════════════════════════════════════════
+%  INTESTAZIONE SEZIONE
+% ════════════════════════════════════════════════════════════════════════════
+\begin{center}
+  {\Huge\bfseries\color{nutrigreen} Sezione 4}\\[6pt]
+  {\Large\bfseries\color{nutridark} Guida all'utilizzo dell'applicazione}\\[4pt]
+  {\normalsize\itshape\color{nutrigray} Manuale utente --- istruzioni passo per passo}
+\end{center}
+
+\medskip
+\noindent\rule{\textwidth}{1.5pt}{\color{nutrigreen}}
+\medskip
+
+\noindent Il presente capitolo illustra le funzionalita' principali di \textbf{NutriApp}
+attraverso istruzioni dettagliate e schermate tratte direttamente dall'applicazione.
+Ogni sezione e' suddivisa in passaggi progressivi per facilitare la comprensione anche
+agli utenti meno esperti.
+
+\medskip
+\begin{infobox}
+  \textbf{\color{nutrigreen}Indice delle sezioni}
+  \begin{enumerate}[leftmargin=1.4em, itemsep=2pt]
+    \item Accesso e registrazione
+    \item Barra di navigazione
+    \item Inserimento degli alimenti
+    \item Impostazione degli obiettivi
+    \item Visualizzazione del progresso
+    \item Impostazioni dell'account
+  \end{enumerate}
+\end{infobox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  1. ACCESSO E REGISTRAZIONE
+% ════════════════════════════════════════════════════════════════════════════
+\section{Accesso e registrazione}
+
+Alla prima apertura dell'applicazione viene mostrata la schermata di benvenuto,
+da cui e' possibile accedere a un account esistente oppure crearne uno nuovo.
+NutriApp supporta tre modalita' di accesso: credenziali email e password,
+autenticazione tramite account Google e autenticazione tramite Apple ID.
+E' inoltre possibile esplorare l'app in modalita' ospite senza creare un account.
+
+% ─── 1.1 ─────────────────────────────────────────────────────────────────────
+\subsection{Schermata di benvenuto e login}
+
+\passaggio{Aprire l'applicazione}
+
+\schermata[0.40\textwidth]{login.jpeg}{Schermata di benvenuto \textbf{NutriApp}:
+  in cima il logo verde e il sottotitolo \emph{Accedi per gestire i tuoi pasti,
+  i macro e i micro nutrienti in un'unica app.} Il pannello bianco centrale
+  mostra i campi \textbf{Email} e \textbf{Password} (con icona occhio per
+  mostrare/nascondere i caratteri), il pulsante verde \textbf{ACCEDI} e il
+  link \emph{Continua senza accedere}. Sotto il separatore \emph{oppure} i
+  pulsanti \textbf{Accedi con Google} e \textbf{Accedi con Apple}, e in fondo
+  il link \emph{Non hai un account? Registrati}.}
+
+\labelgreen{Descrizione}
+Alla prima apertura di NutriApp compare la schermata di accesso con il nome
+dell'app in verde scuro e un sottotitolo che ne descrive brevemente la funzione.
+Il pannello di accesso centrale presenta due campi:
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Email} --- indirizzo di posta elettronica associato all'account,
+        indicato dall'icona busta a sinistra del campo
+  \item \textbf{Password} --- password dell'account; toccare l'icona occhio
+        barrato a destra del campo per alternare la visualizzazione dei caratteri
+        in chiaro o mascherati
+\end{itemize}
+
+Dopo aver compilato entrambi i campi, premere il pulsante verde \textbf{Accedi}
+per completare l'autenticazione ed entrare nell'applicazione.
+
+\labelgreen{Continua senza accedere}
+Toccando il link \emph{Continua senza accedere} e' possibile esplorare
+l'applicazione in modalita' ospite, senza creare ne' inserire credenziali.
+In questa modalita' i dati non vengono sincronizzati sul cloud e non sono
+accessibili da altri dispositivi. Si consiglia di creare un account per
+non perdere i dati inseriti.
+
+\suggerimento{Se si dimentica la password, e' possibile recuperarla tramite
+la procedura di recupero disponibile sul sito ufficiale di NutriApp: il
+sistema invia un link di reset all'indirizzo email associato all'account.}
+
+% ─── 1.2 ─────────────────────────────────────────────────────────────────────
+\subsection{Accedere con Google}
+
+\passaggio{Selezionare l'accesso rapido tramite Google}
+
+\dueschermate{login.jpeg}{Schermata di login: in basso al pannello bianco il
+  pulsante \textbf{Accedi con Google} con il logo G a sinistra. Toccandolo
+  si apre il selettore degli account Google presenti sul dispositivo.}{login_google.jpeg}{%
+  Finestra di sistema \textbf{Choose an account}: mostra tutti gli account
+  Google salvati sul dispositivo con foto profilo e indirizzo email (oscurati
+  per la privacy). In fondo la voce \emph{Add another account} per aggiungere
+  un account non ancora presente, e la nota che Google condividera' nome,
+  email e foto profilo con NutriApp.}
+
+\labelgreen{Descrizione}
+Toccare \textbf{Accedi con Google} nella schermata di login per avviare
+l'autenticazione rapida. Il sistema operativo apre automaticamente la finestra
+di selezione account di Google, che mostra tutti gli account Gmail gia'
+configurati sul dispositivo. Ogni voce nella lista riporta la foto profilo
+e l'indirizzo email dell'account.
+
+\labelgreen{Come procedere}
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Toccare il proprio account} nell'elenco per selezionarlo e
+        autorizzare NutriApp ad accedere a nome, email e foto profilo.
+        L'accesso viene completato automaticamente senza ulteriori passaggi
+  \item \textbf{Toccare \emph{Add another account}} se l'account desiderato
+        non e' nella lista: si apre il flusso di login Google standard per
+        aggiungere un nuovo account al dispositivo
+\end{itemize}
+
+\labelgreen{Passaggio successivo}
+Dopo la selezione dell'account, l'applicazione autentica l'utente e apre
+direttamente la schermata principale. Se e' il primo accesso con quell'account
+Google, viene avviato il flusso di configurazione iniziale del profilo.
+
+\suggerimento{L'accesso con Google e' il metodo piu' rapido: non richiede
+di ricordare una password separata e si aggiorna automaticamente se si cambia
+la password Google. E' consigliato per chi usa gia' Google su altri servizi.}
+
+% ─── 1.3 ─────────────────────────────────────────────────────────────────────
+\subsection{Creare un nuovo account}
+
+\passaggio{Aprire il form di registrazione --- Step 1}
+
+\schermata[0.40\textwidth]{registra_step1.jpeg}{Schermata \textbf{Registrazione}
+  --- Step 1 di 3: l'indicatore di avanzamento in cima mostra il primo trattino
+  verde (attivo) e due grigi (da completare). Al centro l'avatar segnaposto con
+  l'icona fotocamera verde per aggiungere una foto opzionale. I campi del form
+  sono: \textbf{Nome}, \textbf{Cognome}, \textbf{Email}, \textbf{Password} e
+  \textbf{Conferma Password}. In fondo il pulsante verde \textbf{REGISTRATI}.}
+
+\labelgreen{Descrizione}
+Toccare il link verde \emph{Non hai un account? Registrati} nella schermata
+di login per aprire il wizard di registrazione a tre step, visualizzati
+dall'indicatore di avanzamento in cima (trattino verde = step corrente,
+trattini grigi = step successivi).
+
+\textbf{Step 1 --- Dati personali e credenziali.}
+Compilare i seguenti campi:
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Nome} e \textbf{Cognome} --- il nome completo che verra'
+        visualizzato nell'app e nel saluto della schermata principale
+  \item \textbf{Email} --- l'indirizzo di posta che funzionera' da
+        identificativo univoco dell'account; deve essere valido perche'
+        verra' usato per la verifica tramite codice OTP nel passo successivo
+  \item \textbf{Password} --- scegliere una password sicura di almeno 8
+        caratteri; si consiglia di includere lettere maiuscole, minuscole,
+        numeri e caratteri speciali
+  \item \textbf{Conferma Password} --- reinserire la stessa password per
+        evitare errori di digitazione; i due campi devono corrispondere
+        esattamente per poter procedere
+\end{itemize}
+
+\textbf{Foto profilo (opzionale).}
+Toccare l'icona fotocamera verde sovrapposta all'avatar grigio per scattare
+una foto o sceglierla dalla galleria. La foto e' facoltativa e puo' essere
+aggiunta o modificata in qualsiasi momento successivo dalla sezione
+\emph{Il mio profilo} nelle impostazioni.
+
+\labelgreen{Passaggio successivo}
+Controllare che tutti i campi obbligatori siano compilati correttamente,
+quindi premere il pulsante verde \textbf{REGISTRATI} per passare allo step
+successivo.
+
+\passaggio{Verificare l'indirizzo email --- Step 2}
+
+\schermata[0.40\textwidth]{registra_step2.jpeg}{Schermata \textbf{Registrazione}
+  --- Step 2 di 3: l'indicatore mostra i primi due trattini verdi e l'ultimo
+  grigio. Al centro l'icona di una busta con spunta verde e il titolo
+  \textbf{Verifica la tua email}. Il testo indica che e' stato inviato un
+  codice OTP all'indirizzo email inserito (visualizzato parzialmente oscurato).
+  Il campo \textbf{Codice OTP} attende l'inserimento. Il link 
+  \emph{Invia di nuovo} permette di richiederne uno nuovo.
+  In fondo il pulsante verde \textbf{CONTROLLA EMAIL}.}
+
+\labelgreen{Descrizione}
+Dopo aver premuto \textbf{Continua} nel primo step, l'applicazione invia
+automaticamente un codice OTP (One-Time Password) all'indirizzo email
+inserito. La schermata mostra l'icona di una busta con spunta verde e
+indica a quale indirizzo e' stato spedito il codice.
+
+\labelgreen{Come completare la verifica}
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item Aprire la casella di posta dell'indirizzo email usato durante la
+        registrazione e cercare l'email di NutriApp relativa alla verifica
+  \item Annotare o copiare il codice OTP a 6 cifre presente nell'email
+  \item Tornare nell'app e inserire il codice nel campo \textbf{Codice OTP}
+  \item Premere \textbf{CONTROLLA EMAIL} per confermare l'indirizzo email
+        e procedere all'ultimo step
+\end{itemize}
+
+\labelgreen{Codice non ricevuto}
+Se il codice non arriva entro qualche minuto, verificare la cartella
+\emph{Spam} o \emph{Posta indesiderata} del proprio provider. In alternativa,
+toccare il link \emph{Invia di nuovo} per richiedere un nuovo codice OTP.
+Il link diventa attivo dopo un breve intervallo di attesa per evitare
+invii multipli ravvicinati.
+
+\suggerimento{Il codice OTP ha una validita' limitata nel tempo (di solito
+10--15 minuti). Se si attende troppo a lungo prima di inserirlo, sara'
+necessario richiederne uno nuovo tramite il link \emph{Invia di nuovo}.}
+
+\passaggio{Completare la registrazione --- Step 3}
+
+\schermata[0.40\textwidth]{registra_step3.jpeg}{Schermata \textbf{Registrazione}
+  --- Step 3 di 3: tutti e tre i trattini dell'indicatore sono verdi a segnalare
+  il completamento del percorso. Al centro un cerchio verde con spunta bianca e
+  il titolo \textbf{Ottimo lavoro!} con il sottotitolo \emph{Sei pronto a
+  iniziare il tuo percorso con NutriApp.} In fondo il pulsante verde
+  \textbf{VAI ALLA HOMEPAGE}.}
+
+\labelgreen{Descrizione}
+Dopo la verifica riuscita del codice OTP, l'app mostra la schermata di
+conferma. Tutti e tre i trattini dell'indicatore diventano verdi. Il
+messaggio \textbf{Ottimo lavoro!} conferma che l'account e' stato creato e
+verificato correttamente. Premere \textbf{VAI ALLA HOMEPAGE} per accedere
+all'applicazione.
+
+\begin{infobox}
+  \textbf{\color{nutrigreen}Riepilogo delle modalita' di accesso}
+
+  \smallskip
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Metodo}       & \textbf{Requisito}             & \textbf{Ideale per} \\
+    \midrule
+    Email + Password      & Account NutriApp               & Chi preferisce credenziali dedicate \\
+    Accedi con Google     & Account Gmail sul dispositivo  & Accesso rapido senza password \\
+    Accedi con Apple      & Apple ID (solo iOS)            & Utenti iPhone/iPad \\
+    Senza accedere        & Nessuno                        & Esplorazione rapida dell'app \\
+    \bottomrule
+  \end{tabular}
+\end{infobox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  2. BARRA DI NAVIGAZIONE
+% ════════════════════════════════════════════════════════════════════════════
+\section{Barra di navigazione}
+
+La barra di navigazione e' l'elemento persistente dell'interfaccia: appare nella
+parte inferiore di ogni schermata e consente di spostarsi istantaneamente tra le
+cinque aree principali dell'applicazione con un singolo tocco.
+
+% ─── 2.1 ─────────────────────────────────────────────────────────────────────
+\subsection{Visualizzare la barra di navigazione}
+
+\passaggio{Aprire l'applicazione}
+
+\schermata[0.38\textwidth]{homepage.jpg}{Schermata principale \textbf{NutriApp}:
+  riepilogo calorico giornaliero con grafico circolare, barre dei macronutrienti
+  (Carboidrati, Proteine, Grassi) e le quattro fasce pasto. La barra di
+  navigazione in basso con le icone NutriApp, Calendario, Aggiungi, Ricette
+  e Grafici.}
+
+\labelgreen{Descrizione}
+All'apertura dell'applicazione viene mostrata la schermata principale con il
+saluto personalizzato in cima, la data corrente navigabile con le frecce
+\texttt{<} e \texttt{>}, e un grafico circolare verde che indica le calorie
+rimanenti nella giornata. Sulla destra del grafico sono visibili le barre
+orizzontali colorate per Carboidrati (arancione), Proteine (verde) e Grassi
+(rosa/rosso), ciascuna con il valore consumato rispetto all'obiettivo.
+Le quattro fasce orarie --- Colazione, Pranzo, Cena e Snack --- sono
+accessibili con il pulsante \textbf{+} a fianco di ciascuna.
+
+\labelgreen{Elementi della barra}
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{NutriApp} (icona casetta) --- schermata principale con riepilogo
+        calorie, macronutrienti e sezioni pasto giornaliere
+  \item \textbf{Calendario} (icona calendario) --- vista mensile con codice
+        colore verde/rosso per i giorni con o senza pasti registrati
+  \item \textbf{Aggiungi} (pulsante \textbf{+} verde centrale) --- accesso
+        rapido alla schermata di inserimento alimenti
+  \item \textbf{Ricette} (icona libro) --- elenco delle ricette salvate
+  \item \textbf{Grafici} (icona grafico a linee) --- statistiche nutrizionali
+        con viste giornaliera, settimanale, mensile e annuale
+\end{itemize}
+
+\suggerimento{L'icona attiva viene evidenziata in verde nella barra inferiore.
+Il pulsante \textbf{+} verde al centro e' sempre disponibile per aggiungere
+velocemente un alimento: e' il percorso piu' rapido per la registrazione quotidiana.}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  3. INSERIMENTO DEGLI ALIMENTI
+% ════════════════════════════════════════════════════════════════════════════
+\section{Inserimento degli alimenti}
+
+L'applicazione offre piu' percorsi per registrare i pasti: ricerca nel database
+globale, selezione tra alimenti salvati, aggiunta di una ricetta gia' creata e
+scansione del codice a barre del prodotto.
+
+% ─── 3.1 ─────────────────────────────────────────────────────────────────────
+\subsection{Aprire la schermata di inserimento}
+
+\passaggio{Accedere alla schermata principale}
+
+\schermata[0.38\textwidth]{homepage.jpg}{HomePage: grafico circolare con le calorie
+  rimanenti, barre dei macronutrienti e le quattro fasce orarie ciascuna con
+  il pulsante \textbf{+}.}
+
+\labelgreen{Passaggio successivo}
+Premere il \textbf{+} accanto alla fascia oraria desiderata (Colazione, Pranzo,
+Cena o Snack) oppure premere il grande pulsante verde \textbf{+} al centro della
+barra di navigazione per accedere alla schermata \emph{Aggiungi}.
+
+% ─── 3.2 ─────────────────────────────────────────────────────────────────────
+\subsection{Scegliere la modalita' di inserimento}
+
+\passaggio{Selezionare la sorgente dell'alimento}
+
+\dueschermate{pasto_dropdown.jpg}{Schermata \textbf{Manuale}: menu a tendina
+  \emph{Seleziona Pasto} e campi Nome Alimento, Peso (g) e Macronutrienti
+  (Calorie, Carboidrati, Proteine, Grassi, Fibre, Zuccheri).}{pasto_recenti.jpg}{%
+  Schermata \textbf{Aggiungi} con tab \emph{Aggiungi Alimento} attivo: barra
+  di ricerca con icona barcode. In basso il link \emph{Non trovi alimento?
+  Registralo te!}}
+
+\labelgreen{Descrizione}
+La schermata \emph{Aggiungi} presenta tre tab nella parte superiore:
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Aggiungi Alimento} --- ricerca nel database globale o scansione
+        del codice a barre
+  \item \textbf{Ricette Salvate} --- le ricette create dall'utente con il totale
+        calorico di ciascuna
+  \item \textbf{Alimenti Salvati} --- gli alimenti registrati manualmente in
+        precedenza
+\end{itemize}
+
+\passaggio{Navigare tra i tab Ricette Salvate e Alimenti Salvati}
+
+\dueschermate{pasto_ricette.jpg}{Tab \textbf{Ricette Salvate}: ogni ricetta
+  mostra nome e calorie totali. In fondo il link
+  \emph{Inserisci nuova ricetta}.}{pasto_preferiti.jpg}{Tab \textbf{Alimenti
+  Salvati}: barra di ricerca; se non ci sono alimenti salvati compare il
+  messaggio \emph{Nessun alimento salvato}.}
+
+\suggerimento{Gli alimenti inseriti manualmente vengono salvati automaticamente
+nella sezione \emph{Alimenti Salvati} e saranno disponibili per gli inserimenti
+futuri senza doverli reinserire da capo.}
+
+% ─── 3.3 ─────────────────────────────────────────────────────────────────────
+\subsection{Inserimento manuale di un alimento}
+
+\passaggio{Compilare il form di inserimento}
+
+\dueschermate{registra_alimento.jpg}{Form \textbf{Ingrediente}: campi
+  \emph{Nome Alimento} e \emph{Peso (g)}, seguiti dalla sezione
+  \textbf{Macronutrienti} con Carboidrati, Proteine, Grassi, Fibre,
+  Zuccheri e Acqua.}{nutrienti_micro1.jpg}{Sezione \textbf{Ingrediente} con
+  le sezioni espandibili \emph{Dettagli Grassi}, \emph{Vitamine} e
+  \emph{Minerali} per un tracciamento nutrizionale completo.}
+
+\labelgreen{Descrizione}
+Toccare \emph{Registralo te!} per aprire il form di inserimento manuale.
+Compilare almeno i campi obbligatori della sezione \textbf{Macronutrienti}
+leggendo i valori dalla confezione del prodotto (etichetta \emph{Valori
+nutrizionali per 100\,g}). Per una tracciatura completa e' possibile espandere
+le sezioni \textbf{Dettagli Grassi}, \textbf{Vitamine} e \textbf{Minerali}.
+
+
+% ─── 3.4 ─────────────────────────────────────────────────────────────────────
+\subsection{Inserimento tramite scansione del codice a barre}
+
+\passaggio{Avviare la fotocamera di scansione}
+
+\schermata[0.38\textwidth]{scansione_barcode.jpg}{Schermata di scansione
+  \textbf{barcode}: la fotocamera inquadra il retro di una confezione.
+  Il riquadro verde delimita l'area di riconoscimento. In alto i controlli
+  \textbf{FLASH ON} e \textbf{CANCEL}.}
+
+\labelgreen{Descrizione}
+Toccare l'icona barcode a destra della barra di ricerca nel tab
+\emph{Aggiungi Alimento}. Inquadrare il codice a barre all'interno del
+riquadro verde: il riconoscimento avviene in automatico non appena il
+codice entra a fuoco, senza premere alcun pulsante.
+
+\suggerimento{In ambienti poco illuminati attivare il flash toccando
+\textbf{FLASH ON} in alto a destra. Tenere il telefono a circa 15--20\,cm
+dalla confezione per un risultato ottimale.}
+
+% ─── 3.5 ─────────────────────────────────────────────────────────────────────
+\subsection{Creare una nuova ricetta}
+
+\passaggio{Aprire il form e aggiungere gli ingredienti}
+
+\treschermate{nuova_ricetta.jpg}{Form \textbf{Crea Ricetta}: campi
+  \emph{Nome ricetta}, \emph{Porzioni} e \emph{Procedimento / Note}.
+  La sezione Ingredienti mostra \emph{0 aggiunti}. In fondo i pulsanti
+  \textbf{+ Ingredienti} e \textbf{Salva}.}{nuova_ricetta_recenti.jpg}{%
+  Schermata \textbf{Aggiungi Ingrediente} con tab \emph{Aggiungi Alimento}:
+  barra di ricerca con barcode. In basso il link
+  \emph{Non trovi alimento? Registralo te!}}{nuova_ricetta_preferiti.jpg}{%
+  Tab \emph{Alimenti Salvati}: elenco degli alimenti gia' registrati o
+  messaggio \emph{Nessun alimento salvato} se vuoto.}
+
+\labelgreen{Descrizione}
+Dalla sezione \emph{Ricette} toccare il pulsante \textbf{+} verde per aprire
+il form \emph{Crea Ricetta}. Compilare nome, numero di porzioni e note
+opzionali, poi premere \textbf{+ Ingredienti} per aggiungere ciascun
+componente. Ogni ingrediente aggiunto appare nella lista con le icone di
+modifica e cancellazione. Al termine premere \textbf{Salva}.
+
+% ─── 3.6 ─────────────────────────────────────────────────────────────────────
+\subsection{Consultare il dettaglio di un pasto}
+
+\passaggio{Aprire la schermata dettaglio fascia oraria}
+
+\schermata[0.38\textwidth]{dettaglia_pasto.jpg}{Schermata \textbf{Colazione}: banner arancione
+  con icona e contatore alimenti, navigazione per data, pulsante \textbf{+}
+  per aggiungere alimenti. Il \emph{Riepilogo Nutrizionale} mostra barre di
+  avanzamento per Calorie, Carboidrati, Proteine e Grassi. In fondo la lista
+  \emph{Alimenti Consumati} con icone modifica e cancellazione.}
+
+\labelgreen{Descrizione}
+Toccare una fascia oraria nella schermata principale per aprire il riepilogo
+dettagliato con il banner colorato, il riepilogo nutrizionale con barre di
+avanzamento e la lista degli alimenti consumati con le icone di modifica
+(matita blu) e cancellazione (cestino rosso).
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  4. IMPOSTAZIONE DEGLI OBIETTIVI
+% ════════════════════════════════════════════════════════════════════════════
+\section{Impostazione degli obiettivi}
+
+Gli obiettivi definiscono i valori di riferimento per calorie, macronutrienti
+e peso che l'app usa per calcolare i progressi. Impostare obiettivi realistici
+e' fondamentale per ottenere dati di avanzamento significativi.
+
+% ─── 4.1 ─────────────────────────────────────────────────────────────────────
+\subsection{Accedere e configurare gli obiettivi}
+
+\passaggio{Aprire le Impostazioni e selezionare I miei obiettivi}
+
+\dueschermate{impostazioni.jpg}{Schermata \textbf{Impostazioni}: le sezioni Account
+  (Il mio profilo, I miei obiettivi, Notifiche, Lingua e
+  paese), Supporto (Aiuto, Informativa sulla privacy, Su di noi) e Azioni (Segnala un
+  problema, Log out).}{obiettivi.jpg}{%
+  Schermata \textbf{I miei obiettivi}: sezione \emph{Peso} con \emph{Peso
+  attuale} (60.0\,kg) e \emph{Obiettivo peso} (70.0\,kg). Sezione
+  \emph{Macronutrienti} con \emph{Goal calorie} (2000.0\,kcal),
+  \emph{Carboidrati} (130.0\,g), \emph{Proteine} (45.0\,g) e
+  \emph{Grassi} (36.0\,g). In fondo le sezioni espandibili
+  \emph{Dettagli Macro}, \emph{Vitamine} e \emph{Minerali}.}
+
+\labelgreen{Descrizione}
+Toccare l'icona ingranaggio in alto a destra per aprire le impostazioni,
+poi selezionare \textbf{I miei obiettivi}. La schermata raccoglie i parametri
+in due sezioni:
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Peso} --- il \emph{Peso attuale} e' il punto di partenza per
+        il calcolo del fabbisogno; l'\emph{Obiettivo peso} e' il traguardo
+        da raggiungere (puo' essere maggiore o minore del peso attuale)
+  \item \textbf{Macronutrienti} --- il \emph{Goal calorie} definisce il limite
+        calorico giornaliero; i campi Carboidrati, Proteine e Grassi impostano
+        i limiti in grammi
+\end{itemize}
+
+\labelgreen{Passaggio successivo}
+Inserire i valori desiderati e premere \textbf{Salva}. Le modifiche vengono
+applicate immediatamente a tutta l'applicazione. Il banner verde di conferma
+appare in fondo allo schermo.
+
+\begin{infobox}
+  \textbf{\color{nutrigreen}Come scegliere i valori giusti:}
+  un punto di partenza comune e' carboidrati 45--65\%, proteine 10--35\%,
+  grassi 20--35\% delle calorie totali giornaliere. Consultare un
+  professionista della nutrizione per valori personalizzati.
+\end{infobox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  5. VISUALIZZAZIONE DEL PROGRESSO
+% ════════════════════════════════════════════════════════════════════════════
+\section{Visualizzazione del progresso}
+
+L'applicazione offre quattro viste temporali per analizzare l'andamento
+calorico e nutrizionale: giornaliera, settimanale, mensile e annuale,
+accessibili dalla sezione \textbf{Grafici} nella barra di navigazione.
+
+% ─── 5.1 ─────────────────────────────────────────────────────────────────────
+\subsection{Accedere ai dati di progresso}
+
+\passaggio{Aprire la sezione Grafici}
+
+\schermata[0.38\textwidth]{storico_giornaliero.jpg}{Schermata \textbf{Grafici}
+  con tab \emph{Giornaliero} attivo: riquadro verde \emph{Statistiche
+  nutrizionali} con voci registrate, giorni tracciati e data dell'ultimo
+  inserimento. Sotto il selettore filtri, i quattro tab temporali e il box
+  rosso con il totale calorico.}
+
+\labelgreen{Descrizione}
+Toccare l'icona \textbf{Grafici} nella barra di navigazione. In cima compare
+il riquadro verde con il riepilogo globale, poi il pannello \textbf{Filtri}
+con il nutriente selezionato (default: Calorie) e l'intervallo di date.
+I quattro tab permettono di cambiare la granularita' della visualizzazione.
+
+% ─── 5.2 ─────────────────────────────────────────────────────────────────────
+\subsection{Analizzare i grafici}
+
+\passaggio{Grafico a barre --- Calorie nel tempo}
+
+\schermata[0.40\textwidth]{grafici_barre.jpeg}{Schermata \textbf{Grafici} con
+  tab \emph{Giornaliero} attivo. In cima il pannello \textbf{Esporta report PDF}
+  con i pulsanti \textbf{Stampa PDF} (verde) e \textbf{Condividi PDF}. Il
+  grafico \textbf{Calorie nel tempo} mostra tre barre verticali rosse per i
+  giorni 28, 29 e 30 aprile: 779\,kcal, 143\,kcal e 377\,kcal. La scala
+  sull'asse verticale va da 0.0 a 779\,kcal. In basso inizia la sezione
+  \emph{Distribuzione macronutrienti}.}
+
+\labelgreen{Descrizione}
+Il grafico a barre \textbf{Calorie nel tempo} mostra l'apporto calorico
+giornaliero nel periodo selezionato. Ogni barra verticale rossa rappresenta
+un giorno, con il valore in kcal indicato sopra. L'altezza e' proporzionale
+al totale calorico: giorni con pochi alimenti registrati producono barre
+piu' basse (come il 29 aprile con 143\,kcal), giorni con piu' pasti producono
+barre piu' alte (come il 28 aprile con 779\,kcal). L'asse verticale si adatta
+automaticamente al valore massimo del periodo.
+
+\labelgreen{Esporta report PDF}
+Sopra il grafico il pannello \textbf{Esporta report PDF} offre due pulsanti:
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Stampa PDF} (verde) --- genera il documento e apre la finestra
+        di stampa del sistema operativo
+  \item \textbf{Condividi PDF} (bianco con bordo) --- genera il documento e
+        apre il pannello di condivisione per inviarlo via email, WhatsApp o
+        qualsiasi altra app installata
+\end{itemize}
+
+\passaggio{Grafico a torta --- Distribuzione macronutrienti}
+
+\schermata[0.40\textwidth]{grafici_torta.jpeg}{Schermata \textbf{Grafici} ---
+  sezione \textbf{Distribuzione macronutrienti}: grafico ad anello con la
+  ripartizione percentuale dei macronutrienti. La legenda indica Carboidrati
+  44.7\%, Proteine 12.0\% e Grassi 43.3\%. Le barre orizzontali sotto
+  mostrano i valori assoluti: Carboidrati 155.6\,g (barra arancione),
+  Proteine 41.9\,g (barra blu) e Grassi 67.1\,g (barra viola).}
+
+\labelgreen{Descrizione}
+Scorrendo verso il basso nella schermata \emph{Grafici} compare la sezione
+\textbf{Distribuzione macronutrienti}, con due rappresentazioni complementari:
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Grafico ad anello} --- mostra visivamente la proporzione tra
+        i tre macronutrienti: il segmento dorato/arancione rappresenta i
+        Carboidrati, quello blu scuro le Proteine e quello viola i Grassi.
+        Le percentuali nella legenda a destra consentono di leggere i valori
+        esatti a colpo d'occhio
+  \item \textbf{Barre orizzontali} --- mostrano sia la percentuale sia il
+        valore assoluto in grammi di ciascun macronutriente, facilitando il
+        confronto con gli obiettivi impostati nella sezione \emph{I miei obiettivi}
+\end{itemize}
+
+\labelgreen{Come interpretare i dati}
+Nell'esempio mostrato, i Grassi costituiscono il 43.3\% dell'apporto
+energetico totale (67.1\,g), un valore superiore alla soglia consigliata
+del 20--35\%. I Carboidrati si attestano al 44.7\% (155.6\,g) e le Proteine
+al 12.0\% (41.9\,g). Queste informazioni permettono di identificare squilibri
+nella distribuzione dei macronutrienti e di aggiustare le scelte alimentari
+nei giorni successivi.
+
+\labelgreen{Passaggio successivo}
+Usare il pannello \textbf{Filtri} in cima alla schermata per cambiare il
+nutriente visualizzato (es. da Calorie a Carboidrati) e l'intervallo di date.
+Toccare i tab \textbf{Settimanale}, \textbf{Mensile} o \textbf{Annuale} per
+visualizzare l'andamento su periodi piu' lunghi.
+
+\suggerimento{Il confronto tra il grafico ad anello e gli obiettivi in
+\emph{I miei obiettivi} e' il modo piu' efficace per valutare se la propria
+dieta e' in linea con i target. Se una fetta e' molto piu' grande delle altre,
+conviene ribilanciare i pasti dei giorni successivi.}
+
+% ─── 5.3 ─────────────────────────────────────────────────────────────────────
+\subsection{Usare il Calendario}
+
+\passaggio{Aprire il Calendario}
+
+\schermata[0.38\textwidth]{calendario.jpg}{Schermata \textbf{Calendario} di
+  Aprile 2026: giorni in rosso senza pasti registrati, il 28 in verde con
+  bordo blu (giorno corrente con pasto registrato), giorni futuri in grigio.
+  In basso la legenda: verde = Pasti registrati, rosso = Senza pasti.}
+
+\labelgreen{Descrizione}
+Toccare l'icona \textbf{Calendario} nella barra di navigazione. Il codice
+colore identifica immediatamente i giorni registrati: verde (pasto presente),
+rosso (nessun pasto), grigio chiaro (giorni futuri), bordo blu (giorno corrente).
+Toccare un giorno per visualizzare il dettaglio dei pasti di quella data.
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  6. IMPOSTAZIONI DELL'ACCOUNT
+% ════════════════════════════════════════════════════════════════════════════
+\section{Impostazioni dell'account}
+
+La sezione \emph{Settings} raccoglie tutte le opzioni di personalizzazione:
+profilo personale, notifiche, unita' di misura, lingua e gestione dell'account.
+
+% ─── 6.1 ─────────────────────────────────────────────────────────────────────
+\subsection{Aprire le impostazioni}
+
+\passaggio{Accedere alla schermata Settings}
+
+\schermata[0.38\textwidth]{impostazioni.jpg}{Schermata \textbf{Impostazioni}:
+  le tre sezioni Account, Supporto e Azioni con tutte le voci
+  disponibili, ciascuna con la propria icona.}
+
+\labelgreen{Descrizione}
+Toccare l'icona ingranaggio in alto a destra per aprire le impostazioni.
+
+\medskip
+\begin{infobox}
+  \begin{tabular}{@{}ll@{}}
+    \toprule
+    \textbf{Voce}              & \textbf{Funzione} \\
+    \midrule
+    Il mio profilo             & Modifica nome, cognome, altezza, data nascita, sesso e foto \\
+    I miei obiettivi           & Imposta calorie target, peso, macro e micronutrienti \\
+    Notifiche                  & Promemoria pasti e idratazione con orari personalizzati \\
+    Lingua e paese             & Lingua (IT, EN, ZH, AR) e paese di riferimento \\
+    \midrule
+    Aiuto                      & Centro assistenza con domande frequenti \\
+    Informativa sulla privacy  & Documento sulle policy di gestione dati \\
+    Su di noi                  & Informazioni sull'applicazione e il team \\
+    \midrule
+    Segnala un problema        & Segnalazione diretta al team di supporto \\
+    Log out                    & Disconnessione dall'account corrente \\
+    \bottomrule
+  \end{tabular}
+\end{infobox}
+
+% ─── 6.2 ─────────────────────────────────────────────────────────────────────
+\subsection{Modificare i dati dell'account}
+
+\passaggio{Aggiornare il profilo personale}
+
+\schermata[0.38\textwidth]{profilo.jpg}{Schermata \textbf{Il mio profilo}:
+  foto profilo con icona fotocamera verde, campi \emph{Nome} (Christian),
+  \emph{Cognome} (Donzelli), \emph{Altezza} (175.0), \emph{Data di nascita}
+  (30/11/-1) e menu a tendina \emph{Sesso} (Maschio). In fondo il
+  pulsante verde \textbf{Salva}.}
+
+\labelgreen{Descrizione}
+Toccare \textbf{Il mio profilo} per modificare i dati personali:
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Foto profilo} --- toccare l'icona fotocamera verde per scattare
+        una foto o sceglierne una dalla galleria
+  \item \textbf{Nome e Cognome} --- le informazioni anagrafiche dell'utente
+  \item \textbf{Altezza} --- in centimetri, usata per il calcolo del fabbisogno
+  \item \textbf{Data di nascita} --- usata per il calcolo del metabolismo basale
+  \item \textbf{Sesso} --- influisce sulla formula del fabbisogno calorico
+\end{itemize}
+
+Premere \textbf{Salva} per confermare. L'app aggiorna automaticamente i calcoli
+nutrizionali in base ai nuovi dati.
+
+% ─── 6.3 ─────────────────────────────────────────────────────────────────────
+\subsection{Configurare le notifiche}
+
+\passaggio{Attivare i promemoria}
+
+\dueschermate{notifiche.jpg}{Schermata \textbf{Notifiche} con toggle attivi:
+  \emph{Promemoria pasti} con orari Colazione 7:30\,AM, Pranzo 12:00\,PM,
+  Cena 7:00\,PM, Snacks 3:00\,PM; \emph{Promemoria acqua} con frequenza
+  \emph{Ogni 30 minuti}.}{notifiche_orari.jpg}{Dropdown \emph{Frequenza
+  promemoria} aperto: \emph{Ogni 30 minuti} (selezionata), \emph{Ogni 1 ora},
+  \emph{Ogni 2 ore} e \emph{DECIDO IO}. In fondo la \emph{Cronologia avvisi}
+  con le notifiche recenti.}
+
+\labelgreen{Descrizione}
+Nella schermata \emph{Notifiche} sono disponibili due toggle:
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Promemoria pasti} --- attivandolo compaiono le quattro fasce
+        orarie; toccare un orario verde per modificarlo con il selettore di sistema
+  \item \textbf{Promemoria acqua} --- attivandolo compare il menu frequenza
+        (Ogni 30 min, Ogni 1 ora, Ogni 2 ore, DECIDO IO)
+\end{itemize}
+In fondo la \textbf{Cronologia avvisi} con le notifiche recenti; toccare
+\textbf{Pulisci} per cancellarla.
+
+% ─── 6.4 ─────────────────────────────────────────────────────────────────────
+\subsection{Modificare lingua e paese}
+
+\passaggio{Configurare localizzazione}
+
+\schermata[0.38\textwidth]{lingua_paese.jpg}{Schermata
+  \textbf{Lingua e Paese}: menu \emph{Lingua} aperto con \emph{Italiano}
+  selezionato, \emph{Inglese}, \emph{Cinese semplice} e \emph{Arabo}.
+  Sotto la sezione \emph{Paese} con \emph{Italia}, \emph{Inghilterra},
+  \emph{Cina} ed \emph{Egitto}.}
+
+\labelgreen{Lingua e paese}
+Le lingue disponibili sono Italiano, Inglese, Cinese semplice e Arabo.
+La modifica si applica all'interfaccia al riavvio dell'app.
+
+% ─── 6.5 ─────────────────────────────────────────────────────────────────────
+\subsection{Segnalare un problema}
+
+\passaggio{Inviare una segnalazione al supporto}
+
+\schermata[0.38\textwidth]{segnala_problema.jpg}{Schermata \textbf{Segnala un
+  problema}: campo di testo con placeholder \emph{Descrivi dettagliatamente
+  il problema riscontrato\ldots} e pulsante verde \textbf{INVIA SEGNALAZIONE}.}
+
+\labelgreen{Descrizione}
+Toccare \textbf{Segnala un problema} nella sezione \emph{Actions}. Compilare il
+campo di testo con una descrizione dettagliata e premere \textbf{INVIA SEGNALAZIONE}.
+
+\suggerimento{Per una risoluzione piu' rapida, includere nella segnalazione il
+modello del dispositivo (es.\ iPhone 14, Samsung Galaxy S23), la versione del
+sistema operativo e la descrizione precisa dei passaggi che hanno portato al problema.}
+
+\bigskip
+\noindent\rule{\textwidth}{1pt}{\color{nutrigreen}}
+\begin{center}
+  \small\itshape\color{nutrigray}--- Fine Sezione 4 ---
+\end{center}
+
+\end{document}

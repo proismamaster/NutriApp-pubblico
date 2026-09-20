@@ -1,0 +1,334 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[italian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{setspace}
+
+\geometry{margin=2.5cm}
+\onehalfspacing
+
+\title{\textbf{DOCUMENTAZIONE TECNICA DI NUTRIAPP}}
+\author{Team NutriApp}
+\date{\today}
+
+\begin{document}
+
+    \maketitle
+    \tableofcontents
+    \newpage
+
+    \section{Introduzione}
+
+    NutriApp è un'applicazione mobile progettata per il monitoraggio intelligente di calorie, macronutrienti e micronutrienti.
+    L'obiettivo principale del progetto è fornire agli utenti uno strumento digitale affidabile e intuitivo per sviluppare maggiore consapevolezza alimentare e supportare il raggiungimento di obiettivi nutrizionali personalizzati.
+
+    L'applicazione consente la registrazione dei pasti tramite tre modalità principali: inserimento manuale degli ingredienti, utilizzo di ricette salvate e scansione del codice a barre dei prodotti confezionati. I dati raccolti vengono elaborati per fornire un'analisi quantitativa dell'apporto nutrizionale e una visualizzazione storica dell'andamento nel tempo.
+
+    \section{Che problemi risolve}
+
+    Uno dei principali ostacoli al mantenimento di uno stile di vita sano è la mancanza di feedback strutturato e continuo. Molti utenti non dispongono di strumenti adeguati per monitorare con precisione l'assunzione di nutrienti, rendendo difficile valutare l'efficacia delle proprie scelte alimentari.
+
+    NutriApp affronta questa criticità offrendo un sistema di monitoraggio costante, basato su dati aggiornati e rappresentazioni grafiche intuitive. L'utente può così modificare le proprie abitudini alimentari in funzione dei risultati osservati, riducendo errori di valutazione e aumentando la motivazione personale.
+
+    \subsection{La richiesta del committente}
+
+    La committente ha espresso la necessità di sviluppare un'applicazione altamente personalizzabile, in grado di consentire agli utenti di selezionare i parametri nutrizionali da monitorare con priorità.
+
+    In risposta a tale richiesta, l'architettura dell'app è stata progettata per permettere la configurazione dinamica degli obiettivi nutrizionali e dei nutrienti monitorati, garantendo flessibilità e adattabilità alle diverse esigenze individuali.
+
+    \subsection{L'interesse delle masse}
+
+    L'interesse generale verso uno stile di vita sano e consapevole è in costante crescita. Parallelamente, aumenta la necessità di strumenti digitali in grado di supportare persone con condizioni specifiche quali diabete, ipertensione o intolleranze alimentari.
+
+    NutriApp è stata progettata con un approccio inclusivo, mirando a supportare sia utenti generici interessati al miglioramento dello stile alimentare sia soggetti con esigenze nutrizionali particolari.
+
+    \section{Lo sviluppo dell'applicazione}
+
+    Lo sviluppo del progetto è stato condotto adottando la metodologia Agile. Il lavoro è stato suddiviso in sprint incrementali, ciascuno focalizzato sull'implementazione di funzionalità specifiche.
+
+    Questa scelta metodologica ha permesso un monitoraggio continuo dell'avanzamento, una rapida identificazione di criticità e una progressiva validazione delle componenti sviluppate.
+
+    \subsection{Analisi dei requisiti e degli stakeholders}
+
+    \subsubsection{Requisiti funzionali e tecnici}
+
+    I requisiti principali individuati in fase di analisi includono:
+
+    \begin{itemize}
+        \item Inserimento manuale dei pasti tramite elenco ingredienti e quantità.
+        \item Registrazione di ricette personalizzate riutilizzabili.
+        \item Inserimento tramite scansione di codice a barre.
+        \item Calcolo automatico di calorie, macronutrienti e micronutrienti.
+        \item Visualizzazione grafica dei dati storici su base giornaliera, settimanale e mensile.
+        \item Sistema di notifiche per il promemoria della registrazione pasti.
+    \end{itemize}
+
+    L'applicazione integra l'API OpenFoodFacts per il recupero dei dati nutrizionali. I valori vengono adattati alle quantità inserite dall'utente e aggregati nel diario personale.
+
+    Il sistema è progettato per garantire accuratezza nei calcoli e coerenza nei dati visualizzati.
+
+    il documento per l'analisi dei requisiti dell'applicazione è disponibile a questo collegamento:
+
+    \href{https://gitlab.com/ismailbarakat68/nutriapp/-/raw/documentazioneSprint3/Documentazione/documentazioneLatex/analisi_requisiti.pdf?ref_type=heads&inline=true}{LINK}
+
+
+    \subsubsection{Stakeholders}
+
+    Gli stakeholder identificati comprendono:
+
+    \begin{itemize}
+        \item La committente, con ruolo decisionale e strategico.
+        \item Gli utenti finali con esigenze nutrizionali specifiche.
+        \item Gli utenti orientati al miglioramento dello stile di vita.
+        \item Il fornitore dell'API nutrizionale, da cui dipende la qualità dei dati.
+        \item Professionisti della nutrizione potenzialmente interessati all'utilizzo dello strumento.
+        \item Strutture ospedaliere e sanitarie.
+    \end{itemize}
+
+    L'analisi degli stakeholder ha permesso di identificare rischi, dipendenze e priorità progettuali.
+
+    Il documento di analisi degli stakeholder è visibile a questo collegamento:
+
+    \href{https://gitlab.com/ismailbarakat68/nutriapp/-/raw/documentazioneSprint3/Documentazione/documentazioneLatex/analisi_stakeholders.pdf?ref_type=heads&inline=true}{LINK}
+
+
+    \subsection{Creazione del Project Charter}
+
+    il project charter è visibile a questo link:
+
+    \href{https://gitlab.com/ismailbarakat68/nutriapp/-/raw/documentazioneSprint3/Documentazione/documentazioneLatex/project_charter.pdf?ref_type=heads&inline=true}{LINK}
+
+
+    Il Project Charter rappresenta il documento formale di avvio del progetto NutriApp.
+    Esso definisce obiettivi, ambito, stakeholder principali, milestone temporali, budget e vincoli operativi.
+    Il Project Charter individua anche i principali rischi:
+    dipendenza da API esterne (OpenFoodFacts), possibili modifiche delle politiche degli store digitali e limitata disponibilità del team di sviluppo.
+
+    \subsection{Divisione del lavoro}
+
+    La suddivisione delle attività è stata organizzata secondo la metodologia Agile, attraverso sprint incrementali basati su un Product Backlog strutturato in User Stories.
+
+    Le User Stories sono state formulate secondo il modello:
+    `Come [ruolo] vorrei [azione] per [scopo]''
+
+    Le funzionalità sono state classificate per priorità:
+
+    Priorità 1 (MUST):
+    interfaccia intuitiva, inserimento manuale, scansione barcode, calcolo automatico dei totali giornalieri e sistema di notifiche push.
+
+    Priorità 2 (SHOULD):
+    registrazione account, salvataggio ricette personalizzate, impostazione soglie nutrizionali personalizzate e generazione grafici giornalieri.
+
+    Priorità 3 (MAY):
+    report periodici settimanali/mensili e tracciamento di parametri fisici.
+
+    Le tempistiche stimate per ciascuna funzionalità variano tra 6 e 18 giorni lavorativi, consentendo una pianificazione progressiva e modulare dello sviluppo.
+
+    Questa organizzazione ha permesso di garantire iterazioni rapide, validazione continua e adattamento dinamico alle esigenze emergenti.
+
+    \subsection{Divisione dei ruoli e avvio dello sviluppo}
+
+    L'organizzazione del team è stata definita in base alle competenze specifiche dei membri:
+
+    La Prof.ssa Manuela Mileo ricopre il ruolo di committente, con alto livello di interesse e potere decisionale, fornendo linee guida strategiche e supervisione.
+
+    Barakat Ismail svolge il ruolo di Project Manager e responsabile Backend e Data Engineering, coordinando le attività tecniche e l'integrazione con i servizi esterni.
+
+    Maltese Emanuel è responsabile dello sviluppo Frontend.
+
+    Yu Serena cura la progettazione UX/UI, assicurando coerenza grafica e usabilità.
+
+    Donzelli Christian opera come esperto nutrizionale,ricercatore delle informazioni scientifiche e scrittore della documentazione inerente al progetto.
+
+    Gli stakeholder esterni includono utenti con necessità nutrizionali specifiche, utenti generici interessati al miglioramento dello stile alimentare, professionisti della nutrizione, strutture ospedaliere e il fornitore del database nutrizionale.
+
+    Lo sviluppo è stato avviato dopo la definizione dell’architettura tecnica e l’approvazione del design UI/UX, con una pianificazione temporale articolata in milestone che culminano nel rilascio previsto entro Giugno 2026.
+
+    \section{Guida all'utilizzo dell'applicazione}
+
+    link del documento:
+    \href{https://gitlab.com/ismailbarakat68/nutriapp/-/raw/2db73b6a2bec3960f3ce16a5863640902789d547/Documentazione/documentazioneLatex/guida_di_utilizzo.pdf?inline=true}{Apri il documento di guida all'utilizzo}
+
+
+    \section{Fonti dei dati e ricerca scientifica}
+
+    La presente sezione documenta le analisi nutrizionali e scientifiche svolte in fase preliminare allo sviluppo dell’applicazione NutriApp.
+    Le valutazioni effettuate hanno riguardato la selezione delle fonti dati, l’identificazione dei nutrienti da monitorare, l’analisi delle principali condizioni cliniche correlate all’alimentazione e lo studio delle formule per la determinazione del fabbisogno energetico individuale.
+
+    \subsection{Integrazione dell'API OpenFoodFacts}
+
+    Per l’acquisizione dei dati nutrizionali relativi ai prodotti alimentari con codice a barre è stata selezionata l’API OpenFoodFacts, un database open source contenente informazioni su alimenti confezionati e non confezionati distribuiti a livello internazionale.
+
+    L’API consente il recupero dei valori nutrizionali standardizzati per 100 grammi di prodotto, includendo energia, macronutrienti, micronutrienti, ingredienti e allergeni. L’integrazione avviene mediante interrogazione basata su codice a barre (EAN), con successiva normalizzazione dei dati ricevuti in formato JSON.
+
+    Durante la fase di analisi tecnica sono state riscontrate possibili criticità relative alla presenza di campi mancanti, formati non uniformi e incompletezza dei micronutrienti. È stato pertanto progettato un sistema di validazione, gestione delle eccezioni e fallback dei valori non disponibili, al fine di garantire coerenza nei calcoli nutrizionali.
+
+    \subsection{Macronutrienti e parametri energetici}
+
+    I macronutrienti costituiscono il nucleo centrale del sistema di monitoraggio dell’applicazione.
+
+    I carboidrati rappresentano la principale fonte energetica dell’organismo e sono fondamentali per il funzionamento del sistema nervoso centrale. Essi vengono convertiti in glucosio e contribuiscono al mantenimento della glicemia. Il monitoraggio include carboidrati totali, zuccheri semplici e fibre. Particolare attenzione è stata dedicata alla distribuzione giornaliera, all’indice glicemico e al carico glicemico, in quanto un’assunzione eccessiva o mal distribuita è associata a iperglicemia, insulino-resistenza e sindrome metabolica, mentre una carenza può determinare affaticamento e chetosi.
+
+    Le proteine, costituite da aminoacidi essenziali e non essenziali, svolgono funzioni strutturali, enzimatiche, immunitarie e ormonali. Il monitoraggio avviene in grammi per chilogrammo di peso corporeo, considerando la distribuzione nell’arco della giornata e l’origine animale o vegetale. Carenze proteiche possono determinare sarcopenia e immunodepressione, mentre eccessi risultano potenzialmente critici nei soggetti con insufficienza renale.
+
+    I grassi rappresentano una fonte energetica concentrata e svolgono un ruolo essenziale nella struttura delle membrane cellulari e nell’assorbimento delle vitamine liposolubili. L’applicazione distingue tra grassi saturi, monoinsaturi, polinsaturi (omega-3 e omega-6) e trans. È stata prevista un’analisi qualitativa del rapporto tra grassi saturi e insaturi, data la correlazione con dislipidemia e rischio cardiovascolare.
+
+    L’energia totale viene calcolata in chilocalorie (kcal) sulla base dei valori nutrizionali forniti dall’API e delle quantità inserite dall’utente.
+
+    \subsection{Calcolo del fabbisogno energetico}
+
+    Per la determinazione del metabolismo basale (BMR) è stata adottata la formula di Mifflin-St Jeor, considerata tra le più accurate in ambito clinico.
+
+    Per gli uomini:
+    \[
+        BMR = 10 \times peso (kg) + 6.25 \times altezza (cm) - 5 \times età (anni) + 5
+    \]
+
+    Per le donne:
+    \[
+        BMR = 10 \times peso (kg) + 6.25 \times altezza (cm) - 5 \times età (anni) - 161
+    \]
+
+    Il BMR viene successivamente moltiplicato per un fattore di attività fisica (FA) al fine di ottenere il TDEE (Total Daily Energy Expenditure). I fattori utilizzati sono:
+
+    1.2 per soggetti sedentari
+    1.375 per soggetti leggermente attivi
+    1.55 per soggetti moderatamente attivi
+    1.725 per soggetti molto attivi
+    1.9 per soggetti con attività intensa o lavoro fisico pesante
+
+    Questo calcolo consente all’applicazione di personalizzare gli obiettivi calorici giornalieri in funzione delle caratteristiche individuali.
+
+    \subsection{Micronutrienti: vitamine e minerali}
+
+    Le vitamine sono state suddivise in liposolubili (A, D, E, K) e idrosolubili (complesso B e vitamina C).
+    Sono stati analizzati rischi di carenza ed eccesso, nonché popolazioni a rischio specifiche. Ad esempio, la vitamina D è frequentemente carente nella popolazione generale ed è associata alla salute ossea; la vitamina B12 è critica nei soggetti vegani e negli anziani; i folati risultano fondamentali in gravidanza.
+
+    Per quanto riguarda i minerali, sono stati distinti macro-minerali (calcio, fosforo, magnesio, sodio, potassio) e oligoelementi (ferro, zinco, iodio, selenio).
+    Particolare attenzione è stata posta al sodio per la correlazione con ipertensione, al ferro per il rischio di anemia, al calcio e vitamina D per osteoporosi, e al potassio per alterazioni elettrolitiche.
+
+    \subsection{Fibre, acqua ed elettroliti}
+
+    Le fibre alimentari, suddivise in solubili e insolubili, svolgono un ruolo determinante nella regolazione della funzione intestinale, nel controllo della glicemia postprandiale e nella modulazione del colesterolo. Un apporto insufficiente è associato a stipsi, disbiosi e aumentato rischio metabolico.
+
+    L’acqua è essenziale per il mantenimento dell’omeostasi, la termoregolazione e il trasporto dei nutrienti. Gli elettroliti contribuiscono all’equilibrio dei fluidi e alla funzione neuromuscolare. Popolazioni a rischio di disidratazione includono anziani, sportivi e pazienti con patologie renali.
+
+    \subsection{Supporto per condizioni cliniche specifiche}
+
+    L’analisi preliminare ha individuato diverse condizioni cliniche in cui il monitoraggio nutrizionale risulta particolarmente rilevante.
+
+    Nel diabete è prioritario il controllo dei carboidrati e delle fibre.
+    Nell’ipertensione è centrale il monitoraggio del sodio e del potassio.
+    Nell’osteoporosi assumono rilevanza calcio e vitamina D.
+    Nell’anemia risultano critici ferro, vitamina B12 e folati.
+    Nella celiachia è necessario monitorare ferro, B12 e fibre.
+    In gravidanza sono fondamentali folati, iodio e ferro.
+    Nel veganismo occorre attenzione a vitamina B12, ferro e omega-3.
+    Nell’insufficienza renale è necessario controllare proteine, potassio e fosforo.
+
+    L’applicazione consente l’impostazione di soglie personalizzate per nutrienti specifici, con sistema di monitoraggio continuo e segnalazione del superamento dei limiti impostati.
+
+    \subsection{Limitazioni delle fonti dati}
+
+    La preoccupazione principale del team si pone sull'assenza di molti valori da un gran numero di cibi confezionati, questo è dovuto in maggior parte alla legge, in quanto le aziende che producono determinati alimenti non sono obbligate a svolgere tutte le analisi (soprattutto dei micronutrienti) necessarie per avere un elenco comprensivo di tutti i valori nutrizionali dell'alimento.
+
+    Questo problema è purtroppo oltre lo scopo del progetto, siccome per avere veramente tutti i dati dei prodotti, bisognerebbe spostare la responsabilità di svolgere le analisi dalle aziende produttrici agli sviluppatori dell'applicazione, per creare un database riservato a quest'ultima, un obiettivo ben oltre lo scopo di NutriApp.
+
+    \section{Informativa sulla privacy e distribuzione del software}
+
+    \subsection{Informativa sulla privacy}
+
+    All'interno del progetto NutriApp è stato predisposto un documento dedicato al trattamento dei dati personali, redatto in conformità al Regolamento (UE) 2016/679 (GDPR).
+
+    Il documento include informazioni sul trattamento dei dati e come richiedere la loro eliminazione, può essere trovato in forma completa al seguente collegamento:
+
+    \href{https://gitlab.com/ismailbarakat68/nutriapp/-/raw/develop/Documentazione/informativa%20sulla%20privacy.pdf?ref_type=heads&inline=true}{Apri il documento di Informativa sulla Privacy}
+
+    NutriApp raccoglie esclusivamente i dati necessari al funzionamento del servizio. Il trattamento avviene nel rispetto delle normative vigenti in materia di protezione dei dati personali.
+
+    \subsection{Distribuzione del software su piattaforme ufficiali}
+
+    L'applicazione \textbf{Nutriapp} è distribuita ufficialmente tramite le principali piattaforme digitali per dispositivi mobili. La distribuzione attraverso piattaforme ufficiali garantisce maggiore sicurezza, affidabilità e disponibilità degli aggiornamenti.
+
+    \subsubsection*{Piattaforme supportate}
+
+    L'applicazione è disponibile per il download attraverso:
+
+    \begin{itemize}
+
+        \item \textbf{Google Play Store}
+        per dispositivi basati su sistema operativo Android.
+
+        \item \textbf{Apple App Store}
+        per dispositivi basati su sistema operativo iOS
+        (iPhone e iPad).
+
+    \end{itemize}
+
+% ------------------------------------------------------------
+
+    \subsection{Distribuzione del software da terze parti}
+
+    Oltre alla distribuzione tramite piattaforme ufficiali,l'applicazione può essere resa disponibile anche attraverso repository di sviluppo,principalmente per attività di test,debug o installazione manuale.
+
+    \subsubsection*{Repository ufficiale}
+
+    Il pacchetto di installazione dell'applicazione è disponibile nella repository GitLab ufficiale del progetto.
+
+    Il file distribuito è nel formato APK
+
+    \subsubsection*{Avvertenze di sicurezza}
+
+    L'installazione manuale deve essere effettuata esclusivamente utilizzando file provenienti dalla repository ufficiale del progetto. L'utilizzo di file provenienti da fonti non verificate può comportare rischi per la sicurezza del dispositivo e per l'integrità dei dati dell'utente.
+
+    Il team Nutriapp non è da ritenersi responsabile per eventuali danni arrecati agli utenti che hanno installato l'applicazione da una fonte non verificata.
+
+% ------------------------------------------------------------
+
+    \subsection{Recapiti e contatti del team Nutriapp}
+
+    Il team di sviluppo mette a disposizione diversi canali di comunicazione per fornire assistenza tecnica, raccogliere segnalazioni di errore e gestire richieste informative.
+
+    \subsubsection*{Canali di supporto}
+
+    Gli utenti possono contattare il team tramite:
+
+    \begin{itemize}
+
+        \item \textbf{Email di supporto tecnico}
+        support@nutriapp.com
+
+        \item \textbf{Repository GitLab ufficiale}
+        utilizzata per la segnalazione di bug,
+        richieste tecniche e contributi allo sviluppo.
+
+        \item \textbf{Sistema di assistenza integrato}
+        disponibile direttamente all'interno dell'applicazione.
+
+    \end{itemize}
+
+    \subsubsection*{Informazioni da fornire in caso di errore}
+
+    Per facilitare l'analisi di eventuali problemi, si consiglia di includere:
+
+    \begin{itemize}
+
+        \item modello del dispositivo utilizzato
+
+        \item versione del sistema operativo
+
+        \item versione dell'applicazione installata
+
+        \item descrizione dettagliata del problema riscontrato
+
+    \end{itemize}
+
+    \subsubsection*{Gestione delle richieste}
+
+    Le richieste inviate tramite i canali ufficiali vengono analizzate dal team tecnico in base alla priorità e alla complessità del problema. Eventuali aggiornamenti critici verranno distribuiti attraverso le piattaforme ufficiali di distribuzione.
+\end{document}

@@ -1,0 +1,109 @@
+\documentclass[11pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{enumitem}
+
+\geometry{margin=2.5cm}
+\setstretch{1.15}
+
+\begin{document}
+
+    \begin{center}
+        {\Large \textbf{Documento dei Requisiti}} \\
+        \vspace{0.5cm}
+        \textbf{Nome del Progetto:} NutriApp \\
+        \textbf{Data:} 28/10/2025
+    \end{center}
+
+    \section*{Informazioni Generali}
+
+    \begin{itemize}
+        \item \textbf{Committente:} Mileo Manuela
+        \item \textbf{Contatti:} manuela.mileo@galileo.galileicrema.it
+        \item \textbf{Autori:}
+
+        \begin{itemize}
+            \item Barakat Ismail
+            \item Donzelli Christian
+            \item Maltese Emanuel
+            \item Yu Serena
+        \end{itemize}
+
+    \end{itemize}
+
+% ======================================================
+
+    \section*{Requisiti di Contesto}
+
+    Il progetto NutriApp nasce per offrire uno strumento digitale avanzato che consenta agli utenti di monitorare e migliorare la propria alimentazione.
+
+    È rivolto a chi desidera controllare i nutrienti assunti durante i pasti o necessita di un monitoraggio specifico per esigenze di salute (es. sportivi, diabetici, persone con intolleranze alimentari).
+
+% ======================================================
+
+    \section*{Requisiti degli Stakeholders}
+
+    \begin{itemize}
+        \item Monitoraggio completo dei valori nutrizionali (macro e micro nutrienti e acqua)
+
+        \item Allarmi intelligenti personalizzabili in caso di superamento o avvicinamento alle soglie
+
+        \item Tracciamento opzionale dei parametri fisici (peso, pressione, glicemia, ecc.) con analisi nel tempo
+
+        \item Visualizzazione grafica dei dati per una comprensione immediata
+
+        \item Personalizzazione degli obiettivi e dei parametri nutrizionali in base alle esigenze individuali
+
+    \end{itemize}
+
+% ======================================================
+
+    \section*{Requisiti Funzionali}
+
+    \subsection*{MUST}
+
+    \begin{itemize}
+        \item Monitoraggio completo dei valori nutrizionali
+
+        \item Allarmi intelligenti (nel caso di superamento o avvicinamento alla soglia)
+
+    \end{itemize}
+
+    \subsection*{SHOULD}
+
+    \begin{itemize}
+        \item Grafici
+    \end{itemize}
+
+    \subsection*{MAY}
+
+    \begin{itemize}
+        \item Tracciamento opzionale
+    \end{itemize}
+
+% ======================================================
+
+    \section*{Requisiti Non Funzionali}
+
+    Il sistema dovrà garantire:
+
+    \begin{itemize}
+
+        \item \textbf{Usabilità:} interfaccia intuitiva, accessibile e user-friendly
+
+        \item \textbf{Sicurezza:} crittografia dei dati sensibili e protezione della privacy degli utenti
+
+        \item \textbf{Affidabilità:} riduzione dei rischi di crash o perdita dei dati
+
+        \item \textbf{Scalabilità:} capacità di supportare un numero crescente di utenti senza perdita di prestazioni
+
+        \item \textbf{Portabilità:} compatibilità con più piattaforme (Android, iOS, Web)
+
+    \end{itemize}
+
+\end{document}

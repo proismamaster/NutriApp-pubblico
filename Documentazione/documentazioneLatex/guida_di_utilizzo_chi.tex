@@ -1,0 +1,718 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[italian,english]{babel}
+\usepackage[UTF8, fontset=none]{ctex}
+\setCJKmainfont{Microsoft YaHei}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multicol}
+
+% ── 品牌颜色 ─────────────────────────────────────────────────────────────
+\definecolor{nutrigreen}{RGB}{46,125,50}
+\definecolor{nutrilightgreen}{RGB}{232,245,233}
+\definecolor{nutridark}{RGB}{28,28,28}
+\definecolor{nutrigray}{RGB}{117,117,117}
+\definecolor{nutriaccent}{RGB}{56,142,60}
+
+% ── 页面边距 ────────────────────────────────────────────────────────────
+\setlength{\headheight}{30pt}
+\geometry{left=2.5cm, right=2.5cm, top=2.8cm, bottom=2.5cm}
+
+% ── 页眉 ─────────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{nutrigray}第 4 部分 --- 应用程序使用指南}
+\fancyhead[R]{\small\color{nutrigray}\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{nutrigreen}\leaders\hrule height \headrulewidth\hfill}}
+
+% ── 步骤计数器 ───────────────────────────────────────────────────────────
+\newcounter{passo}[subsection]
+\newcommand{\passaggio}[1]{%
+    \stepcounter{passo}%
+    \subsubsection*{\color{nutriaccent}步骤 \thesubsection.\thepasso\ ---\ #1}%
+}
+
+% ── 绿色信息框 ─────────────────────────────────────────────────────
+\newmdenv[
+  backgroundcolor=nutrilightgreen,
+  linecolor=nutrigreen,
+  linewidth=1.5pt,
+  roundcorner=5pt,
+  innertopmargin=8pt,
+  innerbottommargin=8pt,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  skipabove=8pt,
+  skipbelow=8pt
+]{infobox}
+
+% ── 绿色粗体标签 ─────────────────────────────────────────────────
+\newcommand{\labelgreen}[1]{\medskip\noindent{\color{nutriaccent}\textbf{#1}}\par\smallskip}
+
+% ── 斜体提示 ──────────────────────────────────────────────────────
+\newcommand{\suggerimento}[1]{%
+  \smallskip\noindent\textit{\color{nutrigray}#1}\par\smallskip%
+}
+
+% ── 图片文件夹变量 (用于翻译) ───────────────────
+\newcommand{\imgdir}{immagini_chi}
+
+% ── 带标题的居中图片 ─────────────────────────────────────────
+\newcommand{\schermata}[3][0.38\textwidth]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=#1]{\imgdir/#2}
+    \caption{\small\color{nutrigray}#3}
+  \end{figure}%
+}
+
+% ── 两张并排图片 ──────────────────────────────────────────────────
+\newcommand{\dueschermate}[4]{%
+  \begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.42\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#1}
+      \caption{\small\color{nutrigray}#2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.42\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#3}
+      \caption{\small\color{nutrigray}#4}
+    \end{subfigure}
+  \end{figure}%
+}
+
+% ── 三张并排图片 ──────────────────────────────────────────────────
+\newcommand{\treschermate}[6]{%
+  \begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.30\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#1}
+      \caption{\small\color{nutrigray}#2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.30\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#3}
+      \caption{\small\color{nutrigray}#4}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.30\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#5}
+      \caption{\small\color{nutrigray}#6}
+    \end{subfigure}
+  \end{figure}%
+}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+% ════════════════════════════════════════════════════════════════════════════
+%  章节标题
+% ════════════════════════════════════════════════════════════════════════════
+\begin{center}
+  {\Huge\bfseries\color{nutrigreen} 第 4 部分}\\[6pt]
+  {\Large\bfseries\color{nutridark} 应用程序使用指南}\\[4pt]
+  {\normalsize\itshape\color{nutrigray} 用户手册 --- 分步说明}
+\end{center}
+
+\medskip
+\noindent\rule{\textwidth}{1.5pt}{\color{nutrigreen}}
+\medskip
+
+\noindent 本章通过详细的说明和直接取自应用程序的屏幕截图，
+展示了 \textbf{NutriApp} 的主要功能。
+每个部分都分为渐进式步骤，以帮助即使是缺乏经验的用户也能轻松理解。
+
+\medskip
+\begin{infobox}
+  \textbf{\color{nutrigreen}章节索引}
+  \begin{enumerate}[leftmargin=1.4em, itemsep=2pt]
+    \item 登录与注册
+    \item 导航栏
+    \item 添加食物
+    \item 设定目标
+    \item 查看进度
+    \item 账户设置
+  \end{enumerate}
+\end{infobox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  1. 登录与注册
+% ════════════════════════════════════════════════════════════════════════════
+\section{登录与注册}
+
+首次打开应用程序时，将显示欢迎屏幕，您可以从中登录现有帐户或创建一个新帐户。
+NutriApp 支持三种登录方式：电子邮件和密码、Google 帐户以及 Apple ID。
+您还可以在未创建帐户的情况下以访客模式浏览该应用。
+
+% ─── 1.1 ─────────────────────────────────────────────────────────────────────
+\subsection{欢迎和登录屏幕}
+
+\passaggio{打开应用程序}
+
+\schermata[0.40\textwidth]{login.jpeg}{\textbf{NutriApp} 欢迎屏幕：
+  顶部是绿色徽标和副标题 \emph{登录以在同一个应用中管理您的膳食、常量和微量营养素。} 中央白色面板
+  显示 \textbf{电子邮件} 和 \textbf{密码} 字段 (带有一个显示/隐藏字符的眼睛图标)，绿色的 \textbf{登录} 按钮，以及
+  链接 \emph{不登录继续}。在 \emph{或} 分隔符下方是
+  \textbf{使用 Google 登录} 和 \textbf{使用 Apple 登录} 按钮，底部
+  是链接 \emph{还没有帐户？注册}。}
+
+\labelgreen{说明}
+首次打开 NutriApp 时，登录屏幕会显示应用的深绿色名称以及简要说明其功能的副标题。
+中央登录面板有两个字段：
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{电子邮件} --- 与帐户关联的电子邮件地址，
+        由字段左侧的信封图标指示
+  \item \textbf{密码} --- 帐户密码；触摸字段右侧的带斜杠眼睛
+        图标以在明文或隐藏字符之间切换
+\end{itemize}
+
+填写完两个字段后，按绿色 \textbf{登录} 按钮
+完成身份验证并进入应用程序。
+
+\labelgreen{不登录继续}
+通过点击 \emph{不登录继续} 链接，您可以在访客模式下浏览
+应用程序，无需创建或输入凭据。
+在此模式下，数据不会同步到云端，也无法从其他设备访问。建议创建帐户，以防
+丢失输入的数据。
+
+\suggerimento{如果您忘记了密码，可以通过 NutriApp 官方网站上提供的
+恢复程序找回：系统会向与帐户关联的电子邮件地址发送重置链接。}
+
+% ─── 1.2 ─────────────────────────────────────────────────────────────────────
+\subsection{使用 Google 登录}
+
+\passaggio{选择通过 Google 快速登录}
+
+\dueschermate{login.jpeg}{登录屏幕：白色面板底部是
+  \textbf{使用 Google 登录} 按钮，左侧带有 G 标志。点击它
+  将打开设备上存在的 Google 帐户选择器。}{login_google.jpeg}{%
+  系统窗口 \textbf{选择帐户}：显示保存在设备上的所有 Google 帐户及其头像和电子邮件地址 (出于隐私已被遮挡)。底部是 \emph{添加另一个帐户} 选项以添加
+  尚未存在的帐户，并提示 Google 将与 NutriApp 共享您的姓名、电子邮件和个人资料图片。}
+
+\labelgreen{说明}
+在登录屏幕上点击 \textbf{使用 Google 登录} 以开始
+快速身份验证。操作系统会自动打开 Google 帐户选择窗口，该窗口显示设备上已配置的
+所有 Gmail 帐户。列表中的每个条目都会显示帐户的个人资料图片
+和电子邮件地址。
+
+\labelgreen{如何进行}
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{在列表中点击您的帐户} 进行选择，并
+        授权 NutriApp 访问您的姓名、电子邮件和个人资料图片。
+        登录将自动完成，无需进一步操作。
+  \item \textbf{点击 \emph{添加另一个帐户}}，如果所需的帐户
+        不在列表中：标准 Google 登录流程将打开以在设备上添加新帐户。
+\end{itemize}
+
+\labelgreen{下一步}
+选择帐户后，应用程序会验证用户身份并直接进入
+主屏幕。如果这是该 Google 帐户的首次登录，
+将启动初始的个人资料设置流程。
+
+\suggerimento{使用 Google 登录是最快的方法：它不需要您记住单独的密码，并在您更改
+Google 密码时自动更新。推荐给已经在其他服务上使用 Google 的用户。}
+
+% ─── 1.3 ─────────────────────────────────────────────────────────────────────
+\subsection{创建新帐户}
+
+\passaggio{打开注册表单 --- 步骤 1}
+
+\schermata[0.40\textwidth]{registra_step1.jpeg}{屏幕 \textbf{注册}
+  --- 第 1 步，共 3 步：顶部的进度指示器显示第一条破折号为绿色 (活动)，另外两条为灰色 (待完成)。中央是带有
+  绿色相机图标以添加可选照片的占位符头像。表单字段包括：
+  \textbf{名字}，\textbf{姓氏}，\textbf{电子邮件}，\textbf{密码}，和
+  \textbf{确认密码}。底部是绿色的 \textbf{注册} 按钮。}
+
+\labelgreen{说明}
+在登录屏幕上点击绿色链接 \emph{还没有帐户？注册} 以
+打开三步注册向导，由顶部的进度指示器显示 (绿色破折号 = 当前步骤，
+灰色破折号 = 后续步骤)。
+
+\textbf{步骤 1 --- 个人数据和凭据。}
+填写以下字段：
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{名字} 和 \textbf{姓氏} --- 将在应用中和
+        主屏幕的问候语中显示的全名
+  \item \textbf{电子邮件} --- 将作为帐户的
+        唯一标识符的电子邮件地址；它必须有效，因为
+        将在下一步用于通过 OTP 代码进行验证
+  \item \textbf{密码} --- 选择一个至少 8
+        个字符的强密码；建议包含大写字母、小写字母、
+        数字和特殊字符
+  \item \textbf{确认密码} --- 重新输入相同的密码以
+        防止输入错误；这两个字段必须
+        完全匹配才能继续
+\end{itemize}
+
+\textbf{个人资料照片 (可选)。}
+点击覆盖在灰色头像上的绿色相机图标以拍摄
+照片或从图库中选择一张。照片是可选的，可以
+随时从设置中的 \emph{我的个人资料} 部分
+添加或更改。
+
+\labelgreen{下一步}
+检查是否已正确填写所有必填字段，
+然后按绿色 \textbf{注册} 按钮进入下一步。
+
+\passaggio{验证您的电子邮件地址 --- 步骤 2}
+
+\schermata[0.40\textwidth]{registra_step2.jpeg}{屏幕 \textbf{注册}
+  --- 第 2 步，共 3 步：指示器显示前两条破折号为绿色，最后一条为灰色。中央是带有绿色勾号的信封图标和标题 \textbf{验证您的电子邮件}。文本表明已向输入的电子邮件地址发送了 OTP 代码 (部分被遮挡)。
+  \textbf{OTP 代码} 字段等待输入。链接
+  \emph{重新发送} 允许您请求一个新代码。
+  底部是绿色的 \textbf{检查电子邮件} 按钮。}
+
+\labelgreen{说明}
+在第一步中按 \textbf{继续} 后，应用程序会自动
+将 OTP (一次性密码) 代码发送到输入的电子邮件地址。
+屏幕显示带有绿色勾号的信封图标，并
+指示代码已发送到哪个地址。
+
+\labelgreen{如何完成验证}
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item 打开注册期间使用的电子邮件地址的收件箱，并查找 NutriApp 验证邮件
+  \item 记下或复制邮件中的 6 位 OTP 代码
+  \item 返回应用程序并在 \textbf{OTP 代码} 字段中输入代码
+  \item 按 \textbf{检查电子邮件} 以确认电子邮件地址
+        并进入最后一步
+\end{itemize}
+
+\labelgreen{未收到代码}
+如果几分钟内未收到代码，请检查提供商的
+\emph{垃圾邮件} 或 \emph{垃圾} 文件夹。或者，
+点击链接 \emph{重新发送} 以请求新的 OTP 代码。
+该链接在短暂等待后激活，以防止
+快速连续的多次请求。
+
+\suggerimento{OTP 代码在有限的时间内有效 (通常为
+10--15 分钟)。如果您在输入前等待太久，将
+需要通过 \emph{重新发送} 链接请求一个新的。}
+
+\passaggio{完成注册 --- 步骤 3}
+
+\schermata[0.40\textwidth]{registra_step3.jpeg}{屏幕 \textbf{注册}
+  --- 第 3 步，共 3 步：指示器上的所有三条破折号都是绿色的，标志着
+  该过程的完成。中央是一个带有白色勾号的绿色圆圈和
+  标题 \textbf{做得好！} 带有副标题 \emph{您已准备好
+  开始使用 NutriApp。} 底部是绿色的
+  \textbf{前往主页} 按钮。}
+
+\labelgreen{说明}
+成功验证 OTP 代码后，应用程序会显示确认屏幕。
+指示器的所有三条破折号变为绿色。消息 \textbf{做得好！} 确认帐户已创建并正确验证。按 \textbf{前往主页} 进入
+应用程序。
+
+\begin{infobox}
+  \textbf{\color{nutrigreen}登录方式摘要}
+
+  \smallskip
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{方式}       & \textbf{要求}             & \textbf{适合} \\
+    \midrule
+    电子邮件 + 密码      & NutriApp 帐户                 & 偏好专用凭据的用户 \\
+    使用 Google 登录    & 设备上的 Gmail 帐户          & 无需密码即可快速访问 \\
+    使用 Apple 登录     & Apple ID (仅限 iOS)              & iPhone/iPad 用户 \\
+    不登录    & 无                             & 快速探索应用 \\
+    \bottomrule
+  \end{tabular}
+\end{infobox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  2. 导航栏
+% ════════════════════════════════════════════════════════════════════════════
+\section{导航栏}
+
+导航栏是界面的持久元素：它出现在每个屏幕的
+底部，让您只需单击一次即可立即在
+应用程序的五个主要区域之间移动。
+
+% ─── 2.1 ─────────────────────────────────────────────────────────────────────
+\subsection{查看导航栏}
+
+\passaggio{打开应用程序}
+
+\schermata[0.38\textwidth]{homepage.jpg}{主屏幕 \textbf{NutriApp}：
+  带饼图的每日热量摘要，常量营养素条 (碳水化合物、蛋白质、脂肪) 和四个用餐时间段。底部的导航栏带有 NutriApp、日历、添加、食谱
+  和图表图标。}
+
+\labelgreen{说明}
+打开应用程序时，显示主屏幕，顶部有
+个性化的问候语，可用 \texttt{<} 和 \texttt{>} 箭头导航当前日期，
+以及一个绿色的圆形图表，指示当天剩余的卡路里。
+图表右侧是碳水化合物 (橙色)、
+蛋白质 (绿色) 和脂肪 (粉色/红色) 的水平彩色条，每个条形都显示已消耗的值与目标值的比较。
+四个时间段 --- 早餐、午餐、晚餐和零食 --- 可通过每个旁边的 \textbf{+} 按钮访问。
+
+\labelgreen{栏目元素}
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{NutriApp} (房屋图标) --- 包含热量
+        摘要、常量营养素和每日膳食部分的主屏幕
+  \item \textbf{日历} (日历图标) --- 每月视图，具有绿色/红色颜色代码，用于指示有或无记录膳食的日子
+  \item \textbf{添加} (中央的绿色 \textbf{+} 按钮) --- 快速访问
+        食物输入屏幕
+  \item \textbf{食谱} (书本图标) --- 保存的食谱列表
+  \item \textbf{图表} (折线图图标) --- 营养统计
+        具有每日、每周、每月和每年视图
+\end{itemize}
+
+\suggerimento{活动图标在底栏中以绿色突出显示。
+中央的绿色 \textbf{+} 按钮始终可用以快速添加
+食物项目：它是每日记录的最快途径。}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  3. 添加食物
+% ════════════════════════════════════════════════════════════════════════════
+\section{添加食物}
+
+应用程序提供多种记录膳食的方法：搜索全球数据库，
+从已保存的食物中选择，添加已创建的食谱，以及
+扫描产品的条形码。
+
+% ─── 3.1 ─────────────────────────────────────────────────────────────────────
+\subsection{打开输入屏幕}
+
+\passaggio{进入主屏幕}
+
+\schermata[0.38\textwidth]{homepage.jpg}{HomePage：带剩余
+  卡路里的圆形图表，常量营养素条和四个时间段，每个时间段都有
+  \textbf{+} 按钮。}
+
+\labelgreen{下一步}
+按所需时间段 (早餐、午餐、
+晚餐或零食) 旁边的 \textbf{+}，或按导航栏中心的
+大型绿色 \textbf{+} 按钮以访问 \emph{添加} 屏幕。
+
+% ─── 3.2 ─────────────────────────────────────────────────────────────────────
+\subsection{选择输入方法}
+
+\passaggio{选择食物来源}
+
+\dueschermate{pasto_dropdown.jpg}{屏幕 \textbf{手动}：下拉菜单
+  \emph{选择膳食} 和食物名称、重量 (g) 以及常量营养素字段
+  (卡路里、碳水化合物、蛋白质、脂肪、纤维、糖类)。}{pasto_recenti.jpg}{%
+  屏幕 \textbf{添加} 且 \emph{添加食物} 选项卡处于活动状态：带条形码图标的搜索栏。下面是链接 \emph{找不到食物？自己注册！}}
+
+\labelgreen{说明}
+\emph{添加} 屏幕顶部有三个选项卡：
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{添加食物} --- 搜索全球数据库或扫描
+        条形码
+  \item \textbf{已保存食谱} --- 用户创建的食谱以及每种食谱的
+        总热量
+  \item \textbf{已保存食物} --- 以前手动注册的
+        食物
+\end{itemize}
+
+\passaggio{在已保存食谱和已保存食物选项卡之间导航}
+
+\dueschermate{pasto_ricette.jpg}{选项卡 \textbf{已保存食谱}：每个食谱
+  显示其名称和总热量。底部是链接
+  \emph{插入新食谱}。}{pasto_preferiti.jpg}{选项卡 \textbf{已保存
+  食物}：搜索栏；如果没有已保存的食物，将显示消息
+  \emph{没有已保存的食物}。}
+
+\suggerimento{手动输入的食物会自动保存
+在 \emph{已保存食物} 部分，并将可用于未来的条目
+而无需从头重新输入它们。}
+
+% ─── 3.3 ─────────────────────────────────────────────────────────────────────
+\subsection{手动输入食物}
+
+\passaggio{填写输入表单}
+
+\dueschermate{registra_alimento.jpg}{表单 \textbf{成分}：字段
+  \emph{食物名称} 和 \emph{重量 (g)}，后跟包含碳水化合物、蛋白质、脂肪、纤维、糖类和水分的
+  \textbf{常量营养素} 部分。}{nutrienti_micro1.jpg}{部分 \textbf{成分} 包含可展开的部分 \emph{脂肪详细信息}，\emph{维生素} 和 \emph{矿物质}，以进行全面的营养追踪。}
+
+\labelgreen{说明}
+点击 \emph{自己注册！} 以打开手动输入表单。
+通过读取产品包装上的值 (\emph{每 100 克的营养价值} 标签) 填写 \textbf{常量营养素} 部分中至少必填的字段。为了全面追踪，您可以展开
+\textbf{脂肪详细信息}，\textbf{维生素} 和 \textbf{矿物质} 部分。
+
+
+% ─── 3.4 ─────────────────────────────────────────────────────────────────────
+\subsection{通过条形码扫描输入}
+
+\passaggio{启动扫描相机}
+
+\schermata[0.38\textwidth]{scansione_barcode.jpg}{扫描屏幕
+  \textbf{条形码}：相机对焦在包装的背面。
+  绿色框架限定了识别区域。顶部是控件 \textbf{闪光灯开启} 和 \textbf{取消}。}
+
+\labelgreen{说明}
+点击 \emph{添加食物} 选项卡中搜索栏右侧的条形码图标。将条形码框在
+绿框内：一旦代码对焦，识别会自动进行，无需按任何按钮。
+
+\suggerimento{在光线昏暗的环境中，通过点击
+右上角的 \textbf{闪光灯开启} 来激活闪光灯。将手机保持在距离包装
+约 15--20\,cm 的位置以获得最佳效果。}
+
+% ─── 3.5 ─────────────────────────────────────────────────────────────────────
+\subsection{创建新食谱}
+
+\passaggio{打开表单并添加成分}
+
+\treschermate{nuova_ricetta.jpg}{表单 \textbf{创建食谱}：字段
+  \emph{食谱名称}，\emph{份量} 和 \emph{步骤 / 备注}。成分部分显示 \emph{已添加 0}。底部是按钮 \textbf{+ 成分} 和 \textbf{保存}。}{nuova_ricetta_recenti.jpg}{%
+  屏幕 \textbf{添加成分} 包含 \emph{添加食物} 选项卡：
+  带条形码的搜索栏。下面是链接
+  \emph{找不到食物？自己注册！}}{nuova_ricetta_preferiti.jpg}{%
+  选项卡 \emph{已保存食物}：已注册食物的列表或如果为空则显示消息 \emph{没有已保存的食物}。}
+
+\labelgreen{说明}
+从 \emph{食谱} 部分，点击绿色的 \textbf{+} 按钮以打开
+\emph{创建食谱} 表单。填写名称、份量和可选备注，
+然后按 \textbf{+ 成分} 添加每个
+组件。每个添加的成分都会出现在列表中，并带有编辑
+和删除图标。完成后，按 \textbf{保存}。
+
+% ─── 3.6 ─────────────────────────────────────────────────────────────────────
+\subsection{查看膳食详情}
+
+\passaggio{打开时间段详情屏幕}
+
+\schermata[0.38\textwidth]{dettaglia_pasto.jpg}{屏幕 \textbf{早餐}：橙色横幅
+  带有图标和食物计数器，日期导航，\textbf{+} 按钮
+  用于添加食物。\emph{营养摘要} 显示了卡路里、碳水化合物、蛋白质和脂肪的进度条。底部是带有编辑和删除图标的 \emph{已消费食物} 列表。}
+
+\labelgreen{说明}
+点击主屏幕上的时间段以打开带彩色横幅的详细摘要，包含进度条的营养摘要，以及带有编辑 (蓝色铅笔) 和删除 (红色垃圾桶) 图标的已消费食物列表。
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  4. 设定目标
+% ════════════════════════════════════════════════════════════════════════════
+\section{设定目标}
+
+目标定义了卡路里、常量营养素和权重的参考值，应用程序使用这些值来计算进度。设定现实的目标对于获得有意义的跟踪数据至关重要。
+
+% ─── 4.1 ─────────────────────────────────────────────────────────────────────
+\subsection{访问和配置目标}
+
+\passaggio{打开设置并选择我的目标}
+
+\dueschermate{impostazioni.jpg}{屏幕 \textbf{设置}：帐户部分 (我的个人资料，我的目标，通知，语言和
+  国家/地区)，支持 (帮助，隐私政策，关于我们) 和操作 (报告问题，注销)。}{obiettivi.jpg}{%
+  屏幕 \textbf{我的目标}：\emph{体重} 部分包含 \emph{当前
+  体重} (60.0\,kg) 和 \emph{目标体重} (70.0\,kg)。\emph{常量营养素} 部分包含 \emph{卡路里目标} (2000.0\,kcal)，\emph{碳水化合物} (130.0\,g)，\emph{蛋白质} (45.0\,g) 和 \emph{脂肪} (36.0\,g)。底部是可展开的部分 \emph{宏量营养素详情}，\emph{维生素} 和 \emph{矿物质}。}
+
+\labelgreen{说明}
+点击右上角的齿轮图标打开设置，然后选择 \textbf{我的目标}。屏幕将参数
+分为两部分：
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{体重} --- \emph{当前体重} 是计算需求的起点；\emph{目标体重} 是要达到的目标 (可以高于或低于当前体重)
+  \item \textbf{常量营养素} --- \emph{卡路里目标} 定义了每日热量限制；碳水化合物、蛋白质和脂肪字段设置了以克为单位的限制
+\end{itemize}
+
+\labelgreen{下一步}
+输入所需的值并按 \textbf{保存}。更改将立即应用于整个应用程序。屏幕底部将出现绿色的确认横幅。
+
+\begin{infobox}
+  \textbf{\color{nutrigreen}如何选择正确的值：}
+  一个常见的起点是碳水化合物 45--65\%，蛋白质 10--35\%，
+  脂肪 20--35\% 占每日总卡路里。请咨询营养专业人士获取个性化建议。
+\end{infobox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  5. 查看进度
+% ════════════════════════════════════════════════════════════════════════════
+\section{查看进度}
+
+应用程序提供四种时间视图来分析卡路里和
+营养趋势：每日、每周、每月和每年，可从导航栏中的 \textbf{图表} 部分访问。
+
+% ─── 5.1 ─────────────────────────────────────────────────────────────────────
+\subsection{访问进度数据}
+
+\passaggio{打开图表部分}
+
+\schermata[0.38\textwidth]{storico_giornaliero.jpg}{屏幕 \textbf{图表}
+  包含活动的 \emph{每日} 选项卡：绿色框 \emph{营养
+  统计} 包含记录的项目、跟踪的天数和最后输入的日期。下面是过滤器选择器、四个时间选项卡和显示总卡路里的红框。}
+
+\labelgreen{说明}
+点击导航栏中的 \textbf{图表} 图标。顶部将出现包含全局摘要的绿色框，然后是 \textbf{过滤器} 面板，其中包含所选营养素 (默认：卡路里) 和日期范围。四个选项卡允许您更改视图的粒度。
+
+% ─── 5.2 ─────────────────────────────────────────────────────────────────────
+\subsection{分析图表}
+
+\passaggio{条形图 --- 随时间变化的卡路里}
+
+\schermata[0.40\textwidth]{grafici_barre.jpeg}{屏幕 \textbf{图表} 包含
+  活动的 \emph{每日} 选项卡。顶部是 \textbf{导出 PDF 报告} 面板，包含 \textbf{打印 PDF} (绿色) 和 \textbf{分享 PDF} 按钮。\textbf{随时间变化的卡路里} 图表显示 4 月 28、29 和 30 日的三个红色垂直条：779\,kcal、143\,kcal 和 377\,kcal。垂直轴上的比例从 0.0 到 779\,kcal。下面开始 \emph{常量营养素分布} 部分。}
+
+\labelgreen{说明}
+\textbf{随时间变化的卡路里} 条形图显示所选期间的每日热量摄入量。每条红色垂直条代表一天，上面标有以 kcal 为单位的值。高度与总卡路里成正比：记录食物很少的日子会产生较短的条形 (例如 4 月 29 日 143\,kcal)，用餐较多的日子会产生较高的条形 (例如 4 月 28 日 779\,kcal)。垂直轴会自动适应期间的最大值。
+
+\labelgreen{导出 PDF 报告}
+在图表上方，\textbf{导出 PDF 报告} 面板提供两个按钮：
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{打印 PDF} (绿色) --- 生成文档并打开操作系统的打印窗口
+  \item \textbf{分享 PDF} (带边框的白色) --- 生成文档并打开共享面板，以通过电子邮件、WhatsApp 或任何其他已安装的应用程序发送
+\end{itemize}
+
+\passaggio{饼图 --- 常量营养素分布}
+
+\schermata[0.40\textwidth]{grafici_torta.jpeg}{屏幕 \textbf{图表} ---
+  \textbf{常量营养素分布} 部分：包含常量营养素百分比细分的环形图。图例表明碳水化合物 44.7\%，蛋白质 12.0\%，脂肪 43.3\%。下面的水平条显示绝对值：碳水化合物 155.6\,g (橙色条)，蛋白质 41.9\,g (蓝色条) 和脂肪 67.1\,g (紫色条)。}
+
+\labelgreen{说明}
+在 \emph{图表} 屏幕中向下滚动将显示 \textbf{常量营养素分布} 部分，包含两种互补的表示：
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{环形图} --- 直观地显示三种常量营养素之间的比例：金色/橙色片段代表碳水化合物，深蓝色代表蛋白质，紫色代表脂肪。右侧图例中的百分比让您一眼就能读出准确值
+  \item \textbf{水平条} --- 显示每种常量营养素的百分比和以克为单位的绝对值，使其很容易与 \emph{我的目标} 部分中设定的目标进行比较
+\end{itemize}
+
+\labelgreen{如何解读数据}
+在显示的示例中，脂肪占总能量摄入 (67.1\,g) 的 43.3\%，该值高于推荐的 20--35\% 阈值。碳水化合物占比 44.7\% (155.6\,g)，蛋白质占比 12.0\% (41.9\,g)。此信息允许您识别常量营养素分布中的不平衡，并在接下来的几天中调整食物选择。
+
+\labelgreen{下一步}
+使用屏幕顶部的 \textbf{过滤器} 面板来更改显示的营养素 (例如，从卡路里更改为碳水化合物) 和日期范围。点击 \textbf{每周}，\textbf{每月} 或 \textbf{每年} 选项卡以查看较长期间的趋势。
+
+\suggerimento{将环形图和 \emph{我的目标} 中的目标进行比较是评估您的饮食是否与您的目标保持一致的最有效方法。如果切片之一比其他切片大得多，建议在接下来的几天中重新平衡您的膳食。}
+
+% ─── 5.3 ─────────────────────────────────────────────────────────────────────
+\subsection{使用日历}
+
+\passaggio{打开日历}
+
+\schermata[0.38\textwidth]{calendario.jpg}{2026 年 4 月 \textbf{日历} 屏幕：红色的日子没有记录膳食，28 日为绿色带有蓝色边框 (有记录膳食的当前日)，未来的日子为灰色。底部是图例：绿色 = 已记录膳食，红色 = 无膳食。}
+
+\labelgreen{说明}
+点击导航栏中的 \textbf{日历} 图标。颜色代码可立即识别已记录的日期：绿色 (有膳食)，红色 (无膳食)，浅灰色 (未来的日子)，蓝色边框 (当前日)。点击某一天以查看该日期的膳食详情。
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  6. 帐户设置
+% ════════════════════════════════════════════════════════════════════════════
+\section{帐户设置}
+
+\emph{设置} 部分包含所有个性化选项：个人资料、通知、计量单位、语言和帐户管理。
+
+% ─── 6.1 ─────────────────────────────────────────────────────────────────────
+\subsection{打开设置}
+
+\passaggio{访问设置屏幕}
+
+\schermata[0.38\textwidth]{impostazioni.jpg}{屏幕 \textbf{设置}：包含帐户、支持以及操作三个部分，以及所有可用选项，每个选项都有自己的图标。}
+
+\labelgreen{说明}
+点击右上角的齿轮图标以打开设置。
+
+\medskip
+\begin{infobox}
+  \begin{tabular}{@{}ll@{}}
+    \toprule
+    \textbf{选项}            & \textbf{功能} \\
+    \midrule
+    我的个人资料                 & 更改名字、姓氏、身高、出生日期、性别和照片 \\
+    我的目标                   & 设置目标卡路里、体重、常量和微量营养素 \\
+    通知              & 膳食和补水提醒以及自定义时间 \\
+    语言和国家/地区       & 语言 (IT, EN, ZH, AR) 和参考国家/地区 \\
+    \midrule
+    帮助                       & 包含常见问题的帮助中心 \\
+    隐私政策             & 有关数据管理政策的文件 \\
+    关于我们                   & 有关应用程序和团队的信息 \\
+    \midrule
+    报告问题            & 直接向支持团队报告 \\
+    注销                    & 注销当前帐户 \\
+    \bottomrule
+  \end{tabular}
+\end{infobox}
+
+% ─── 6.2 ─────────────────────────────────────────────────────────────────────
+\subsection{修改帐户数据}
+
+\passaggio{更新您的个人资料}
+
+\schermata[0.38\textwidth]{profilo.jpg}{屏幕 \textbf{我的个人资料}：带有绿色相机图标的个人资料照片，字段 \emph{名字} (Christian)，\emph{姓氏} (Donzelli)，\emph{身高} (175.0)，\emph{出生日期} (11/30/-1) 和下拉菜单 \emph{性别} (男)。底部是绿色的 \textbf{保存} 按钮。}
+
+\labelgreen{说明}
+点击 \textbf{我的个人资料} 以修改您的个人数据：
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{个人资料照片} --- 点击绿色相机图标拍摄照片或从您的图库中选择一张
+  \item \textbf{名字和姓氏} --- 用户的个人信息
+  \item \textbf{身高} --- 以厘米为单位，用于计算需求
+  \item \textbf{出生日期} --- 用于计算基础代谢率
+  \item \textbf{性别} --- 影响热量需求公式
+\end{itemize}
+
+按 \textbf{保存} 确认。应用程序将根据新数据自动更新营养计算。
+
+% ─── 6.3 ─────────────────────────────────────────────────────────────────────
+\subsection{配置通知}
+
+\passaggio{启用提醒}
+
+\dueschermate{notifiche.jpg}{具有活动切换的 \textbf{通知} 屏幕：包含早餐 7:30\,AM、午餐 12:00\,PM、晚餐 7:00\,PM、零食 3:00\,PM 时间的 \emph{膳食提醒}；包含频率 \emph{每 30 分钟} 的 \emph{饮水提醒}。}{notifiche_orari.jpg}{打开 \emph{提醒频率} 下拉菜单：\emph{每 30 分钟} (已选)，\emph{每 1 小时}，\emph{每 2 小时}，以及 \emph{我决定}。底部是最近通知的 \emph{警报历史记录}。}
+
+\labelgreen{说明}
+在 \emph{通知} 屏幕中，有两个可用切换：
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{膳食提醒} --- 启用此项将显示四个时间段；点击绿色时间以使用系统选择器对其进行修改
+  \item \textbf{饮水提醒} --- 启用此项将显示频率菜单 (每 30 分钟，每 1 小时，每 2 小时，我决定)
+\end{itemize}
+底部是包含近期通知的 \textbf{警报历史记录}；点击 \textbf{清除} 将其删除。
+
+% ─── 6.4 ─────────────────────────────────────────────────────────────────────
+\subsection{更改语言和国家/地区}
+
+\passaggio{配置本地化}
+
+\schermata[0.38\textwidth]{lingua_paese.jpg}{屏幕 \textbf{语言和国家/地区}：打开 \emph{语言} 菜单，选中 \emph{意大利语}，\emph{英语}，\emph{简体中文} 和 \emph{阿拉伯语}。下面是包含 \emph{意大利}，\emph{英国}，\emph{中国} 和 \emph{埃及} 的 \emph{国家/地区} 部分。}
+
+\labelgreen{说明}
+可用语言有意大利语、英语、简体中文和阿拉伯语。更改将在应用重新启动时应用于界面。
+
+% ─── 6.5 ─────────────────────────────────────────────────────────────────────
+\subsection{报告问题}
+
+\passaggio{向支持人员发送报告}
+
+\schermata[0.38\textwidth]{segnala_problema.jpg}{屏幕 \textbf{报告问题}：文本字段包含占位符 \emph{详细描述遇到的问题\ldots} 以及绿色的 \textbf{发送报告} 按钮。}
+
+\labelgreen{说明}
+在 \emph{操作} 部分中点击 \textbf{报告问题}。填写具有详细描述的文本字段，然后按 \textbf{发送报告}。
+
+\suggerimento{为更快获得解决方案，请在报告中包含设备型号 (例如，iPhone 14，Samsung Galaxy S23)，操作系统版本以及导致问题的步骤的精确描述。}
+
+\bigskip
+\noindent\rule{\textwidth}{1pt}{\color{nutrigreen}}
+\begin{center}
+  \small\itshape\color{nutrigray}--- 第 4 部分结束 ---
+\end{center}
+
+\end{document}

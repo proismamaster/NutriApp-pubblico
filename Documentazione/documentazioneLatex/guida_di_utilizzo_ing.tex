@@ -1,0 +1,850 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[italian,english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multicol}
+
+% ── Brand Colors ─────────────────────────────────────────────────────────────
+\definecolor{nutrigreen}{RGB}{46,125,50}
+\definecolor{nutrilightgreen}{RGB}{232,245,233}
+\definecolor{nutridark}{RGB}{28,28,28}
+\definecolor{nutrigray}{RGB}{117,117,117}
+\definecolor{nutriaccent}{RGB}{56,142,60}
+
+% ── Page Margins ────────────────────────────────────────────────────────────
+\setlength{\headheight}{30pt}
+\geometry{left=2.5cm, right=2.5cm, top=2.8cm, bottom=2.5cm}
+
+% ── Header ─────────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{nutrigray}Section 4 --- Application User Guide}
+\fancyhead[R]{\small\color{nutrigray}\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{nutrigreen}\leaders\hrule height \headrulewidth\hfill}}
+
+% ── Step Counter ───────────────────────────────────────────────────────────
+\newcounter{passo}[subsection]
+\newcommand{\passaggio}[1]{%
+    \stepcounter{passo}%
+    \subsubsection*{\color{nutriaccent}Step \thesubsection.\thepasso\ ---\ #1}%
+}
+
+% ── Green Info Box ─────────────────────────────────────────────────────
+\newmdenv[
+  backgroundcolor=nutrilightgreen,
+  linecolor=nutrigreen,
+  linewidth=1.5pt,
+  roundcorner=5pt,
+  innertopmargin=8pt,
+  innerbottommargin=8pt,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  skipabove=8pt,
+  skipbelow=8pt
+]{infobox}
+
+% ── Green Bold Label ─────────────────────────────────────────────────
+\newcommand{\labelgreen}[1]{\medskip\noindent{\color{nutriaccent}\textbf{#1}}\par\smallskip}
+
+% ── Italic Tip ──────────────────────────────────────────────────────
+\newcommand{\suggerimento}[1]{%
+  \smallskip\noindent\textit{\color{nutrigray}#1}\par\smallskip%
+}
+
+% ── Variable for Images Folder (useful for translations) ───────────────────
+\newcommand{\imgdir}{immagini_ing}
+
+% ── Centered Image with Caption ─────────────────────────────────────────
+\newcommand{\schermata}[3][0.38\textwidth]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=#1]{\imgdir/#2}
+    \caption{\small\color{nutrigray}#3}
+  \end{figure}%
+}
+
+% ── Two Side-by-Side Images ──────────────────────────────────────────────────
+\newcommand{\dueschermate}[4]{%
+  \begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.42\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#1}
+      \caption{\small\color{nutrigray}#2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.42\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#3}
+      \caption{\small\color{nutrigray}#4}
+    \end{subfigure}
+  \end{figure}%
+}
+
+% ── Three Side-by-Side Images ──────────────────────────────────────────────────
+\newcommand{\treschermate}[6]{%
+  \begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.30\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#1}
+      \caption{\small\color{nutrigray}#2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.30\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#3}
+      \caption{\small\color{nutrigray}#4}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.30\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{\imgdir/#5}
+      \caption{\small\color{nutrigray}#6}
+    \end{subfigure}
+  \end{figure}%
+}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+% ════════════════════════════════════════════════════════════════════════════
+%  SECTION HEADER
+% ════════════════════════════════════════════════════════════════════════════
+\begin{center}
+  {\Huge\bfseries\color{nutrigreen} Section 4}\\[6pt]
+  {\Large\bfseries\color{nutridark} Application User Guide}\\[4pt]
+  {\normalsize\itshape\color{nutrigray} User Manual --- step-by-step instructions}
+\end{center}
+
+\medskip
+\noindent\rule{\textwidth}{1.5pt}{\color{nutrigreen}}
+\medskip
+
+\noindent This chapter illustrates the main features of \textbf{NutriApp}
+through detailed instructions and screenshots taken directly from the application.
+Each section is divided into progressive steps to facilitate understanding even
+for less experienced users.
+
+\medskip
+\begin{infobox}
+  \textbf{\color{nutrigreen}Section Index}
+  \begin{enumerate}[leftmargin=1.4em, itemsep=2pt]
+    \item Login and Registration
+    \item Navigation Bar
+    \item Adding Food
+    \item Setting Goals
+    \item Viewing Progress
+    \item Account Settings
+  \end{enumerate}
+\end{infobox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  1. LOGIN AND REGISTRATION
+% ════════════════════════════════════════════════════════════════════════════
+\section{Login and Registration}
+
+Upon opening the application for the first time, the welcome screen is displayed,
+from which you can access an existing account or create a new one.
+NutriApp supports three login methods: email and password credentials,
+authentication via Google account, and authentication via Apple ID.
+You can also explore the app in guest mode without creating an account.
+
+% ─── 1.1 ─────────────────────────────────────────────────────────────────────
+\subsection{Welcome and Login Screen}
+
+\passaggio{Open the application}
+
+\schermata[0.40\textwidth]{login.jpeg}{Welcome screen of \textbf{NutriApp}:
+  at the top is the green logo and the subtitle \emph{Log in to manage your meals,
+  macros, and micros all in one app.} The central white panel
+  shows the \textbf{Email} and \textbf{Password} fields (with an eye icon to
+  show/hide characters), the green \textbf{LOG IN} button, and the
+  link \emph{Continue without logging in}. Below the \emph{or} separator are the
+  \textbf{Log in with Google} and \textbf{Log in with Apple} buttons, and at the bottom
+  is the link \emph{Don't have an account? Sign up}.}
+
+\labelgreen{Description}
+When you first open NutriApp, the login screen appears with the app's name
+in dark green and a subtitle briefly describing its function.
+The central login panel has two fields:
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Email} --- email address associated with the account,
+        indicated by the envelope icon to the left of the field
+  \item \textbf{Password} --- account password; touch the crossed-out eye
+        icon to the right of the field to toggle between showing the characters
+        in plain text or masked
+\end{itemize}
+
+After filling out both fields, press the green \textbf{Log In} button
+to complete the authentication and enter the application.
+
+\labelgreen{Continue without logging in}
+By tapping the link \emph{Continue without logging in}, you can explore the
+application in guest mode, without creating or entering credentials.
+In this mode, data is not synced to the cloud and is not
+accessible from other devices. It is recommended to create an account so you
+do not lose entered data.
+
+\suggerimento{If you forget your password, you can recover it via the
+recovery procedure available on the official NutriApp website: the
+system sends a reset link to the email address associated with the account.}
+
+% ─── 1.2 ─────────────────────────────────────────────────────────────────────
+\subsection{Log in with Google}
+
+\passaggio{Select quick login via Google}
+
+\dueschermate{login.jpeg}{Login screen: at the bottom of the white panel is the
+  \textbf{Log in with Google} button with the G logo on the left. Tapping it
+  opens the selector for Google accounts present on the device.}{login_google.jpeg}{%
+  System window \textbf{Choose an account}: shows all Google accounts
+  saved on the device with profile picture and email address (obscured
+  for privacy). At the bottom is the option \emph{Add another account} to add
+  an account not yet present, and the note that Google will share your name,
+  email, and profile picture with NutriApp.}
+
+\labelgreen{Description}
+Tap \textbf{Log in with Google} on the login screen to start
+quick authentication. The operating system automatically opens the Google
+account selection window, which shows all Gmail accounts already
+configured on the device. Each entry in the list shows the profile picture
+and the email address of the account.
+
+\labelgreen{How to proceed}
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Tap your account} in the list to select it and
+        authorize NutriApp to access your name, email, and profile picture.
+        The login is completed automatically without further steps.
+  \item \textbf{Tap \emph{Add another account}} if the desired account
+        is not in the list: the standard Google login flow will open to
+        add a new account to the device.
+\end{itemize}
+
+\labelgreen{Next step}
+After selecting the account, the application authenticates the user and goes
+straight to the main screen. If this is the first login with that Google account,
+the initial profile setup flow will be started.
+
+\suggerimento{Logging in with Google is the fastest method: it does not require
+you to remember a separate password and updates automatically if you change
+your Google password. It is recommended for those who already use Google on other services.}
+
+% ─── 1.3 ─────────────────────────────────────────────────────────────────────
+\subsection{Create a New Account}
+
+\passaggio{Open the registration form --- Step 1}
+
+\schermata[0.40\textwidth]{registra_step1.jpeg}{Screen \textbf{Registration}
+  --- Step 1 of 3: the progress indicator at the top shows the first dash
+  as green (active) and two as gray (to be completed). In the center is the placeholder avatar with
+  the green camera icon to add an optional photo. The form fields are:
+  \textbf{First Name}, \textbf{Last Name}, \textbf{Email}, \textbf{Password}, and
+  \textbf{Confirm Password}. At the bottom is the green \textbf{SIGN UP} button.}
+
+\labelgreen{Description}
+Tap the green link \emph{Don't have an account? Sign up} on the login screen
+to open the three-step registration wizard, displayed
+by the progress indicator at the top (green dash = current step,
+gray dashes = upcoming steps).
+
+\textbf{Step 1 --- Personal Data and Credentials.}
+Fill out the following fields:
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{First Name} and \textbf{Last Name} --- the full name that will be
+        displayed in the app and in the greeting on the main screen
+  \item \textbf{Email} --- the email address that will act as the
+        unique identifier for the account; it must be valid because
+        it will be used for verification via an OTP code in the next step
+  \item \textbf{Password} --- choose a strong password of at least 8
+        characters; it is recommended to include uppercase letters, lowercase letters,
+        numbers, and special characters
+  \item \textbf{Confirm Password} --- re-enter the same password to
+        prevent typos; the two fields must match
+        exactly to proceed
+\end{itemize}
+
+\textbf{Profile Photo (optional).}
+Tap the green camera icon superimposed on the gray avatar to take
+a photo or choose one from the gallery. The photo is optional and can be
+added or changed at any time later from the
+\emph{My Profile} section in the settings.
+
+\labelgreen{Next step}
+Check that all required fields are correctly filled out,
+then press the green \textbf{SIGN UP} button to proceed to the next
+step.
+
+\passaggio{Verify your email address --- Step 2}
+
+\schermata[0.40\textwidth]{registra_step2.jpeg}{Screen \textbf{Registration}
+  --- Step 2 of 3: the indicator shows the first two dashes as green and the last
+  as gray. In the center is an envelope icon with a green checkmark and the title
+  \textbf{Verify your email}. The text indicates that an
+  OTP code has been sent to the entered email address (partially obscured).
+  The \textbf{OTP Code} field awaits input. The link
+  \emph{Send again} allows you to request a new one.
+  At the bottom is the green \textbf{CHECK EMAIL} button.}
+
+\labelgreen{Description}
+After pressing \textbf{Continue} in the first step, the application automatically
+sends an OTP (One-Time Password) code to the entered email address.
+The screen shows an envelope icon with a green checkmark and
+indicates to which address the code was sent.
+
+\labelgreen{How to complete verification}
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item Open the inbox of the email address used during
+        registration and look for the NutriApp verification email
+  \item Note or copy the 6-digit OTP code found in the email
+  \item Return to the app and enter the code in the \textbf{OTP Code} field
+  \item Press \textbf{CHECK EMAIL} to confirm the email address
+        and proceed to the final step
+\end{itemize}
+
+\labelgreen{Code not received}
+If the code does not arrive within a few minutes, check your provider's
+\emph{Spam} or \emph{Junk} folder. Alternatively,
+tap the link \emph{Send again} to request a new OTP code.
+The link becomes active after a short waiting period to prevent
+rapid multiple requests.
+
+\suggerimento{The OTP code is valid for a limited time (usually
+10--15 minutes). If you wait too long before entering it, you will
+need to request a new one via the \emph{Send again} link.}
+
+\passaggio{Complete registration --- Step 3}
+
+\schermata[0.40\textwidth]{registra_step3.jpeg}{Screen \textbf{Registration}
+  --- Step 3 of 3: all three dashes on the indicator are green, signaling
+  the completion of the process. In the center is a green circle with a white checkmark and
+  the title \textbf{Great job!} with the subtitle \emph{You are ready to
+  start your journey with NutriApp.} At the bottom is the green
+  \textbf{GO TO HOMEPAGE} button.}
+
+\labelgreen{Description}
+After successful verification of the OTP code, the app shows the confirmation screen.
+All three dashes of the indicator turn green. The
+message \textbf{Great job!} confirms that the account has been created and
+verified correctly. Press \textbf{GO TO HOMEPAGE} to enter
+the application.
+
+\begin{infobox}
+  \textbf{\color{nutrigreen}Summary of Login Methods}
+
+  \smallskip
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Method}       & \textbf{Requirement}             & \textbf{Ideal for} \\
+    \midrule
+    Email + Password      & NutriApp Account                 & Those who prefer dedicated credentials \\
+    Log in with Google    & Gmail Account on device          & Quick access without password \\
+    Log in with Apple     & Apple ID (iOS only)              & iPhone/iPad users \\
+    Without logging in    & None                             & Quick exploration of the app \\
+    \bottomrule
+  \end{tabular}
+\end{infobox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  2. NAVIGATION BAR
+% ════════════════════════════════════════════════════════════════════════════
+\section{Navigation Bar}
+
+The navigation bar is the persistent element of the interface: it appears at the
+bottom of every screen and allows you to instantly move between the
+five main areas of the application with a single tap.
+
+% ─── 2.1 ─────────────────────────────────────────────────────────────────────
+\subsection{View the Navigation Bar}
+
+\passaggio{Open the application}
+
+\schermata[0.38\textwidth]{homepage.jpg}{Main screen \textbf{NutriApp}:
+  daily caloric summary with circular graph, macronutrient bars
+  (Carbs, Protein, Fat) and the four meal time slots. The navigation bar
+  at the bottom with the icons NutriApp, Calendar, Add, Recipes,
+  and Charts.}
+
+\labelgreen{Description}
+When you open the application, the main screen is shown with a
+personalized greeting at the top, the current date navigable with the \texttt{<} and \texttt{>} arrows,
+and a green circular graph indicating the calories remaining for the day.
+To the right of the graph are horizontal colored bars for Carbs (orange),
+Protein (green), and Fat (pink/red), each showing the consumed value compared to the goal.
+The four time slots --- Breakfast, Lunch, Dinner, and Snack --- are
+accessible via the \textbf{+} button next to each one.
+
+\labelgreen{Bar Elements}
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{NutriApp} (house icon) --- main screen with caloric
+        summary, macronutrients, and daily meal sections
+  \item \textbf{Calendar} (calendar icon) --- monthly view with a green/red color
+        code for days with or without logged meals
+  \item \textbf{Add} (central green \textbf{+} button) --- quick access
+        to the food entry screen
+  \item \textbf{Recipes} (book icon) --- list of saved recipes
+  \item \textbf{Charts} (line chart icon) --- nutritional statistics
+        with daily, weekly, monthly, and yearly views
+\end{itemize}
+
+\suggerimento{The active icon is highlighted in green on the bottom bar.
+The green \textbf{+} button in the center is always available to quickly add
+a food item: it's the fastest route for daily logging.}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  3. ADDING FOOD
+% ════════════════════════════════════════════════════════════════════════════
+\section{Adding Food}
+
+The application offers multiple ways to log meals: searching the global database,
+selecting from saved foods, adding an already created recipe, and
+scanning the product's barcode.
+
+% ─── 3.1 ─────────────────────────────────────────────────────────────────────
+\subsection{Open the Entry Screen}
+
+\passaggio{Go to the main screen}
+
+\schermata[0.38\textwidth]{homepage.jpg}{HomePage: circular graph with remaining
+  calories, macronutrient bars, and the four time slots each with
+  the \textbf{+} button.}
+
+\labelgreen{Next step}
+Press the \textbf{+} next to the desired time slot (Breakfast, Lunch,
+Dinner, or Snack) or press the large green \textbf{+} button in the center of the
+navigation bar to access the \emph{Add} screen.
+
+% ─── 3.2 ─────────────────────────────────────────────────────────────────────
+\subsection{Choose the Entry Method}
+
+\passaggio{Select the food source}
+
+\dueschermate{pasto_dropdown.jpg}{Screen \textbf{Manual}: dropdown menu
+  \emph{Select Meal} and fields for Food Name, Weight (g), and Macronutrients
+  (Calories, Carbs, Protein, Fat, Fiber, Sugars).}{pasto_recenti.jpg}{%
+  Screen \textbf{Add} with active tab \emph{Add Food}: search bar
+  with barcode icon. Below is the link \emph{Can't find the food?
+  Register it yourself!}}
+
+\labelgreen{Description}
+The \emph{Add} screen has three tabs at the top:
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Add Food} --- search the global database or scan
+        the barcode
+  \item \textbf{Saved Recipes} --- recipes created by the user with the total
+        calories of each
+  \item \textbf{Saved Foods} --- previously manually registered
+        foods
+\end{itemize}
+
+\passaggio{Navigate between Saved Recipes and Saved Foods tabs}
+
+\dueschermate{pasto_ricette.jpg}{Tab \textbf{Saved Recipes}: each recipe
+  shows its name and total calories. At the bottom is the link
+  \emph{Insert new recipe}.}{pasto_preferiti.jpg}{Tab \textbf{Saved
+  Foods}: search bar; if there are no saved foods, the message
+  \emph{No saved food} appears.}
+
+\suggerimento{Manually entered foods are automatically saved
+in the \emph{Saved Foods} section and will be available for future entries
+without having to re-enter them from scratch.}
+
+% ─── 3.3 ─────────────────────────────────────────────────────────────────────
+\subsection{Manual Food Entry}
+
+\passaggio{Fill out the entry form}
+
+\dueschermate{registra_alimento.jpg}{Form \textbf{Ingredient}: fields
+  \emph{Food Name} and \emph{Weight (g)}, followed by the
+  \textbf{Macronutrients} section with Carbs, Protein, Fat, Fiber,
+  Sugars, and Water.}{nutrienti_micro1.jpg}{Section \textbf{Ingredient} with
+  expandable sections \emph{Fat Details}, \emph{Vitamins}, and
+  \emph{Minerals} for complete nutritional tracking.}
+
+\labelgreen{Description}
+Tap \emph{Register it yourself!} to open the manual entry form.
+Fill out at least the mandatory fields in the \textbf{Macronutrients} section by
+reading the values from the product packaging (\emph{Nutritional values
+per 100\,g} label). For complete tracking, you can expand
+the \textbf{Fat Details}, \textbf{Vitamins}, and \textbf{Minerals} sections.
+
+
+% ─── 3.4 ─────────────────────────────────────────────────────────────────────
+\subsection{Entry via Barcode Scan}
+
+\passaggio{Start the scanning camera}
+
+\schermata[0.38\textwidth]{scansione_barcode.jpg}{Scanning screen
+  \textbf{barcode}: the camera focuses on the back of a package.
+  The green frame delimits the recognition area. At the top are the controls
+  \textbf{FLASH ON} and \textbf{CANCEL}.}
+
+\labelgreen{Description}
+Tap the barcode icon to the right of the search bar in the
+\emph{Add Food} tab. Frame the barcode within the
+green box: recognition happens automatically as soon as the
+code comes into focus, without pressing any buttons.
+
+\suggerimento{In poorly lit environments, activate the flash by tapping
+\textbf{FLASH ON} at the top right. Hold the phone about 15--20\,cm
+from the package for optimal results.}
+
+% ─── 3.5 ─────────────────────────────────────────────────────────────────────
+\subsection{Create a New Recipe}
+
+\passaggio{Open the form and add ingredients}
+
+\treschermate{nuova_ricetta.jpg}{Form \textbf{Create Recipe}: fields
+  \emph{Recipe Name}, \emph{Portions}, and \emph{Procedure / Notes}.
+  The Ingredients section shows \emph{0 added}. At the bottom are the buttons
+  \textbf{+ Ingredients} and \textbf{Save}.}{nuova_ricetta_recenti.jpg}{%
+  Screen \textbf{Add Ingredient} with tab \emph{Add Food}:
+  search bar with barcode. Below is the link
+  \emph{Can't find the food? Register it yourself!}}{nuova_ricetta_preferiti.jpg}{%
+  Tab \emph{Saved Foods}: list of already registered foods or
+  the message \emph{No saved food} if empty.}
+
+\labelgreen{Description}
+From the \emph{Recipes} section, tap the green \textbf{+} button to open
+the \emph{Create Recipe} form. Fill out the name, number of portions, and optional notes,
+then press \textbf{+ Ingredients} to add each
+component. Each added ingredient appears in the list with edit
+and delete icons. When finished, press \textbf{Save}.
+
+% ─── 3.6 ─────────────────────────────────────────────────────────────────────
+\subsection{View Meal Details}
+
+\passaggio{Open the time slot detail screen}
+
+\schermata[0.38\textwidth]{dettaglia_pasto.jpg}{Screen \textbf{Breakfast}: orange banner
+  with icon and food counter, date navigation, \textbf{+} button
+  to add foods. The \emph{Nutritional Summary} shows progress bars
+  for Calories, Carbs, Protein, and Fat. At the bottom is the list of
+  \emph{Consumed Foods} with edit and delete icons.}
+
+\labelgreen{Description}
+Tap a time slot on the main screen to open the detailed summary
+with the colored banner, the nutritional summary with progress bars,
+and the list of consumed foods with the edit (blue pencil)
+and delete (red trash can) icons.
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  4. SETTING GOALS
+% ════════════════════════════════════════════════════════════════════════════
+\section{Setting Goals}
+
+Goals define the reference values for calories, macronutrients,
+and weight that the app uses to calculate progress. Setting realistic goals
+is essential for obtaining meaningful tracking data.
+
+% ─── 4.1 ─────────────────────────────────────────────────────────────────────
+\subsection{Access and Configure Goals}
+
+\passaggio{Open Settings and select My Goals}
+
+\dueschermate{impostazioni.jpg}{Screen \textbf{Settings}: sections for Account
+  (My profile, My goals, Notifications, Language and
+  country), Support (Help, Privacy policy, About us), and Actions (Report an
+  issue, Log out).}{obiettivi.jpg}{%
+  Screen \textbf{My goals}: \emph{Weight} section with \emph{Current
+  weight} (60.0\,kg) and \emph{Goal weight} (70.0\,kg). Section
+  \emph{Macronutrients} with \emph{Calorie goal} (2000.0\,kcal),
+  \emph{Carbs} (130.0\,g), \emph{Protein} (45.0\,g), and
+  \emph{Fat} (36.0\,g). At the bottom are the expandable sections
+  \emph{Macro Details}, \emph{Vitamins}, and \emph{Minerals}.}
+
+\labelgreen{Description}
+Tap the gear icon in the top right to open settings,
+then select \textbf{My goals}. The screen gathers the parameters
+into two sections:
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Weight} --- the \emph{Current weight} is the starting point for
+        calculating needs; the \emph{Goal weight} is the target
+        to reach (can be higher or lower than the current weight)
+  \item \textbf{Macronutrients} --- the \emph{Calorie goal} defines the daily
+        caloric limit; the Carbs, Protein, and Fat fields set
+        the limits in grams
+\end{itemize}
+
+\labelgreen{Next step}
+Enter the desired values and press \textbf{Save}. The changes are
+applied immediately throughout the application. The green confirmation banner
+appears at the bottom of the screen.
+
+\begin{infobox}
+  \textbf{\color{nutrigreen}How to choose the right values:}
+  a common starting point is carbs 45--65\%, protein 10--35\%,
+  fat 20--35\% of total daily calories. Consult a
+  nutrition professional for personalized values.
+\end{infobox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  5. VIEWING PROGRESS
+% ════════════════════════════════════════════════════════════════════════════
+\section{Viewing Progress}
+
+The application offers four time views to analyze the caloric and
+nutritional trends: daily, weekly, monthly, and yearly,
+accessible from the \textbf{Charts} section in the navigation bar.
+
+% ─── 5.1 ─────────────────────────────────────────────────────────────────────
+\subsection{Access Progress Data}
+
+\passaggio{Open the Charts section}
+
+\schermata[0.38\textwidth]{storico_giornaliero.jpg}{Screen \textbf{Charts}
+  with active \emph{Daily} tab: green box \emph{Nutritional
+  statistics} with logged items, tracked days, and date of last
+  entry. Below are the filter selector, the four time tabs, and the red box
+  with the total calories.}
+
+\labelgreen{Description}
+Tap the \textbf{Charts} icon in the navigation bar. At the top appears
+the green box with the global summary, then the \textbf{Filters} panel
+with the selected nutrient (default: Calories) and the date range.
+The four tabs allow you to change the granularity of the view.
+
+% ─── 5.2 ─────────────────────────────────────────────────────────────────────
+\subsection{Analyze the Charts}
+
+\passaggio{Bar Chart --- Calories Over Time}
+
+\schermata[0.40\textwidth]{grafici_barre.jpeg}{Screen \textbf{Charts} with
+  active \emph{Daily} tab. At the top is the \textbf{Export PDF report} panel
+  with the \textbf{Print PDF} (green) and \textbf{Share PDF} buttons. The
+  \textbf{Calories over time} chart shows three red vertical bars for
+  April 28, 29, and 30: 779\,kcal, 143\,kcal, and 377\,kcal. The scale
+  on the vertical axis goes from 0.0 to 779\,kcal. Below starts the
+  \emph{Macronutrient distribution} section.}
+
+\labelgreen{Description}
+The \textbf{Calories over time} bar chart shows the daily
+caloric intake for the selected period. Each red vertical bar represents
+one day, with the value in kcal indicated above. The height is proportional
+to the total calories: days with few logged foods produce shorter
+bars (like April 29 with 143\,kcal), days with more meals produce
+taller bars (like April 28 with 779\,kcal). The vertical axis automatically adapts
+to the maximum value of the period.
+
+\labelgreen{Export PDF Report}
+Above the chart, the \textbf{Export PDF report} panel offers two buttons:
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Print PDF} (green) --- generates the document and opens the operating
+        system's print window
+  \item \textbf{Share PDF} (white with border) --- generates the document and
+        opens the share panel to send it via email, WhatsApp, or
+        any other installed app
+\end{itemize}
+
+\passaggio{Pie Chart --- Macronutrient Distribution}
+
+\schermata[0.40\textwidth]{grafici_torta.jpeg}{Screen \textbf{Charts} ---
+  \textbf{Macronutrient distribution} section: ring chart with the
+  percentage breakdown of macronutrients. The legend indicates Carbs
+  44.7\%, Protein 12.0\%, and Fat 43.3\%. The horizontal bars below
+  show the absolute values: Carbs 155.6\,g (orange bar),
+  Protein 41.9\,g (blue bar), and Fat 67.1\,g (purple bar).}
+
+\labelgreen{Description}
+Scrolling down in the \emph{Charts} screen reveals the
+\textbf{Macronutrient distribution} section, with two complementary representations:
+
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Ring Chart} --- visually shows the proportion among
+        the three macronutrients: the golden/orange segment represents
+        Carbs, the dark blue one Protein, and the purple one Fat.
+        The percentages in the legend on the right allow you to read the exact
+        values at a glance
+  \item \textbf{Horizontal Bars} --- show both the percentage and the
+        absolute value in grams of each macronutrient, making it easy to
+        compare with the goals set in the \emph{My goals} section
+\end{itemize}
+
+\labelgreen{How to interpret the data}
+In the example shown, Fat makes up 43.3\% of the total energy
+intake (67.1\,g), a value higher than the recommended threshold
+of 20--35\%. Carbs stand at 44.7\% (155.6\,g) and Protein
+at 12.0\% (41.9\,g). This information allows you to identify imbalances
+in the macronutrient distribution and adjust food choices
+in the following days.
+
+\labelgreen{Next step}
+Use the \textbf{Filters} panel at the top of the screen to change the
+displayed nutrient (e.g., from Calories to Carbs) and the date range.
+Tap the \textbf{Weekly}, \textbf{Monthly}, or \textbf{Yearly} tabs to
+view the trend over longer periods.
+
+\suggerimento{Comparing the ring chart and the goals in
+\emph{My goals} is the most effective way to evaluate if your
+diet is aligned with your targets. If one slice is much larger than the others,
+it's advisable to rebalance your meals in the following days.}
+
+% ─── 5.3 ─────────────────────────────────────────────────────────────────────
+\subsection{Using the Calendar}
+
+\passaggio{Open the Calendar}
+
+\schermata[0.38\textwidth]{calendario.jpg}{Screen \textbf{Calendar} of
+  April 2026: days in red without logged meals, the 28th in green with
+  a blue border (current day with logged meal), future days in gray.
+  At the bottom is the legend: green = Logged meals, red = No meals.}
+
+\labelgreen{Description}
+Tap the \textbf{Calendar} icon in the navigation bar. The color
+code immediately identifies logged days: green (meal present),
+red (no meal), light gray (future days), blue border (current day).
+Tap a day to view the detail of the meals for that date.
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+%  6. ACCOUNT SETTINGS
+% ════════════════════════════════════════════════════════════════════════════
+\section{Account Settings}
+
+The \emph{Settings} section gathers all personalization options:
+personal profile, notifications, units of measure, language, and account management.
+
+% ─── 6.1 ─────────────────────────────────────────────────────────────────────
+\subsection{Open Settings}
+
+\passaggio{Access the Settings screen}
+
+\schermata[0.38\textwidth]{impostazioni.jpg}{Screen \textbf{Settings}:
+  the three sections Account, Support, and Actions with all available
+  options, each with its own icon.}
+
+\labelgreen{Description}
+Tap the gear icon in the top right to open settings.
+
+\medskip
+\begin{infobox}
+  \begin{tabular}{@{}ll@{}}
+    \toprule
+    \textbf{Option}            & \textbf{Function} \\
+    \midrule
+    My profile                 & Change first name, last name, height, birth date, gender, and photo \\
+    My goals                   & Set target calories, weight, macros, and micronutrients \\
+    Notifications              & Meal and hydration reminders with custom times \\
+    Language and country       & Language (IT, EN, ZH, AR) and reference country \\
+    \midrule
+    Help                       & Help center with frequently asked questions \\
+    Privacy policy             & Document on data management policies \\
+    About us                   & Information about the application and the team \\
+    \midrule
+    Report an issue            & Direct report to the support team \\
+    Log out                    & Log out from the current account \\
+    \bottomrule
+  \end{tabular}
+\end{infobox}
+
+% ─── 6.2 ─────────────────────────────────────────────────────────────────────
+\subsection{Modify Account Data}
+
+\passaggio{Update your personal profile}
+
+\schermata[0.38\textwidth]{profilo.jpg}{Screen \textbf{My profile}:
+  profile photo with green camera icon, fields \emph{First Name} (Christian),
+  \emph{Last Name} (Donzelli), \emph{Height} (175.0), \emph{Date of Birth}
+  (11/30/-1) and dropdown menu \emph{Gender} (Male). At the bottom is the
+  green \textbf{Save} button.}
+
+\labelgreen{Description}
+Tap \textbf{My profile} to modify your personal data:
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Profile photo} --- tap the green camera icon to take
+        a photo or choose one from your gallery
+  \item \textbf{First and Last Name} --- the user's personal information
+  \item \textbf{Height} --- in centimeters, used for needs calculation
+  \item \textbf{Date of Birth} --- used to calculate the basal metabolic rate
+  \item \textbf{Gender} --- affects the caloric needs formula
+\end{itemize}
+
+Press \textbf{Save} to confirm. The app automatically updates the nutritional
+calculations based on the new data.
+
+% ─── 6.3 ─────────────────────────────────────────────────────────────────────
+\subsection{Configure Notifications}
+
+\passaggio{Enable reminders}
+
+\dueschermate{notifiche.jpg}{Screen \textbf{Notifications} with active toggles:
+  \emph{Meal reminders} with times Breakfast 7:30\,AM, Lunch 12:00\,PM,
+  Dinner 7:00\,PM, Snacks 3:00\,PM; \emph{Water reminder} with frequency
+  \emph{Every 30 minutes}.}{notifiche_orari.jpg}{Dropdown \emph{Reminder
+  frequency} open: \emph{Every 30 minutes} (selected), \emph{Every 1 hour},
+  \emph{Every 2 hours}, and \emph{I DECIDE}. At the bottom is the \emph{Alert History}
+  with recent notifications.}
+
+\labelgreen{Description}
+In the \emph{Notifications} screen, two toggles are available:
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{Meal reminders} --- turning this on displays the four time
+        slots; tap a green time to modify it with the system selector
+  \item \textbf{Water reminder} --- turning this on displays the frequency menu
+        (Every 30 min, Every 1 hour, Every 2 hours, I DECIDE)
+\end{itemize}
+At the bottom is the \textbf{Alert History} with recent notifications; tap
+\textbf{Clear} to delete it.
+
+% ─── 6.4 ─────────────────────────────────────────────────────────────────────
+\subsection{Change Language and Country}
+
+\passaggio{Configure localization}
+
+\schermata[0.38\textwidth]{lingua_paese.jpg}{Screen \textbf{Language and Country}: \emph{Language} menu open with \emph{Italian} selected, \emph{English}, \emph{Simplified Chinese}, and \emph{Arabic}. Below is the \emph{Country} section with \emph{Italy}, \emph{England}, \emph{China}, and \emph{Egypt}.}
+
+\labelgreen{Description}
+The available languages are Italian, English, Simplified Chinese, and Arabic. The change applies to the interface when the app is restarted.
+
+% ─── 6.5 ─────────────────────────────────────────────────────────────────────
+\subsection{Report an Issue}
+
+\passaggio{Send a report to support}
+
+\schermata[0.38\textwidth]{segnala_problema.jpg}{Screen \textbf{Report an
+  issue}: text field with placeholder \emph{Describe in detail
+  the issue encountered\ldots} and green \textbf{SEND REPORT} button.}
+
+\labelgreen{Description}
+Tap \textbf{Report an issue} in the \emph{Actions} section. Fill out the
+text field with a detailed description and press \textbf{SEND REPORT}.
+
+\suggerimento{For a faster resolution, include in your report the
+device model (e.g., iPhone 14, Samsung Galaxy S23), the version of the
+operating system, and the precise description of the steps that led to the problem.}
+
+\bigskip
+\noindent\rule{\textwidth}{1pt}{\color{nutrigreen}}
+\begin{center}
+  \small\itshape\color{nutrigray}--- End of Section 4 ---
+\end{center}
+
+\end{document}

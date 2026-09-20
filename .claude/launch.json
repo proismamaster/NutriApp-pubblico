@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "nutriapp-web",
+      "runtimeExecutable": "flutter",
+      "runtimeArgs": ["run", "-d", "chrome", "--web-port", "5959"],
+      "port": 5959
+    },
+    {
+      "name": "nutriapp-web-static",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5960", "--directory", "build/web"],
+      "port": 5960
+    }
+  ]
+}

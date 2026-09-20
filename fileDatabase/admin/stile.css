@@ -1,0 +1,584 @@
+/* stile.css — pannello di revisione NutriApp.
+ *
+ * Ricalcato sui mockup di Claude Design del 13/09 (schermate 2, 3, 5 e 6).
+ * Le misure vengono da li': barra alta 60px, righe di tabella da 44px,
+ * angoli 14-16px sulle schede, 10px su pulsanti e campi, testo 13-13.5px.
+ *
+ * Gli stessi colori dell'app (lib/theme_nutri.dart), non una palette nuova:
+ * chi passa dall'app al pannello deve riconoscere gli stessi significati.
+ * Verde = fatto/pubblico, ambra = in attesa, rosso = rifiutato, grigio = privato.
+ *
+ * Solo chiaro, come chiesto nei prompt: il pannello si usa alla scrivania.
+ */
+
+:root {
+  --verde: #1b7a33;
+  --verde-scuro: #155e28;
+  --verde-tenue: #eaf4e6;
+  --fondo: #f4f7ef;
+  --superficie: #ffffff;
+  --inchiostro: #1f2a1c;
+  --testo: #5a6157;
+  --spento: #7d857a;
+  --filo: #e1e8da;
+  --ambra: #b26a00;
+  --ambra-tenue: #fdf3e2;
+  --rosso: #b3261e;
+  --rosso-tenue: #fbeceb;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--inchiostro);
+  font: 13.5px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--verde); }
+a:hover { color: var(--verde-scuro); }
+
+/* ---------------- barra ---------------- */
+.barra {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 0 28px;
+  height: 60px;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--filo);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.marchio { font-size: 15px; font-weight: 700; color: var(--inchiostro); white-space: nowrap; }
+.marchio span { font-weight: 400; color: var(--testo); }
+.barra nav { display: flex; gap: 20px; flex: 1; min-width: 0; }
+.barra nav a {
+  font-size: 13px;
+  color: var(--testo);
+  text-decoration: none;
+  white-space: nowrap;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+}
+.barra nav a:hover { color: var(--inchiostro); }
+.barra nav a.attiva { color: var(--verde); font-weight: 600; border-bottom-color: var(--verde); }
+.chi { display: flex; align-items: center; gap: 14px; flex: none; font-size: 13px; }
+.chi a { color: var(--testo); text-decoration: none; }
+.chi a:hover { color: var(--inchiostro); }
+
+main { max-width: 1280px; margin: 0 auto; padding: 28px 28px 64px; }
+h1 { font-size: 20px; margin: 0 0 20px; letter-spacing: -.2px; }
+h2 { font-size: 13px; font-weight: 700; margin: 26px 0 10px; }
+.torna { display: inline-block; margin: -6px 0 16px; font-size: 13px; text-decoration: none; }
+
+/* ---------------- tabelle a griglia ---------------- */
+/* Griglie e non <table>: le colonne dei mockup hanno larghezze miste (fisse
+   e proporzionali) e il testo lungo va tagliato con i puntini, cose che una
+   tabella HTML fa male. */
+.riquadro { border: 1px solid var(--filo); border-radius: 14px; overflow: hidden; background: var(--superficie); }
+.riga {
+  display: grid;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 16px;
+  min-height: 44px;
+  border-bottom: 1px solid var(--filo);
+}
+.riquadro .riga:last-child { border-bottom: none; }
+.riga.testa { background: var(--fondo); min-height: 0; padding-top: 10px; padding-bottom: 10px; }
+.riga.testa span {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--testo);
+}
+.destra { text-align: right; }
+.cifre { font-variant-numeric: tabular-nums; }
+.taglia { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.codice { font-size: 10.5px; color: var(--spento); font-family: ui-monospace, monospace; margin-top: 1px; }
+.secondario { color: var(--testo); }
+.spento { color: var(--spento); }
+.barrato, .barrato * { text-decoration: line-through; color: var(--spento) !important; }
+
+/* ---------------- pastiglie ---------------- */
+.pastiglia {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 100px;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+.pastiglia.ok { color: var(--verde); background: var(--verde-tenue); }
+.pastiglia.attesa { color: var(--ambra); background: var(--ambra-tenue); }
+.pastiglia.no { color: var(--rosso); background: var(--rosso-tenue); }
+.pastiglia.neutro { color: var(--testo); background: var(--superficie); border: 1px solid var(--filo); }
+.pastiglia.stato { text-align: center; padding: 4px 10px; }
+
+/* ---------------- pulsanti ---------------- */
+.bottone, button {
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--filo);
+  background: var(--superficie);
+  color: var(--inchiostro);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+.bottone:hover, button:hover { background: var(--fondo); }
+.bottone.principale, button.principale { background: var(--verde); border-color: var(--verde); color: #fff; }
+.bottone.principale:hover, button.principale:hover { filter: brightness(.95); background: var(--verde); }
+button.rischio { background: var(--rosso); border-color: var(--rosso); color: #fff; }
+button.rischio:hover { filter: brightness(.95); background: var(--rosso); }
+button:disabled, button:disabled:hover {
+  background: var(--filo);
+  border-color: var(--filo);
+  color: var(--spento);
+  cursor: not-allowed;
+  filter: none;
+}
+button.piccolo { font-size: 12px; padding: 6px 14px; border-radius: 100px; }
+button.pieno { width: 100%; }
+
+/* ---------------- moduli ---------------- */
+.filtri { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 20px; }
+.filtri label, .campo { display: flex; flex-direction: column; gap: 5px; }
+.filtri label > span, .etichetta-campo {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--testo);
+}
+.filtri button { padding: 9px 20px; font-size: 13px; }
+select, input[type=text], input[type=email], input[type=password], input[type=date], textarea {
+  font: inherit;
+  font-size: 13px;
+  color: var(--inchiostro);
+  background: var(--superficie);
+  border: 1px solid var(--filo);
+  border-radius: 10px;
+  padding: 8px 10px;
+  outline: none;
+}
+select { min-width: 150px; }
+textarea { width: 100%; resize: none; padding: 10px 12px; }
+input:focus, select:focus, textarea:focus { border-color: var(--verde); }
+textarea.motivazione:focus { border-color: var(--rosso); }
+
+/* ---------------- avvisi ---------------- */
+.esito, .avviso, .errore { font-size: 13px; border-radius: 10px; padding: 11px 14px; margin: 0 0 16px; }
+.esito { background: var(--verde-tenue); color: var(--verde); }
+.avviso { background: var(--ambra-tenue); color: var(--ambra); }
+.errore { background: var(--rosso-tenue); color: var(--rosso); }
+.vuoto { padding: 44px 20px; text-align: center; color: var(--testo); font-size: 13.5px; }
+
+/* ---------------- dettaglio segnalazione ---------------- */
+.decisa {
+  background: var(--verde-tenue);
+  color: var(--verde);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 14px 18px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+.decisa.no { background: var(--rosso-tenue); color: var(--rosso); }
+.due-colonne { display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; align-items: start; }
+.foto { margin-bottom: 14px; }
+.foto .titolo {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.foto .titolo strong { font-size: 13px; }
+.foto .titolo span { font-size: 11px; color: var(--spento); white-space: nowrap; }
+.foto img {
+  display: block;
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid var(--filo);
+  background: var(--fondo);
+  cursor: zoom-in;
+}
+.foto img:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+.senza-foto {
+  border: 1.5px dashed var(--filo);
+  border-radius: 14px;
+  padding: 30px 18px;
+  text-align: center;
+  color: var(--testo);
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+.nota-utente {
+  background: var(--fondo);
+  border-left: 4px solid var(--verde);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 0 0 16px;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.fatti .riga { grid-template-columns: auto 1fr; gap: 12px; min-height: 0; padding: 10px 14px; }
+.fatti .riga span:first-child { font-size: 12.5px; color: var(--testo); white-space: nowrap; }
+.fatti .riga span:last-child { font-size: 12.5px; font-weight: 500; text-align: right; }
+
+.decisione .riga { grid-template-columns: 28px 1fr 76px 88px; gap: 8px; padding: 11px 14px; }
+.decisione .riga.testa { padding: 10px 14px; }
+.decisione .riga.sospetta { background: var(--ambra-tenue); }
+.decisione .campo-nome { font-size: 13.5px; }
+.decisione .colonna-db { font-size: 10.5px; color: var(--spento); font-family: ui-monospace, monospace; }
+.decisione .motivo { font-size: 11px; color: var(--ambra); margin-top: 2px; }
+.decisione .adesso { font-size: 13px; color: var(--spento); text-align: right; font-variant-numeric: tabular-nums; }
+.decisione .proposto { font-size: 13.5px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.decisione .proposto.scritto { color: var(--verde); }
+.decisione .proposto.scartato { color: var(--spento); text-decoration: line-through; }
+.decisione input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--verde); cursor: pointer; }
+.decisione .segno-ok { color: var(--verde); font-size: 15px; }
+.decisione .segno-no { color: var(--spento); font-size: 13px; }
+.azioni { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.azioni .principale { flex: 1; min-width: 160px; }
+.rifiuto { margin-top: 14px; }
+.rifiuto button { margin-top: 8px; width: 100%; }
+.scorciatoie { margin-top: 14px; font-size: 11px; color: var(--spento); }
+.valori-assenti {
+  border: 1px solid var(--filo);
+  border-radius: 14px;
+  padding: 20px;
+  background: var(--fondo);
+  color: var(--testo);
+  font-size: 13.5px;
+}
+
+/* ---------------- cruscotto ---------------- */
+.contatori { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.contatore {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--superficie);
+  border: 1.5px solid var(--filo);
+  border-radius: 16px;
+  padding: 26px 22px;
+  text-align: center;
+  transition: border-color .15s;
+}
+.contatore:hover { border-color: var(--verde); color: inherit; }
+.contatore .n { font-size: 52px; font-weight: 700; line-height: 1; color: var(--verde); font-variant-numeric: tabular-nums; }
+.contatore.zero .n { color: var(--spento); }
+.contatore .etichetta { font-size: 13.5px; color: var(--testo); margin-top: 10px; }
+.tutto-fatto {
+  margin-top: 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 44px 20px;
+  border: 1.5px dashed var(--filo);
+  border-radius: 14px;
+  font-size: 14px;
+}
+.tutto-fatto .cerchio {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--verde-tenue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.attesa-ok { color: var(--inchiostro); }
+.attesa-medio { color: var(--ambra); }
+.attesa-lungo { color: var(--rosso); }
+
+/* ---------------- code alimenti e ricette ---------------- */
+.schede { display: inline-flex; background: var(--superficie); border: 1px solid var(--filo); border-radius: 100px; padding: 4px; gap: 2px; }
+.schede a {
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--testo);
+  text-decoration: none;
+}
+.schede a.attiva { background: var(--verde); color: #fff; }
+.griglia-schede { margin-top: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.scheda-voce {
+  background: var(--superficie);
+  border: 1px solid var(--filo);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.scheda-voce .immagine { aspect-ratio: 4 / 3; background: var(--fondo); position: relative; }
+.scheda-voce .immagine img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.scheda-voce .immagine.vuota {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 10.5px;
+  color: var(--spento);
+  font-family: ui-monospace, monospace;
+}
+.scheda-voce .corpo { padding: 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.scheda-voce .nome { font-size: 15.5px; font-weight: 700; }
+.scheda-voce .sotto { font-size: 11.5px; color: var(--spento); margin-top: 2px; }
+.scheda-voce .striscia { border-top: 1px solid var(--filo); border-bottom: 1px solid var(--filo); padding: 8px 0; }
+.scheda-voce .striscia-titolo {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--spento);
+  margin-bottom: 6px;
+}
+.macro { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; text-align: center; }
+.macro b { display: block; font-size: 14px; }
+.macro small { font-size: 9.5px; color: var(--spento); }
+.ingredienti .voce, .ingredienti .intestazione { display: grid; grid-template-columns: 1.4fr 60px 70px; gap: 6px; }
+.ingredienti .intestazione {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--spento);
+  margin-bottom: 4px;
+}
+.ingredienti .voce { font-size: 12px; padding: 3px 0; }
+.ingredienti .voce span:not(:first-child) { text-align: right; color: var(--testo); }
+.scheda-voce .nota-ricetta {
+  background: var(--fondo);
+  border-left: 3px solid var(--verde);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.scheda-voce .chi-propone { font-size: 12px; color: var(--testo); }
+.scheda-voce input[type=text] { width: 100%; font-size: 12.5px; }
+.scheda-voce .bottoni { display: flex; gap: 8px; margin-top: 2px; }
+.scheda-voce .bottoni button { flex: 1; padding: 10px; font-size: 12.5px; }
+.scheda-voce .deciso { text-align: center; font-size: 11.5px; font-weight: 700; padding: 8px; border-radius: 10px; }
+.scheda-voce .deciso.ok { background: var(--verde-tenue); color: var(--verde); }
+.scheda-voce .deciso.no { background: var(--rosso-tenue); color: var(--rosso); }
+
+/* ---------------- accesso ---------------- */
+.pagina-accesso { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.accesso {
+  width: 360px;
+  max-width: 100%;
+  background: var(--superficie);
+  border: 1px solid var(--filo);
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.accesso h1 { text-align: center; font-size: 18px; margin: 0; }
+.accesso label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: var(--testo); }
+.accesso input { font-size: 13.5px; padding: 10px 12px; border-radius: 11px; }
+.accesso .esito, .accesso .avviso, .accesso .errore { margin: 0; font-size: 12.5px; padding: 10px 12px; }
+.accesso button { width: 100%; padding: 13px; border-radius: 100px; font-size: 14px; }
+
+/* ---------------- registro ---------------- */
+.registro .riga { grid-template-columns: 100px 170px 110px 1.3fr 1.3fr 110px; }
+.registro .quando, .registro .chi-decide { font-size: 12px; }
+.registro .cosa { font-size: 12.5px; font-weight: 700; }
+.registro .cosa.accept, .registro .cosa.approve { color: var(--verde); }
+.registro .cosa.reject { color: var(--rosso); }
+.registro .cosa.undo { color: var(--testo); }
+.registro .su-nome { font-size: 12.5px; font-weight: 600; }
+.registro .su-tipo { font-size: 11px; color: var(--testo); }
+.registro .campi { font-size: 12px; }
+.registro .nota-annullata { font-size: 10.5px; color: var(--spento); text-decoration: none !important; }
+
+/* ---------------- account ---------------- */
+.account .riga { grid-template-columns: 1fr 1.4fr 110px 130px 110px 1.6fr; }
+.modulo-nuovo { margin-top: 26px; max-width: 420px; background: var(--superficie); border: 1px solid var(--filo); border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+.modulo-nuovo label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: var(--testo); }
+
+/* ---------------- colonne delle code (erano scritte nelle pagine) ---------------- */
+/* Tolte dagli attributi style il 14/09: uno stile scritto nella riga vince su
+   qualunque regola del foglio, quindi sul telefono le colonne restavano quelle
+   da scrivania e il testo usciva dallo schermo. */
+.coda .riga { grid-template-columns: 1.5fr 1.1fr 1.4fr 90px 110px 100px; }
+.attese .riga { grid-template-columns: 1fr 2fr 140px; }
+.utenti .riga { grid-template-columns: 1.3fr 1.6fr 110px 80px 90px 110px; }
+.contributi .riga { grid-template-columns: 1fr 90px 110px; }
+.diario .riga { grid-template-columns: 90px 90px 1fr 70px 80px; }
+.nome-link { font-weight: 700; color: var(--inchiostro); text-decoration: none; }
+.nome-link:hover { color: var(--verde); }
+.prove { display: flex; gap: 6px; flex-wrap: wrap; }
+.registro .cosa.edit { color: var(--ambra); }
+.filtri label.cerca { flex: 1; min-width: 220px; }
+.filtri label.cerca input { width: 100%; }
+input[type=search], input[type=number] {
+  font: inherit; font-size: 13px; color: var(--inchiostro); background: var(--superficie);
+  border: 1px solid var(--filo); border-radius: 10px; padding: 8px 10px; outline: none;
+}
+.riepilogo { font-size: 13px; color: var(--testo); margin: 0 0 12px; }
+.riepilogo b { color: var(--inchiostro); }
+.modifica { font-size: 12.5px; font-weight: 600; text-decoration: none; }
+
+/* ---------------- ordinamento, problemi dell'app, pagina di un admin (15/09) ---------------- */
+.riga.testa a.ordina { color: inherit; text-decoration: none; }
+.riga.testa a.ordina:hover, .riga.testa a.ordina.attiva { color: var(--inchiostro); }
+.problemi .riga { grid-template-columns: 2fr 90px 110px 1fr 90px 90px; }
+.problemi details { border-bottom: 1px solid var(--filo); }
+.problemi details:last-child { border-bottom: none; }
+.problemi summary.riga { border-bottom: none; cursor: pointer; list-style: none; }
+.problemi summary::-webkit-details-marker { display: none; }
+.problemi details[open] > summary { background: var(--fondo); }
+.corpo-problema { padding: 6px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+.testo-problema { margin: 0; font-size: 13.5px; line-height: 1.55; }
+.fatti-problema { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--testo); }
+.gestisci-problema { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.gestisci-problema label { display: flex; flex-direction: column; gap: 5px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--testo); }
+.gestisci-problema label.largo { flex: 1; min-width: 240px; }
+.gestisci-problema textarea { width: 100%; padding: 8px 10px; }
+.elenco-admin .riga { grid-template-columns: 1.6fr 120px 90px 90px 90px 120px; }
+.pubblicati-alimenti .riga { grid-template-columns: 1.4fr 1fr 100px 1fr 1.6fr; }
+.pubblicati-ricette .riga { grid-template-columns: 1.6fr 100px 1fr 1.6fr; }
+.modifiche-admin .riga { grid-template-columns: 1.3fr 150px 1.4fr 100px 90px; }
+.sezione-admin { font-size: 15px; margin: 26px 0 10px; }
+form.ritira { display: flex; gap: 6px; margin: 0; min-width: 0; }
+form.ritira input { flex: 1; min-width: 0; padding: 6px 10px; }
+.scheda-voce .pubblicato-da { font-size: 12px; color: var(--testo); }
+.categorie-ricetta { display: flex; flex-wrap: wrap; gap: 6px; }
+.scegli-categorie { border: 1px solid var(--filo); border-radius: 12px; padding: 8px 12px 10px; margin: 0 0 8px; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; }
+.scegli-categorie legend { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--testo); padding: 0 4px; }
+.scegli-categorie .opzioni { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.scegli-categorie label { display: inline-flex; align-items: center; gap: 5px; }
+
+/* ---------------- modifica di un alimento ---------------- */
+.testata-alimento { display: flex; gap: 16px; align-items: center; margin-bottom: 18px; }
+.testata-alimento img, .testata-alimento .senza { width: 72px; height: 72px; border-radius: 14px; object-fit: cover; border: 1px solid var(--filo); background: var(--superficie); flex: none; }
+.testata-alimento .chi-propone { font-size: 12.5px; color: var(--testo); margin-top: 4px; }
+.modulo-alimento fieldset { border: 1px solid var(--filo); border-radius: 16px; background: var(--superficie); padding: 14px 18px 18px; margin: 0 0 16px; }
+.modulo-alimento legend { font-size: 13px; font-weight: 700; padding: 0 6px; }
+.campi-alimento { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px 16px; }
+.campi-alimento .campo input, .campi-alimento .campo textarea { width: 100%; }
+.campi-alimento .campo.largo { grid-column: 1 / -1; }
+.campi-alimento .unita { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--spento); }
+.campi-alimento .campo.sbagliato input { border-color: var(--rosso); }
+.campi-alimento .campo small { color: var(--rosso); font-size: 11.5px; }
+.nota-modifica { font-size: 12.5px; color: var(--testo); margin: 0 0 16px; }
+
+/* ---------------- tablet ---------------- */
+@media (max-width: 900px) {
+  .barra { gap: 14px; padding: 0 16px; }
+  main { padding: 20px 16px 48px; }
+  .due-colonne, .griglia-schede { grid-template-columns: 1fr; }
+  .griglia-schede { grid-template-columns: repeat(2, 1fr); }
+  .registro .riga, .account .riga { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------------- telefono ---------------- */
+/* Pannello usabile dal telefono (14/09), non solo alla scrivania: si guarda una
+   coda o si approva un alimento anche fuori casa. Le tabelle diventano schede
+   impilate (una riga = un blocco che va a capo), i campi hanno testo a 16px
+   perche' iOS non ingrandisca la pagina toccandoli, e ogni pulsante e' alto
+   almeno 44px, la misura minima di un dito. */
+@media (max-width: 700px) {
+  body { font-size: 14px; }
+  .barra {
+    height: auto;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    padding: 10px 14px 0;
+  }
+  .barra .marchio { flex: 1; }
+  .barra nav {
+    order: 3;
+    flex: 0 0 100%;
+    overflow-x: auto;
+    gap: 18px;
+    padding: 4px 0 0;
+    scrollbar-width: none;
+  }
+  .barra nav::-webkit-scrollbar { display: none; }
+  .barra nav a { padding: 8px 0 10px; font-size: 14px; }
+  main { padding: 16px 12px 48px; }
+  h1 { font-size: 18px; margin-bottom: 14px; }
+
+  /* !important: la regola sotto, che impila le righe, e' piu' specifica e
+     rimetterebbe in vista le intestazioni. */
+  .riquadro .riga.testa { display: none !important; }
+  .riquadro:not(.decisione):not(.fatti) .riga {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 12px;
+    padding: 12px 14px;
+  }
+  .riquadro:not(.decisione):not(.fatti) .riga > :first-child { flex: 1 0 100%; font-size: 14.5px; }
+  .riquadro:not(.decisione):not(.fatti) .riga > * { max-width: 100%; min-width: 0; }
+
+  /* Il pulsante della riga sempre nello stesso posto: riga sua, in basso a
+     destra. Impilando i campi finiva dove capitava — dopo un nome corto a
+     meta' riga, dopo uno lungo a capo — e da telefono non si sapeva mai dove
+     cercarlo (segnalato da Ismail il 20/09, foto del registro). */
+  .riquadro:not(.decisione):not(.fatti) .riga .destra {
+    flex: 1 0 100%;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+    text-align: right;
+  }
+  .riquadro:not(.decisione):not(.fatti) .riga .destra form { margin: 0; }
+  .riquadro:not(.decisione):not(.fatti) .riga .destra button { min-width: 112px; }
+
+  .filtri { flex-direction: column; align-items: stretch; gap: 10px; }
+  .filtri label, .filtri label.cerca { min-width: 0; }
+  .filtri select, .filtri input { width: 100%; min-width: 0 !important; }
+  select, input[type=text], input[type=email], input[type=password], input[type=date],
+  input[type=search], input[type=number], textarea { font-size: 16px; padding: 10px 12px; }
+  .bottone, button { min-height: 44px; }
+  button.piccolo { min-height: 36px; }
+
+  .contatori { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .contatore { padding: 14px 6px; }
+  .contatore .n { font-size: 32px; }
+  .contatore .etichetta { font-size: 11.5px; margin-top: 6px; }
+
+  .griglia-schede { grid-template-columns: 1fr; gap: 14px; }
+  /* Senza foto il segnaposto 4:3 a tutta larghezza occupava mezzo schermo. */
+  .scheda-voce .immagine.vuota { aspect-ratio: auto; height: 64px; flex-direction: row; }
+  .schede { display: flex; overflow-x: auto; max-width: 100%; }
+  .schede a { white-space: nowrap; }
+
+  .foto img { height: 220px; }
+  .decisione .riga { grid-template-columns: 24px 1fr 62px 70px; gap: 6px; padding: 12px 10px; }
+  .riquadro.decisione .riga.testa { display: grid !important; }
+  .azioni .principale { flex: 1 0 100%; }
+  .azioni .bottone { flex: 1; }
+
+  .testata-alimento img, .testata-alimento .senza { width: 56px; height: 56px; }
+  .modulo-alimento fieldset { padding: 12px 12px 14px; }
+  .campi-alimento { grid-template-columns: 1fr 1fr; gap: 10px; }
+}
+
+/* Niente tastiera fisica: le scorciatoie A / R / S non servono a niente. */
+@media (hover: none) {
+  .scorciatoie { display: none; }
+}

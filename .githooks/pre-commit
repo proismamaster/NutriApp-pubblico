@@ -1,0 +1,22 @@
+#!/bin/sh
+# Blocca i commit che contengono segreti: .env, chiavi private, keystore,
+# file di credenziali. Regola in AI.md del vault.
+# Eccezione voluta e consapevole, solo da Ismail: CONSENTI_SEGRETI=1 git commit ...
+[ "$CONSENTI_SEGRETI" = "1" ] && exit 0
+
+file=$(git diff --cached --name-only --diff-filter=ACMR |
+  grep -iE '(^|/)\.env($|\.)|(^|/)db_config\.local\.php$|\.(pem|key|p12|pfx|jks|keystore)$|(^|/)id_(rsa|dsa|ecdsa|ed25519)$|(^|/)key\.properties$|(^|/)credenziali|deploy-key/' |
+  grep -viE '\.env\.(example|sample|template)$')
+
+chiave=""
+if git diff --cached -U0 --diff-filter=ACMR | grep -qE '^\+.*-----BEGIN ([A-Z]+ )?PRIVATE KEY-----'; then
+  chiave="una chiave privata incollata dentro un file"
+fi
+
+[ -z "$file$chiave" ] && exit 0
+
+echo "pre-commit: commit bloccato, contiene segreti." >&2
+[ -n "$file" ] && printf '%s\n' "$file" | sed 's/^/  - /' >&2
+[ -n "$chiave" ] && echo "  - $chiave" >&2
+echo "Toglili dallo stage (git restore --staged <file>) e aggiungili a .gitignore." >&2
+exit 1

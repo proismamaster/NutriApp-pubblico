@@ -1,0 +1,26 @@
+# .htaccess — pannello di revisione NutriApp.
+#
+# Due sole regole, entrambe cose che il PHP da solo non puo' garantire:
+#   1. HTTPS obbligatorio (il dominio ha un certificato valido, verificato il
+#      12/09): una password che apre la scrittura sul database non viaggia in
+#      chiaro. _comune.php fa la stessa cosa via PHP, ma qui succede prima che
+#      PHP parta;
+#   2. i file che iniziano con "_" non si aprono dal browser. _comune.php non
+#      stampa nulla se aperto da solo, ma un file di fondamenta raggiungibile
+#      e' una superficie in piu' per niente.
+#
+# Se l'hosting non e' Apache questo file viene ignorato: il controllo in PHP
+# resta comunque attivo, ed e' il motivo per cui e' scritto in due posti.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+<FilesMatch "^_">
+  Require all denied
+</FilesMatch>
+
+Options -Indexes

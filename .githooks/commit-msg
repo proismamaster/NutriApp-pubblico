@@ -1,0 +1,11 @@
+#!/bin/sh
+# Toglie dal messaggio di commit le firme degli strumenti AI (Co-Authored-By e
+# "Generated with ..."): il lavoro e' di Ismail, l'AI e' uno strumento.
+# Regola in AI.md del vault. Attivo con: git config core.hooksPath .githooks
+msg="$1"
+pulito=$(mktemp) || exit 0
+grep -viE '^[[:space:]]*co-authored-by:.*(claude|anthropic|openai|chatgpt|gpt|copilot|gemini|cursor|codex|devin|aider|windsurf)|generated with \[?(claude|chatgpt|copilot|cursor|codex)' "$msg" > "$pulito"
+# via le righe vuote rimaste in coda al posto della firma
+sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' "$pulito" > "$msg"
+rm -f "$pulito"
+exit 0

@@ -1,0 +1,2 @@
+# gli hook git devono restare LF, anche con core.autocrlf=true
+.githooks/* text eol=lf

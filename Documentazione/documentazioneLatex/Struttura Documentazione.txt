@@ -1,0 +1,28 @@
+    DOCUMENTAZIONE NUTRIAPP
+X   ├── Introduzione
+X   │   └── cosa e' NutriApp e a cosa serve?
+X   ├── Sez. 1: che problemi risolve?
+X   │   ├── 1. la richiesta del committente
+X   │   └── 2. l'interesse delle masse
+X   ├── Sez. 2: Lo sviluppo dell'applicazione
+X   │   ├── 1. analisi dei requisiti e degli stakeholders
+X   │   ├── 2. creazione del project charter
+X   │   ├── 3. divisione del lavoro
+X   │   └── 4. divisione dei ruoli e avvio dello sviluppo
+X   ├── Sez. 3: Una guida all'utilizzo dell'applicazione
+X   │   ├── 1. barra di navigazione
+X   │   ├── 2. inserimento degli alimenti
+X   │   ├── 3. impostazione degli obbiettivi
+X   │   ├── 4. visualizzazione del progresso
+X   │   └── 5. impostazioni dell'account
+X   ├── Sez. 4: fonti dei dati e ricerca scientifica
+X   │   ├── 1. OpenFoodFacts API
+X   │   ├── 2. elenco dei macronutrienti e micronutrienti gestiti dall'applicazione
+X   │   ├── 3. supporto per utenti con determinate patologie
+X   │   └── 4. limitazioni dell'API di fornitura dati
+    ├── Sez. 5: informativa sulla privacy e distribuzione del software
+X   │   ├── 1. trattamento dei dati personali
+X   │   ├── 2. eliminazione dell'account e dei dati raccolti
+    │   ├── 3. piattaforme ufficiali per l'installazione di NutriApp
+    │   ├── 4. regolamento per la redistribuzione del software da terze parti
+    └── └── 5. Recapiti e Contatti del team NutriApp

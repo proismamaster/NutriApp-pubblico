@@ -1,0 +1,174 @@
+\documentclass[11pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\geometry{margin=2.5cm}
+\setstretch{1.15}
+
+\begin{document}
+
+    \begin{center}
+        {\Large \textbf{NutriApp Project Charter}} \\
+        \vspace{0.5cm}
+        {Project Charter: NutriApp} \\
+        14/11/2025
+    \end{center}
+
+    \section*{Background}
+
+    Many people who aim to improve their health, fitness, or dietary habits struggle with accurately tracking their daily intake of micro and macronutrients.
+
+    Although nutritional monitoring is essential for achieving goals such as weight management, muscle gain, improved athletic performance, or managing medical conditions, the tools currently used by most individuals are inefficient and unreliable.
+
+    Today, tracking nutrients is often done manually or using basic apps that provide limited detail and are not tailored to the user's ever changing nutritional needs. These methods make it easy to miscalculate quantities, skip entries, or lose historical data. As a result, users often fail to notice trends, overlook nutritional deficiencies, or become discouraged by the complexity of the process.
+
+    This project aims to solve these issues by creating an intuitive, accurate, and user-friendly platform that enables people to record, analyze, and monitor their nutrient intake over time. Users will be able to log their food quickly, access up-to-date nutrient information, and visualize their progress through historical analytics. This will make nutritional monitoring more accessible, consistent, and effective.
+
+    By reducing the friction and errors of traditional methods, the project empowers individuals to make informed decisions about their diet, stay motivated, and reach their goals with confidence.
+
+    \section*{Goals}
+
+    \begin{enumerate}
+
+        \item \textbf{Launch Core Features:}
+        The primary objective is to launch the app's core features by the end of February 2026. This includes building the key tools: barcode scanning, manual food entry, and nutrient tracking.
+
+        This goal will be considered met when the app can successfully calculate and display 100\% of macronutrients (protein, carbs, fats) and at least 50\% of key micronutrients for each logged food item, relying on the integration of the OpenFoodFacts API.
+
+        \item \textbf{Implement the Notification System:}
+        The second objective is to implement a push notification system by mid-March 2026.
+
+        The goal will be achieved with:
+
+        \begin{itemize}
+            \item Reminder for meal logging
+            \item Alert for reaching the daily goal
+        \end{itemize}
+
+        \item \textbf{Create a Graphical Statistics History:}
+        The third objective is to create a graphical statistics history by mid-March 2026.
+
+    \end{enumerate}
+
+    \section*{Scope}
+
+    This project will deliver a mobile app designed to help users monitor their nutrition in a simple and practical way. The app will allow users to scan product barcodes or manually enter foods when necessary.
+
+    The collected data will be organized into daily, weekly, and monthly summaries supported by clear graphs.
+
+    The project will include:
+
+    \begin{itemize}
+        \item Interface design
+        \item Development of core features
+        \item API integration
+        \item Testing and deployment
+    \end{itemize}
+
+    The project will not include:
+
+    \begin{itemize}
+        \item Medical advice
+        \item Additional languages beyond English and Italian
+        \item Advanced features such as photo recognition
+        \item Wearable integration
+    \end{itemize}
+
+    \section*{Key Stakeholders}
+
+    \begin{itemize}
+        \item Mileo Manuela -- Commissioner
+        \item End Users
+        \item Hospital End Users
+        \item Barakat Ismail -- Project Manager
+        \item Donzelli Christian -- Nutrition Expert
+        \item Maltese Emanuel -- Frontend Manager
+        \item Yu Serena -- UX/UI Designer
+    \end{itemize}
+
+    \section*{Project History}
+
+    Currently the project is in the concept stage. Initial designs and analysis are underway.
+
+    \section*{Project Milestones}
+
+    \begin{enumerate}
+
+        \item Project Architecture Definition
+
+        \item UI/UX Design Approved
+
+        \item Initial Frontend Development
+
+        \item Core API Integration
+
+        \item Advanced Feature Development
+
+        \item Beta Testing
+
+        \item Final Release
+
+    \end{enumerate}
+
+    \section*{Project Budget}
+
+    Estimated Budget: \textbf{€124}
+
+    \begin{itemize}
+        \item Play Store License: €25
+        \item Apple Store License: €99 / year
+        \item OpenFoodFacts API: €0
+        \item PlanetScale Database: €0
+        \item Vercel / Netlify Hosting: €0
+    \end{itemize}
+
+    \section*{Constraints, Assumptions, Risks and Dependencies}
+
+    \subsection*{Constraints}
+
+    \begin{itemize}
+        \item Dependency on third-party APIs
+        \item Time constraints
+        \item App store compliance
+    \end{itemize}
+
+    \subsection*{Assumptions}
+
+    \begin{itemize}
+        \item Users will have modern smartphones
+        \item Free-tier services remain available
+        \item APIs remain functional
+    \end{itemize}
+
+    \subsection*{Dependencies}
+
+    \begin{itemize}
+        \item External services availability
+        \item App Store approval
+    \end{itemize}
+
+    \subsection*{Risks}
+
+    \begin{itemize}
+        \item Service failures
+        \item Exceeding limits
+        \item App rejection
+        \item Team delays
+    \end{itemize}
+
+    \section*{Approval Signatures}
+
+    Barakat Ismail \\
+    [Name], Project Client \\
+    [Name], Project Sponsor \\
+    [Name], Project Manager
+
+\end{document}

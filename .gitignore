@@ -1,0 +1,94 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# File binari degli installer pronti per l'upload manuale come asset di una GitHub Release
+/release-assets/
+
+# Graphify: cache locale/lock, non deterministica, non da versionare
+/graphify-out/cost.json
+/graphify-out/manifest.json
+/graphify-out/.rebuild.lock
+/graphify-out/cache/
+
+# Secret locali: mai versionare, vedi i rispettivi *.example.*
+/fileDatabase/db_config.local.php
+/dart_define.json
+
+# Inferenza nutrienti in locale: ambiente Python (torch CUDA, ~4 GB) e cache
+# delle foto/OCR scaricate da AWS. Entrambi si ricreano da soli, vedi
+# fileDatabase/tools/nutrienti_locale.py
+/fileDatabase/tools/.venv/
+/fileDatabase/tools/cache_off/
+
+# Dump OFF e prodotti dell'import: gigabyte di dati scaricati, tutti
+# riscaricabili dalla fonte. Non stanno in un repo git.
+/fileDatabase/tools/off_products.csv.gz
+/fileDatabase/tools/food.parquet
+/fileDatabase/tools/off_import_v3/
+/fileDatabase/tools/taxonomies/
+/fileDatabase/tools/completa_da_parquet.sql
+/fileDatabase/tools/quarantena.sql
+/fileDatabase/tools/senza_categoria.csv
+
+# CSV della raccolta dai retailer: decine di MB, si rigenerano da soli con
+# fileDatabase/tools/raccolta_ebsn.py --riprendi
+/fileDatabase/tools/raccolta/
+
+# Uscita di completa_da_off.py: 172 MB di dato derivato, si rigenera in pochi
+# minuti dal parquet locale con `completa_da_off.py --tutto`. Dentro c'e' anche
+# l'audit per campo, che e' quello che rende reversibile il completamento.
+/fileDatabase/tools/completamento_off/
+/graphify-out/20*/
+
+# Segreti che non vanno nel repository (20/09/2026).
+#
+# google-services.json porta la chiave API Android del progetto Firebase e i
+# client OAuth. Sta dentro l'APK, quindi non e' un segreto forte — ma pubblicarlo
+# su un repository pubblico invita ad abusarne, e la chiave va comunque
+# ristretta al package e alla firma dell'app nella console Google Cloud.
+# Copia google-services.json.example e riempilo con i tuoi valori.
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist

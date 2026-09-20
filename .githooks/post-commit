@@ -1,0 +1,13 @@
+#!/bin/sh
+# Dopo un commit che tocca codice riallinea il grafo Graphify in background:
+# su NutriApp ci vogliono ~2 minuti, il commit non li aspetta.
+# Salta da solo se il repo non ha graphify-out/ o se graphify non c'e'
+# (per esempio nella sandbox Cowork).
+radice=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+[ -f "$radice/graphify-out/graph.json" ] || exit 0
+command -v graphify >/dev/null 2>&1 || exit 0
+git diff-tree --no-commit-id --name-only -r HEAD |
+  grep -v '^graphify-out/' |
+  grep -qiE '\.(dart|php|py|js|jsx|ts|tsx|kt|kts|java|swift|c|cc|cpp|h|hpp|go|rs|rb|cs)$' || exit 0
+nohup sh "$radice/.githooks/riallinea-grafo.sh" "$radice" >/dev/null 2>&1 &
+exit 0
