@@ -21,6 +21,8 @@ import '../services/local_food_cache.dart';
 import '../providers/locale_provider.dart';
 import '../dictionary/translations.dart';
 import '../widgets/stato_condivisione.dart';
+import '../widgets/segnala_ricetta.dart';
+import '../widgets/paragrafo_ricetta.dart';
 import '../widgets/immagine_zoomabile.dart';
 
 class EntryMenuPage extends ConsumerStatefulWidget {
@@ -1791,6 +1793,34 @@ class _EntryMenuPageState extends ConsumerState<EntryMenuPage>
     );
   }
 
+  /// Cuore su una ricetta della comunita'. Cambia subito a schermo e
+  /// torna indietro se il server rifiuta, come nell'elenco Ricette.
+  Future<void> _likeComunita(Recipe recipe) async {
+    final email = ref.read(userProvider)?.email ?? '';
+    if (email.isEmpty || recipe.id == null) return;
+    final (primaLike, primaConto) = (recipe.likedByMe, recipe.likesCount);
+    final metti = !primaLike;
+    setState(() {
+      recipe.likedByMe = metti;
+      recipe.likesCount = primaConto + (metti ? 1 : -1);
+    });
+    final esito = await ApiServices.toggleRecipeLike(
+      userEmail: email,
+      recipeId: recipe.id!,
+      like: metti,
+    );
+    if (!mounted) return;
+    setState(() {
+      if (esito['status'] == 'success') {
+        recipe.likesCount =
+            int.tryParse('${esito['likes_count']}') ?? recipe.likesCount;
+      } else {
+        recipe.likedByMe = primaLike;
+        recipe.likesCount = primaConto;
+      }
+    });
+  }
+
   Widget _buildRecipeList(
     String? mealType,
     List<Recipe> recipes,
@@ -1807,6 +1837,53 @@ class _EntryMenuPageState extends ConsumerState<EntryMenuPage>
             separatorBuilder: (_, index) => const Divider(height: 1),
             itemBuilder: (context, index) {
               final recipe = filtered[index];
+              // Stessa scheda e stessi pulsanti dell'elenco Ricette
+              // (richiesta di Ismail, 21/09): cuore e bandierina, niente
+              // matita ne' cestino — quelli valgono sulle proprie.
+              if (comunita) {
+                final lang = ref.watch(appSettingsProvider).language;
+                return ParagrafoRicetta(
+                  title: recipe.name,
+                  imageUrl: recipe.imageUrl,
+                  subtitle: '${recipe.ingredients.length} ${Translations.get(lang, 'ingredienti')}',
+                  kcalLabel:
+                      '${UnitFormat.e(recipe.calories)} ${Translations.get(lang, 'totali')}',
+                  footnote: recipe.isMine
+                      ? Translations.get(lang, 'public_recipe_yours')
+                      : recipe.authorName.isEmpty
+                      ? null
+                      : '${Translations.get(lang, 'public_recipe_by')} ${recipe.authorName}',
+                  onLike: () => _likeComunita(recipe),
+                  likesCount: recipe.likesCount,
+                  likedByMe: recipe.likedByMe,
+                  likeTooltip: recipe.likedByMe
+                      ? Translations.get(lang, 'like_remove')
+                      : Translations.get(lang, 'like_add'),
+                  onReport: recipe.isMine
+                      ? null
+                      : () => mostraSegnalaRicetta(context, recipe: recipe),
+                  reportTooltip: recipe.isMine
+                      ? null
+                      : Translations.get(lang, 'report_recipe_action'),
+                  onTap: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => RecipeDetailPage(
+                          recipe: recipe,
+                          dataVoce: widget.dataVoce,
+                          initialMealType: mealType,
+                        ),
+                      ),
+                    );
+                    if (result == true) {
+                      _dopoLAggiunta();
+                    } else if (mounted) {
+                      setState(() {});
+                    }
+                  },
+                );
+              }
               // La foto della ricetta anche qui (2026-09-09): questa lista
               // mostrava sempre la stessa icona generica, mentre l'elenco
               // Ricette mostra gia' la foto. Stessa ricetta, due aspetti

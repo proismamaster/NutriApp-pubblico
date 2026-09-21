@@ -509,10 +509,14 @@ class RecipeListaPageState extends ConsumerState<RecipeListaPage> with SingleTic
             likeTooltip: recipe.likedByMe
                 ? Translations.get(lang, 'like_remove')
                 : Translations.get(lang, 'like_add'),
-            // Matita anche qui (21/09): non modifica la ricetta pubblica,
-            // ne fa una copia privata — il popup lo dice prima di aprirla.
-            onCopy: () => _copiaRicettaPubblica(recipe),
-            copyTooltip: Translations.get(lang, 'recipe_public_copy_action'),
+            // Matita solo sulle proprie (21/09, seconda richiesta): sulle
+            // ricette degli altri restano cuore e bandierina, perche'
+            // modificare quello che ha scritto un altro non si fa. Sulla
+            // propria la matita fa la copia privata di prima.
+            onCopy: recipe.isMine ? () => _copiaRicettaPubblica(recipe) : null,
+            copyTooltip: recipe.isMine
+                ? Translations.get(lang, 'recipe_public_copy_action')
+                : null,
             // Segnalare ha senso solo su quelle degli altri: la propria si
             // modifica o si ritira.
             onReport: recipe.isMine ? null : () => mostraSegnalaRicetta(context, recipe: recipe),
