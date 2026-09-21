@@ -25,6 +25,18 @@ void main() {
       await b.avvia(preferenze: {'app_language': 'Italiano', 'user_email': email});
       await b.aspettaTesto('Aggiungi un alimento:');
 
+      b.passo('comunita dentro Aggiungi');
+      // La scheda Ricette della pagina Aggiungi ha la sotto-scheda Comunita':
+      // si registra un pasto con la ricetta di un altro senza cambiare pagina.
+      await b.tocca(find.byIcon(Icons.add).last, attesa: 2000);
+      await b.tocca(find.text(tr('recipes_tab_title')), attesa: 2500);
+      await b.scatta('aggiungi_ricette');
+      await b.tocca(find.text(tr('recipes_tab_public')).last, attesa: 3000);
+      await b.scatta('aggiungi_comunita');
+      b.diario.writeln('ricetta pubblica dentro Aggiungi: ${b.vede('Pasta e ceci')}');
+      await b.indietro();
+      await b.attendi(1200);
+
       b.passo('consigliate: per te');
       await b.tocca(find.byIcon(Icons.bookmark), attesa: 2500);
       await b.tocca(find.text(tr('recipes_tab_public')), attesa: 3000);
@@ -65,6 +77,23 @@ void main() {
       await b.attendi(1500);
       await b.scatta('elenco_dopo_dettaglio');
       b.diario.writeln('LIKE dopo il dettaglio: ${await likes()}');
+
+      b.passo('segnala una ricetta di un altro');
+      // 21/09: dall'app arrivava "Errore del server". Qui si controlla il
+      // giro intero, endpoint compreso, e che la riga finisca nel database.
+      await t.scrollUntilVisible(find.text('Pasta e ceci'), 300,
+          scrollable: find.byType(Scrollable).last, maxScrolls: 20);
+      await b.tocca(find.text('Pasta e ceci').first, attesa: 2500);
+      await b.tocca(find.byIcon(Icons.outlined_flag).first, attesa: 1500);
+      await b.scatta('segnala_ricetta');
+      await b.tocca(find.text(tr('report_recipe_issue_valori')), attesa: 600);
+      await b.scrivi(find.byType(TextField).last, 'Le calorie non tornano (prova E2E)');
+      await b.viaSnackbar();
+      await b.tocca(find.text(tr('report_send')).last, attesa: 3000);
+      await b.scatta('segnalazione_ricetta_inviata');
+      b.diario.writeln('SEGNALAZIONE RICETTA: ${await t.runAsync(() => sql("SELECT IFNULL(GROUP_CONCAT(CONCAT_WS('|',recipe_name,issue,status)),'(nessuna)') FROM na_recipe_reports WHERE user_mail='$email'"))}');
+      await b.indietro();
+      await b.attendi(1500);
 
       b.passo('la propria ricetta');
       for (var giro = 0; giro < 6 && !b.vede('Torta di mele della nonna'); giro++) {

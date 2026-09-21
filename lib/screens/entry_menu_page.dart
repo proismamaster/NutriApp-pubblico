@@ -66,6 +66,11 @@ class _EntryMenuPageState extends ConsumerState<EntryMenuPage>
   bool _isSearchRefining = false;
 
   List<Recipe> _recipes = [];
+
+  /// Le ricette pubbliche degli altri: si aggiungono al diario come le
+  /// proprie, e da qui si arriva senza passare dalla scheda Ricette
+  /// (richiesta di Ismail, 21/09).
+  List<Recipe> _ricetteComunita = [];
   List<Map<String, dynamic>> _customFoods = [];
 
   /// true quando la libreria mostrata viene dalla copia sul telefono perche'
@@ -979,6 +984,15 @@ class _EntryMenuPageState extends ConsumerState<EntryMenuPage>
         _recipes = ricetteDaMostrare;
         _customFoods = alimentiDaMostrare;
       });
+      // Le pubbliche arrivano dopo le proprie: se il server non risponde
+      // la scheda resta com'era invece di svuotarsi.
+      final pubbliche = await ApiServices.fetchPublicRecipes(
+        userEmail,
+        mode: 'per_te',
+      );
+      if (mounted && pubbliche != null) {
+        setState(() => _ricetteComunita = pubbliche);
+      }
     }
   }
 
@@ -1274,7 +1288,7 @@ class _EntryMenuPageState extends ConsumerState<EntryMenuPage>
             tabs: [
               Tab(text: Translations.get(ref.watch(appSettingsProvider).language, 'search_add_food')),
               if (!widget.returnAsIngredient)
-                Tab(text: Translations.get(ref.watch(appSettingsProvider).language, 'search_saved_recipes')),
+                Tab(text: Translations.get(ref.watch(appSettingsProvider).language, 'recipes_tab_title')),
               Tab(text: Translations.get(ref.watch(appSettingsProvider).language, 'search_saved_foods')),
             ],
           ),
@@ -1725,7 +1739,7 @@ class _EntryMenuPageState extends ConsumerState<EntryMenuPage>
   Widget _buildRecipeTab(String? mealType) {
     final lang = ref.watch(appSettingsProvider).language;
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Column(
         children: [
           _buildSearchField(
@@ -1745,7 +1759,17 @@ class _EntryMenuPageState extends ConsumerState<EntryMenuPage>
                   _recipes.where((r) => r.isFavorite).length,
                 ),
               ),
+              // La comunita' e' qui dentro, non in un'altra schermata:
+              // chi sta registrando un pasto vuole poter scegliere anche
+              // fra le ricette degli altri (21/09).
+              Tab(
+                child: _tabLabelWithCount(
+                  Translations.get(lang, 'recipes_tab_public'),
+                  _ricetteComunita.length,
+                ),
+              ),
             ],
+            labelPadding: const EdgeInsets.symmetric(horizontal: 6),
           ),
           Expanded(
             child: TabBarView(
@@ -1756,6 +1780,8 @@ class _EntryMenuPageState extends ConsumerState<EntryMenuPage>
                   _recipes.where((r) => r.isFavorite).toList(),
                   _searchRecipeQuery,
                 ),
+                _buildRecipeList(mealType, _ricetteComunita, _searchRecipeQuery,
+                    comunita: true),
               ],
             ),
           ),
@@ -1768,8 +1794,9 @@ class _EntryMenuPageState extends ConsumerState<EntryMenuPage>
   Widget _buildRecipeList(
     String? mealType,
     List<Recipe> recipes,
-    String query,
-  ) {
+    String query, {
+    bool comunita = false,
+  }) {
     final filtered = recipes
         .where((r) => r.name.toLowerCase().contains(query))
         .toList();
@@ -1810,13 +1837,18 @@ class _EntryMenuPageState extends ConsumerState<EntryMenuPage>
                 subtitle: Text(
                   '${UnitFormat.e(recipe.calories)} ${Translations.get(ref.watch(appSettingsProvider).language, 'totali')}',
                 ),
-                trailing: IconButton(
-                  icon: Icon(
-                    recipe.isFavorite ? Icons.star : Icons.star_border,
-                    color: Colors.amber,
-                  ),
-                  onPressed: () => _toggleRecipeFav(recipe),
-                ),
+                // La stella e' "preferita fra le mie": su una ricetta di un
+                // altro non ha senso e il server la rifiuterebbe. Nella
+                // comunita' si apre la scheda, dove ci sono cuore e aggiunta.
+                trailing: comunita
+                    ? const Icon(Icons.chevron_right, color: Colors.grey)
+                    : IconButton(
+                        icon: Icon(
+                          recipe.isFavorite ? Icons.star : Icons.star_border,
+                          color: Colors.amber,
+                        ),
+                        onPressed: () => _toggleRecipeFav(recipe),
+                      ),
                 onTap: () async {
                   final result = await Navigator.push(
                     context,

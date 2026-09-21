@@ -1,6 +1,8 @@
 class Translations {
   static const Map<String, Map<String, String>> strings = {
     'Italiano': {
+      'report_daily_limit': 'Hai già inviato una segnalazione oggi. Riprova domani.',
+      'recipes_tab_title': 'Ricette',
       'quick_weights_label': 'Pesi rapidi',
       'report_recipe_action': 'Segnala ricetta',
       'report_recipe_title': 'Segnala questa ricetta',
@@ -591,6 +593,8 @@ class Translations {
       'I kcal derivati dai macro non sono coerenti con le calorie registrate: controlla unita` o mapping dei dati.': 'L\'energia ricavata dai macro non corrisponde a quella registrata: controlla unita\' o dati.',
     },
     'English': {
+      'report_daily_limit': 'You already sent a report today. Try again tomorrow.',
+      'recipes_tab_title': 'Recipes',
       'quick_weights_label': 'Quick weights',
       'report_recipe_action': 'Report recipe',
       'report_recipe_title': 'Report this recipe',
@@ -1847,6 +1851,8 @@ class Translations {
     },
 
     '简体中文': {
+      'report_daily_limit': '你今天已经提交过一次反馈，请明天再试。',
+      'recipes_tab_title': '食谱',
       'quick_weights_label': '常用重量',
       'report_recipe_action': '举报食谱',
       'report_recipe_title': '举报这个食谱',
@@ -3027,6 +3033,8 @@ class Translations {
     },
 
     'العربية': {
+      'report_daily_limit': 'لقد أرسلت بلاغًا اليوم بالفعل. حاول مرة أخرى غدًا.',
+      'recipes_tab_title': 'الوصفات',
       'quick_weights_label': 'أوزان سريعة',
       'report_recipe_action': 'الإبلاغ عن الوصفة',
       'report_recipe_title': 'الإبلاغ عن هذه الوصفة',

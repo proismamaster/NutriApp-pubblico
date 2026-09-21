@@ -2050,7 +2050,7 @@ class ApiServices {
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       }
-      return {'status': 'error', 'message': 'Errore del server'};
+      return _erroreRisposta(response);
     } catch (e) {
       return {'status': 'error', 'message': e.toString()};
     }
@@ -2123,7 +2123,7 @@ class ApiServices {
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
       }
-      return {'status': 'error', 'message': 'Errore del server'};
+      return _erroreRisposta(response);
     } catch (e) {
       return {'status': 'error', 'message': e.toString()};
     }
@@ -2160,7 +2160,7 @@ class ApiServices {
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
       }
-      return {'status': 'error', 'message': 'Errore del server'};
+      return _erroreRisposta(response);
     } catch (e) {
       return {'status': 'error', 'message': e.toString()};
     }
@@ -2185,10 +2185,39 @@ class ApiServices {
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
       }
-      return {'status': 'error', 'message': 'Errore del server'};
+      return _erroreRisposta(response);
     } catch (e) {
       return {'status': 'error', 'message': e.toString()};
     }
+  }
+
+  /// Perche' una richiesta al server non e' andata, detto in modo utile.
+  ///
+  /// "Errore del server" e' quello che leggeva l'utente anche quando il
+  /// problema era un altro: sul telefono di Ismail la segnalazione di una
+  /// ricetta falliva perche' l'endpoint sull'hosting non era ancora stato
+  /// caricato — un 404, non un errore del server (21/09). Il codice HTTP
+  /// distingue i due casi e dice a chi guarda cosa deve fare.
+  static Map<String, dynamic> _erroreRisposta(http.Response risposta) {
+    if (risposta.statusCode == 404) {
+      return {
+        'status': 'error',
+        'code': 'endpoint_mancante',
+        'message': 'Questa funzione non e\' ancora disponibile sul server: va aggiornato.',
+      };
+    }
+    if (risposta.statusCode == 401 || risposta.statusCode == 403) {
+      return {
+        'status': 'error',
+        'code': 'auth',
+        'message': 'Sessione scaduta: esci e rientra.',
+      };
+    }
+    return {
+      'status': 'error',
+      'code': 'http_${risposta.statusCode}',
+      'message': 'Errore del server (${risposta.statusCode}).',
+    };
   }
 
   /// Propone o ritira UN alimento personale. Ritira anche quelli gia'
@@ -2207,7 +2236,7 @@ class ApiServices {
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
       }
-      return {'status': 'error', 'message': 'Errore del server'};
+      return _erroreRisposta(response);
     } catch (e) {
       return {'status': 'error', 'message': e.toString()};
     }
@@ -2246,7 +2275,7 @@ class ApiServices {
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
       }
-      return {'status': 'error', 'message': 'Errore del server'};
+      return _erroreRisposta(response);
     } catch (e) {
       return {'status': 'error', 'message': e.toString()};
     }
@@ -2338,7 +2367,7 @@ class ApiServices {
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
       }
-      return {'status': 'error', 'message': 'Errore del server'};
+      return _erroreRisposta(response);
     } catch (e) {
       return {'status': 'error', 'message': e.toString()};
     }

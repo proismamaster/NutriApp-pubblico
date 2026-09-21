@@ -18,6 +18,13 @@ void main() {
     testWidgets('schermate in $lingua', (t) async {
       final b = Banco(t, 'lin_$sigla');
       String tr(String chiave) => Translations.get(lingua, chiave);
+      // Nomi delle ricette e degli alimenti del banco: sono dati, non
+      // interfaccia, e restano in italiano in ogni lingua.
+      b.datiDiProva.addAll({
+        'Insalata di farro', 'Pasta e ceci', 'Porridge alla banana',
+        'Torta di mele', 'Pasta al pomodoro', 'Mela cotogna',
+        'Dill Pickle Salad', 'Noci Pecan', 'Yogurt prova',
+      });
       await b.giro(() async {
         await b.avvia(preferenze: {
           'app_language': lingua,
@@ -47,11 +54,13 @@ void main() {
         // Il + al centro della barra in basso: e' l'ultimo "add" disegnato.
         await b.tocca(find.byIcon(Icons.add).last, attesa: 2000);
         await b.scatta('aggiungi');
-        await b.tocca(find.byType(Tab).at(1), attesa: 1500);
+        // Per nome, non per indice: dentro la scheda Ricette ci sono altre
+        // sotto-schede e gli indici globali non sono piu' quelli (21/09).
+        await b.tocca(find.text(tr('recipes_tab_title')), attesa: 1500);
         await b.scatta('ricette_salvate');
-        await b.tocca(find.byType(Tab).at(2), attesa: 1500);
+        await b.tocca(find.text(tr('search_saved_foods')), attesa: 1500);
         await b.scatta('alimenti_salvati');
-        await b.tocca(find.byType(Tab).at(0), attesa: 800);
+        await b.tocca(find.text(tr('search_add_food')), attesa: 800);
         await b.tocca(find.text(tr('search_manual_link_2')), attesa: 2000);
         await b.scatta('manuale');
         await t.drag(find.byType(Scrollable).first, const Offset(0, -1400));

@@ -26,6 +26,18 @@ banco blocca via `HttpOverrides` qualunque host che non sia 127.0.0.1.
 flutter test test_e2e/diario_test.dart --dart-define=NUTRI_API=http://127.0.0.1:8790/
 ```
 
+Tutti gli scenari in fila, uno per volta:
+
+```bash
+flutter test test_e2e --concurrency=1 --dart-define=NUTRI_API=http://127.0.0.1:8790/
+```
+
+`--concurrency=1` non e' un vezzo: `php -S` serve **una richiesta alla
+volta**. Senza, `flutter test` fa girare piu' scenari insieme, le richieste
+si accodano e scadono, e gli scenari falliscono per finta ("Aggiungi un
+alimento:" che non compare, "Errore di rete. Riprova.") mentre l'app e il
+server stanno benissimo.
+
 Variabili d'ambiente utili: `E2E_SCATTI` (dove salvare scatti e diari),
 `E2E_FONTS` (i font di Flutter, senza i quali i testi sono rettangoli),
 `E2E_MYSQL` (il client mysql), `E2E_DB` (il database di prova).

@@ -305,34 +305,40 @@ class _GraphicPageState extends ConsumerState<GraphicPage> {
   /// TUTTI DELLA STESSA MISURA (richiesta di Ismail, 21/09): prima erano
   /// pastiglie larghe quanto la parola che contenevano, quindi "Calorie" era
   /// un terzo di "Carboidrati" e cambiando lingua cambiava anche la
-  /// disposizione. Ora ogni riquadro e' [_latoMetrica] x [_altezzaMetrica],
-  /// con la stessa cornice del riquadro che mostra il valore grande piu'
-  /// sotto, e il testo si rimpicciolisce dentro invece di allargare il
-  /// riquadro.
+  /// disposizione. Ora i quattro riquadri si dividono la riga in parti uguali,
+  /// alti [_altezzaMetrica], con la stessa cornice del riquadro che mostra il
+  /// valore grande piu' sotto, e il testo si rimpicciolisce dentro invece di
+  /// allargare il riquadro.
   ///
-  /// La riga continua a scorrere in orizzontale: a misura fissa i quattro
-  /// riquadri stanno su uno schermo normale e scorrono su uno stretto, invece
-  /// di stringersi fino a diventare illeggibili.
+  /// NIENTE SCORRIMENTO (21/09): con la larghezza fissa a 92 px i quattro
+  /// riquadri facevano 424 px e su un telefono da 390 l'ultima metrica restava
+  /// fuori. Una riga che sembra finita non la fa scorrere nessuno.
+  /// Le quattro metriche su UNA riga, sempre: si dividono la larghezza in
+  /// parti uguali invece di scorrere.
+  ///
+  /// Prima erano larghe 92 px fisse: quattro riquadri piu' i margini fanno
+  /// 424 px, e su un telefono da 390 "Grassi" restava fuori. Bisognava
+  /// scorrere per arrivare all'ultima metrica, e nessuno scorre una riga che
+  /// sembra finita (segnalato da Ismail il 21/09, schermata Grafici).
   Widget _rigaMetriche(String lang) {
-    return SizedBox(
-      height: _altezzaMetrica + 16,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-        children: [
-          for (final metrica in MetricType.values)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: _riquadroMetrica(lang, metrica),
-            ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: SizedBox(
+        height: _altezzaMetrica,
+        child: Row(
+          children: [
+            for (final metrica in MetricType.values) ...[
+              Expanded(child: _riquadroMetrica(lang, metrica)),
+              if (metrica != MetricType.values.last) const SizedBox(width: 8),
+            ],
+          ],
+        ),
       ),
     );
   }
 
-  /// Misura di un riquadro-metrica. Fissa di proposito: e' cio' che li rende
-  /// tutti uguali indipendentemente dalla parola e dalla lingua.
-  static const double _latoMetrica = 92;
+  /// Altezza di un riquadro-metrica. La larghezza non e' piu' fissa: la
+  /// decide la riga, che le tiene tutte uguali fra loro.
   static const double _altezzaMetrica = 44;
 
   Widget _riquadroMetrica(String lang, MetricType metrica) {
@@ -344,10 +350,9 @@ class _GraphicPageState extends ConsumerState<GraphicPage> {
         borderRadius: BorderRadius.circular(14),
         onTap: () => setState(() => _selectedMetric = metrica),
         child: Container(
-          width: _latoMetrica,
           height: _altezzaMetrica,
           alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 6),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
             // Stessa cornice del riquadro del valore grande (vedi _riquadro).

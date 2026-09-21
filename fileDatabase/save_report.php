@@ -61,7 +61,13 @@ $gia = $stmt->get_result()->num_rows > 0;
 $stmt->close();
 
 if ($gia) {
-    echo json_encode(["status" => "error", "message" => "Hai già inviato una segnalazione oggi. Riprova domani."]);
+    // Il codice serve all'app per tradurre: il messaggio qui sotto resta
+    // italiano ed e' solo la riserva per le versioni vecchie.
+    echo json_encode([
+        "status" => "error",
+        "code" => "report_daily_limit",
+        "message" => "Hai già inviato una segnalazione oggi. Riprova domani.",
+    ]);
     exit;
 }
 

@@ -147,10 +147,15 @@ class _SegnalaProblemaPageState extends ConsumerState<SegnalaProblemaPage> {
     }
     // Il messaggio del server dice cose vere e utili (per esempio "hai già
     // inviato una segnalazione oggi"): mostrarlo com'è vale più di un
-    // generico "errore".
+    // generico "errore". Quando pero' il server manda anche un codice, vince
+    // la traduzione: il messaggio del server e' solo in italiano (21/09).
+    final codice = esito['code']?.toString();
+    final tradotto = codice == null ? null : Translations.get(lang, codice);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(esito['message']?.toString() ?? Translations.get(lang, 'Errore durante invio')),
+        content: Text(tradotto != codice && tradotto != null
+            ? tradotto
+            : esito['message']?.toString() ?? Translations.get(lang, 'Errore durante invio')),
         backgroundColor: const Color(0xFFB4553C),
         duration: const Duration(seconds: 5),
       ),

@@ -96,6 +96,11 @@ class Banco {
   /// dallo scenario quando la cambia. Serve al controllo delle traduzioni.
   String lingua = 'English';
   final Set<String> _traduzioniSegnalate = {};
+
+  /// Testi che sono DATI, non interfaccia: nomi di alimenti e di ricette
+  /// scritti dagli utenti di prova. Restano in italiano in qualunque lingua,
+  /// ed e' giusto cosi': un nome proprio non si traduce (21/09).
+  final Set<String> datiDiProva = {};
   int _scatti = 0;
   int pdfCondivisi = 0;
 
@@ -307,6 +312,7 @@ class Banco {
     for (final testo in testi()) {
       if (testo.startsWith('[campo]')) continue;
       final riga = testo.replaceAll(RegExp(r'\s+'), ' ');
+      if (datiDiProva.any(riga.contains)) continue;
       String? motivo;
       if (_chiaveGrezza.hasMatch(riga)) {
         motivo = 'chiave grezza';

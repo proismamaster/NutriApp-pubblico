@@ -127,6 +127,9 @@ void main() {
       b.diario.writeln('NA_REPORTS: ${await t.runAsync(() => sql("SELECT CONCAT_WS('|',kind,screen,LEFT(problem_description,30),status) FROM na_reports WHERE user_email='$email' ORDER BY id DESC LIMIT 1"))}');
 
       b.passo('le mie segnalazioni');
+      // Il testo delle segnalazioni lo ha scritto l'utente: resta come lo ha
+      // scritto anche cambiando lingua, e non e' una traduzione mancante.
+      b.datiDiProva.add('Il calendario mostra i mesi in italiano');
       if (!b.vede(tr('my_reports_title'))) {
         await b.indietro();
         await b.attendi(800);
