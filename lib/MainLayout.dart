@@ -104,44 +104,22 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       },
       child: Scaffold(
       appBar: AppBar(
-        // Sulla Home il marchio sta a sinistra, logo piu' grande e accanto il
-        // nome scritto (richiesta di Ismail, 21/09): il logo da solo e'
-        // centrato come un titolo qualsiasi e non si legge come marchio.
-        // Le altre schede tengono il loro titolo centrato, che dice dove sei.
-        title: currentIndex == 0
-            ? Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(
-                    'assets/img/logo.png',
-                    height: 36,
-                    semanticLabel: 'NutriApp',
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'NutriApp',
-                    style: TextStyle(
-                      color: scheme.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 21,
-                      letterSpacing: -.2,
-                    ),
-                  ),
-                ],
-              )
-            : Text(
-                navigationItems[currentIndex]['title'],
-                style: TextStyle(
-                  color: scheme.primary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 21,
-                  letterSpacing: -.2,
-                ),
-              ),
-        centerTitle: currentIndex != 0,
-        // Il marchio parte dal bordo come il contenuto della Home, non dal
-        // rientro che Material riserva al titolo quando non c'e' il "indietro".
-        titleSpacing: currentIndex == 0 ? 12 : NavigationToolbar.kMiddleSpacing,
+        // Solo la scritta "NutriApp", centrata come le altre schede
+        // (richiesta di Ismail, 21/09). Storia breve: il 20/09 la scritta era
+        // stata sostituita dal logo, il 21/09 ci avevamo messo logo a
+        // sinistra + scritta accanto, e nessuna delle due convinceva. La
+        // barra ora e' identica su tutte le tab: cambia solo la parola, e
+        // niente salta di posizione passando da una tab all'altra.
+        title: Text(
+          navigationItems[currentIndex]['title'],
+          style: TextStyle(
+            color: scheme.primary,
+            fontWeight: FontWeight.bold,
+            fontSize: 21,
+            letterSpacing: -.2,
+          ),
+        ),
+        centerTitle: true,
         elevation: 1,
         automaticallyImplyLeading: false,
         actions: [
