@@ -31,6 +31,17 @@ class FoodEntry {
   final int? novaGroup;
   final String? ecoscoreGrade;
 
+  /// Foto di QUESTA voce di diario (21/09, colonna `image_url` aggiunta da
+  /// `migrations/2026-09-21_voce_diario_immagine.sql`).
+  ///
+  /// PERCHE' STA QUI E NON SOLO IN LIBRERIA: prima la foto di un alimento
+  /// viveva solo su `na_custom_foods`, quindi cambiarla da una voce del
+  /// diario la cambiava anche nella libreria personale — senza che nessuno
+  /// avesse chiesto "salva nella libreria" — e modificando una voce gia'
+  /// registrata veniva invece scartata in silenzio. Le due foto ora sono
+  /// indipendenti: aggiornare la libreria resta una scelta esplicita.
+  final String imageUrl;
+
   ///i valori vengono tutti inizializzati a 0 cosi se utente
   ///non inserisce il valore di un attributo questo di default sara
   ///assegnato a 0. Se durante la creazione dell'oggetto viene assegnato
@@ -51,6 +62,7 @@ class FoodEntry {
     this.nutriscoreGrade,
     this.novaGroup,
     this.ecoscoreGrade,
+    this.imageUrl = '',
   });
 
   /// Converte l'oggetto in una Map<String, dynamic> per la serializzazione JSON.
@@ -75,6 +87,7 @@ class FoodEntry {
     if (nutriscoreGrade != null) 'nutriscore_grade': nutriscoreGrade,
     if (novaGroup != null) 'nova_group': novaGroup,
     if (ecoscoreGrade != null) 'environmental_score_grade': ecoscoreGrade,
+    'image_url': imageUrl,
   };
   factory FoodEntry.fromJson(Map<String, dynamic> json) {
     final String? nutriscore = (json['nutriscore_grade'] ?? '').toString().trim().isEmpty
@@ -96,6 +109,7 @@ class FoodEntry {
       nutriscoreGrade: nutriscore,
       novaGroup: (nova != null && nova > 0) ? nova : null,
       ecoscoreGrade: eco,
+      imageUrl: (json['image_url'] ?? '').toString(),
     );
   }
 }

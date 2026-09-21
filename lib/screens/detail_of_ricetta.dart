@@ -19,6 +19,9 @@ import '../models/macro_analysis.dart';
 import '../models/macro_totals.dart';
 import '../widgets/nutri_select.dart';
 import '../widgets/ripartizione_macro.dart';
+import '../widgets/immagine_zoomabile.dart';
+import '../widgets/copia_ricetta_pubblica.dart';
+import '../widgets/segnala_ricetta.dart';
 
 /// Pagina della ricetta: la stessa sia per guardarla sia per registrarla nel
 /// diario.
@@ -66,6 +69,12 @@ class _RecipeDetailPageState extends ConsumerState<RecipeDetailPage> {
   bool _mealMissing = false;
   late final TextEditingController _weightController;
   late double _currentWeight;
+
+  /// La ricetta e' pubblica: o e' approvata, o arriva da "Consigliate" (solo
+  /// quelle portano il nome dell'autore). In entrambi i casi non si riscrive:
+  /// se ne fa una copia.
+  bool get _ePubblica =>
+      widget.recipe.sharedStatus == 'approved' || widget.recipe.authorName.isNotEmpty;
 
   /// Peso totale della ricetta = somma dei pesi degli ingredienti.
   ///
@@ -129,6 +138,26 @@ class _RecipeDetailPageState extends ConsumerState<RecipeDetailPage> {
               ),
               onPressed: _toggleLike,
             ),
+          // Modificare una ricetta pubblica ne crea una copia privata
+          // (21/09): l'originale resta di chi l'ha scritta.
+          if (_ePubblica)
+            IconButton(
+              tooltip: Translations.get(lang, 'recipe_public_copy_action'),
+              icon: Icon(Icons.edit_outlined, color: Nutri.green),
+              onPressed: () => copiaRicettaPubblica(
+                context,
+                ricetta: widget.recipe,
+                lang: lang,
+              ),
+            ),
+          // Segnalare ha senso solo sulle ricette pubbliche di ALTRI: la
+          // propria si modifica o si ritira da "Le mie ricette".
+          if (_ePubblica && !widget.recipe.isMine)
+            IconButton(
+              tooltip: Translations.get(lang, 'report_recipe_action'),
+              icon: Icon(Icons.outlined_flag, color: Nutri.muted),
+              onPressed: () => mostraSegnalaRicetta(context, recipe: widget.recipe),
+            ),
         ],
       ),
       body: Column(
@@ -141,15 +170,31 @@ class _RecipeDetailPageState extends ConsumerState<RecipeDetailPage> {
                 children: [
                   // La foto della ricetta, che nessuna delle due vecchie
                   // pagine mostrava pur essendo salvata dal 30/08.
+                  //
+                  // INTERA, NON RITAGLIATA (richiesta di Ismail, 21/09):
+                  // `BoxFit.cover` riempiva il riquadro tagliando via il
+                  // resto — su una foto verticale restava una fascia in mezzo,
+                  // ed era il difetto segnalato. Con `contain` si vede tutta,
+                  // e lo spazio che avanza prende il colore del tema (chiaro
+                  // col tema chiaro, scuro col tema scuro) invece di un bianco
+                  // fisso che in tema scuro sembrerebbe un buco.
                   if (foto != null) ...[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(18),
-                      child: Image(
-                        image: foto,
+                    ImmagineZoomabile(
+                      immagine: foto,
+                      titolo: widget.recipe.name,
+                      child: Container(
                         width: double.infinity,
-                        height: 180,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: sfondoImmagine(context),
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: Image(
+                          image: foto,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 18),
@@ -493,20 +538,24 @@ class _RecipeDetailPageState extends ConsumerState<RecipeDetailPage> {
         ),
         child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        leading: Container(
-          width: 40,
-          height: 40,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-              color: Nutri.surfaceSoft, borderRadius: BorderRadius.circular(10)),
-          child: foto != null
-              ? Image(
-                  image: foto,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) =>
-                      Icon(Icons.restaurant, color: Nutri.green, size: 20),
-                )
-              : Icon(Icons.restaurant, color: Nutri.green, size: 20),
+        leading: ImmagineZoomabile(
+          immagine: foto,
+          titolo: ing.name,
+          child: Container(
+            width: 40,
+            height: 40,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+                color: Nutri.surfaceSoft, borderRadius: BorderRadius.circular(10)),
+            child: foto != null
+                ? Image(
+                    image: foto,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) =>
+                        Icon(Icons.restaurant, color: Nutri.green, size: 20),
+                  )
+                : Icon(Icons.restaurant, color: Nutri.green, size: 20),
+          ),
         ),
         title: Text(ing.name,
             style: TextStyle(

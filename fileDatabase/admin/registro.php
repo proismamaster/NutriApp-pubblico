@@ -129,6 +129,30 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             $stmt->execute();
             $stmt->close();
             $fatto[] = 'problema riportato a ' . $statoPrima;
+        } elseif ($riga['target_type'] === 'recipe_report') {
+            // Segnalazione su una ricetta pubblica (21/09): torna lo stato di
+            // prima, con la risposta e chi l'aveva rivista.
+            //
+            // ATTENZIONE: annullare questa riga NON rimette pubblica la
+            // ricetta. Il ritiro e' una decisione sua, registrata a parte come
+            // 'recipe' (vedi segnalazioni_ricette.php), e si annulla dalla sua
+            // riga — altrimenti un solo annulla farebbe due cose, e chi lo
+            // preme ne vedrebbe scritta una.
+            $statoPrima = (string) ($prima['status'] ?? 'pending');
+            if (!in_array($statoPrima, ['pending', 'accepted', 'rejected'], true)) {
+                $statoPrima = 'pending';
+            }
+            $notaPrima = isset($prima['review_note']) ? (string) $prima['review_note'] : null;
+            $chiPrima = isset($prima['reviewed_by']) ? (string) $prima['reviewed_by'] : null;
+            $quandoPrima = isset($prima['reviewed_at']) ? (string) $prima['reviewed_at'] : null;
+            $idOggetto = (int) $riga['target_id'];
+            $stmt = $conn->prepare(
+                'UPDATE na_recipe_reports SET status = ?, review_note = ?, reviewed_by = ?, reviewed_at = ? WHERE id = ?'
+            );
+            $stmt->bind_param('ssssi', $statoPrima, $notaPrima, $chiPrima, $quandoPrima, $idOggetto);
+            $stmt->execute();
+            $stmt->close();
+            $fatto[] = 'segnalazione sulla ricetta riportata a ' . $statoPrima;
         }
 
         $chi = adminCorrente()['email'];
@@ -207,7 +231,8 @@ $azioni = [
     'accept' => 'Accettata', 'reject' => 'Rifiutata', 'approve' => 'Approvato', 'edit' => 'Modificato',
     'undo' => 'Annullamento', 'withdraw' => 'Ritirato', 'resolve' => 'Risolto', 'close' => 'Chiuso', 'reopen' => 'Riaperto',
 ];
-$tipiOggetto = ['food_report' => 'segnalazione', 'custom_food' => 'alimento', 'recipe' => 'ricetta', 'app_report' => 'problema app'];
+$tipiOggetto = ['food_report' => 'segnalazione', 'recipe_report' => 'segnalazione ricetta',
+    'custom_food' => 'alimento', 'recipe' => 'ricetta', 'app_report' => 'problema app'];
 
 $righe = '';
 while ($r = $res->fetch_assoc()) {

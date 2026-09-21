@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'auth_style.dart';
+import 'immagine_zoomabile.dart';
 import 'stato_condivisione.dart';
 
 /// `ParagrafoRicetta`
@@ -46,6 +47,16 @@ class ParagrafoRicetta extends StatelessWidget {
   final bool likedByMe;
   final String? likeTooltip;
 
+  /// Segnala la ricetta (21/09). `null` su quelle proprie e su quelle
+  /// private: si segnala solo cio' che e' pubblico e di qualcun altro.
+  final VoidCallback? onReport;
+  final String? reportTooltip;
+
+  /// Copia privata di una ricetta pubblica (21/09), con la matita. `null`
+  /// quando questa scheda non offre quella strada.
+  final VoidCallback? onCopy;
+  final String? copyTooltip;
+
   const ParagrafoRicetta({
     super.key,
     required this.title,
@@ -64,10 +75,20 @@ class ParagrafoRicetta extends StatelessWidget {
     this.likesCount = 0,
     this.likedByMe = false,
     this.likeTooltip,
+    this.onReport,
+    this.reportTooltip,
+    this.onCopy,
+    this.copyTooltip,
   });
 
   bool get _haAzioni =>
-      onLike != null || onFavorite != null || onShare != null || onEdit != null || onDelete != null;
+      onLike != null ||
+      onFavorite != null ||
+      onShare != null ||
+      onCopy != null ||
+      onEdit != null ||
+      onDelete != null ||
+      onReport != null;
 
   @override
   Widget build(BuildContext context) {
@@ -99,18 +120,24 @@ class ParagrafoRicetta extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: foto == null
-                          ? segnaposto
-                          : Image(
-                              image: foto,
-                              width: 64,
-                              height: 64,
-                              fit: BoxFit.cover,
-                              // Un indirizzo rotto non deve lasciare un buco.
-                              errorBuilder: (_, _, _) => segnaposto,
-                            ),
+                    // Toccando la foto si apre intera (21/09): il resto
+                    // della scheda continua ad aprire la ricetta.
+                    ImmagineZoomabile(
+                      immagine: foto,
+                      titolo: title,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: foto == null
+                            ? segnaposto
+                            : Image(
+                                image: foto,
+                                width: 64,
+                                height: 64,
+                                fit: BoxFit.cover,
+                                // Un indirizzo rotto non deve lasciare un buco.
+                                errorBuilder: (_, _, _) => segnaposto,
+                              ),
+                      ),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
@@ -188,10 +215,22 @@ class ParagrafoRicetta extends StatelessWidget {
                             );
                           },
                         ),
+                      if (onCopy != null)
+                        IconButton(
+                          tooltip: copyTooltip,
+                          icon: Icon(Icons.edit_outlined, size: 21, color: scheme.primary),
+                          onPressed: onCopy,
+                        ),
                       if (onEdit != null)
                         IconButton(
                           icon: Icon(Icons.edit_outlined, size: 21, color: scheme.primary),
                           onPressed: onEdit,
+                        ),
+                      if (onReport != null)
+                        IconButton(
+                          tooltip: reportTooltip,
+                          icon: Icon(Icons.outlined_flag, size: 21, color: scheme.onSurfaceVariant),
+                          onPressed: onReport,
                         ),
                       if (onDelete != null)
                         IconButton(

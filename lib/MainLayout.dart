@@ -104,14 +104,30 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       },
       child: Scaffold(
       appBar: AppBar(
-        // Sulla Home il marchio si vede, non si legge: al posto della scritta
-        // "NutriApp" c'e' il logo (richiesta di Ismail, 20/09). Le altre
-        // schede tengono il loro titolo, che dice dove sei.
+        // Sulla Home il marchio sta a sinistra, logo piu' grande e accanto il
+        // nome scritto (richiesta di Ismail, 21/09): il logo da solo e'
+        // centrato come un titolo qualsiasi e non si legge come marchio.
+        // Le altre schede tengono il loro titolo centrato, che dice dove sei.
         title: currentIndex == 0
-            ? Image.asset(
-                'assets/img/logo.png',
-                height: 30,
-                semanticLabel: 'NutriApp',
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/img/logo.png',
+                    height: 36,
+                    semanticLabel: 'NutriApp',
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'NutriApp',
+                    style: TextStyle(
+                      color: scheme.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 21,
+                      letterSpacing: -.2,
+                    ),
+                  ),
+                ],
               )
             : Text(
                 navigationItems[currentIndex]['title'],
@@ -122,7 +138,10 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                   letterSpacing: -.2,
                 ),
               ),
-        centerTitle: true,
+        centerTitle: currentIndex != 0,
+        // Il marchio parte dal bordo come il contenuto della Home, non dal
+        // rientro che Material riserva al titolo quando non c'e' il "indietro".
+        titleSpacing: currentIndex == 0 ? 12 : NavigationToolbar.kMiddleSpacing,
         elevation: 1,
         automaticallyImplyLeading: false,
         actions: [

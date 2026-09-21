@@ -4,12 +4,11 @@
 // screenshots to the scratchpad so they can be looked at directly next to
 // the mockup spec. Safe to delete after review.
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart' show FontLoader, MethodChannel;
+import 'package:flutter/services.dart' show MethodChannel;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,9 +50,22 @@ import 'package:nutriapp/models/recipe_ingredient.dart';
 import 'package:nutriapp/widgets/grafico_andamento.dart';
 import 'package:nutriapp/models/history_point.dart';
 import 'package:nutriapp/models/metric_type.dart';
+import 'cartella_font.dart';
 
-const _outDir =
-    r'C:\Users\ismai\AppData\Local\Temp\claude\C--Users-ismai-Desktop-ismail2ndbrain\30629c3e-a533-4a8a-8e53-fce2b48967e8\scratchpad\visual_check';
+/// Dove finiscono gli screenshot.
+///
+/// PERCHE' NON UN PERCORSO SCRITTO A MANO (21/09): qui c'era la cartella
+/// temporanea di una vecchia sessione sul computer di Ismail
+/// (`C:\Users\ismai\AppData\...\scratchpad\visual_check`). Su Linux quel
+/// testo non e' un percorso: `Directory(...).createSync()` crea UNA cartella
+/// col nome pieno di barre rovesciate DENTRO il repo, che poi compare fra i
+/// file non tracciati e rischia di finire in un commit.
+///
+/// Si puo' scegliere con `NUTRIAPP_SCREENSHOT_DIR`; senza, si usa la
+/// cartella temporanea del sistema, che su ogni macchina esiste ed e' fuori
+/// dal repo.
+final _outDir = Platform.environment['NUTRIAPP_SCREENSHOT_DIR'] ??
+    '${Directory.systemTemp.path}${Platform.pathSeparator}nutriapp_visual_check';
 
 /// Lo STESSO tema dell'app, non una copia scritta a mano.
 ///
@@ -105,22 +117,11 @@ Future<void> _shoot(
   });
 }
 
-const _fontCache = r'C:\Users\ismai\flutter\bin\cache\artifacts\material_fonts';
-
 // flutter test's headless binding renders every glyph as a solid "tofu" box
 // unless real font files are loaded manually — pulled straight from the SDK
-// cache so the screenshots show actual readable text/icons instead of blocks.
-Future<void> _loadRealFonts() async {
-  final roboto = FontLoader('Roboto');
-  for (final f in ['roboto-regular.ttf', 'roboto-medium.ttf', 'roboto-bold.ttf']) {
-    roboto.addFont(File('$_fontCache/$f').readAsBytes().then((b) => ByteData.view(b.buffer)));
-  }
-  await roboto.load();
-
-  final icons = FontLoader('MaterialIcons')
-    ..addFont(File('$_fontCache/materialicons-regular.otf').readAsBytes().then((b) => ByteData.view(b.buffer)));
-  await icons.load();
-}
+// cache (see cartella_font.dart) so the screenshots show actual readable
+// text/icons instead of blocks.
+const _loadRealFonts = caricaFontDiProva;
 
 // Utente finto — stessi numeri di riferimento usati nei mockup stessi
 // (Profile: "Ismaa Barakata" 174cm; Charts/Goals: 960 kcal, 108/72/32 g)

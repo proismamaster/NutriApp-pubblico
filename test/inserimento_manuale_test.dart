@@ -5,11 +5,9 @@
 // "Per porzione" non c'era modo di dire quanto pesa la porzione dell'etichetta,
 // quindi i valori venivano salvati come se la porzione fosse il peso mangiato.
 // Si apre la pagina VERA, con i font veri (vedi segnala_visibile_test.dart).
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show FontLoader, MethodChannel;
+import 'package:flutter/services.dart' show MethodChannel;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,19 +17,9 @@ import 'package:nutriapp/domain/user_provider.dart';
 import 'package:nutriapp/models/user_model.dart';
 import 'package:nutriapp/screens/manual_entry_page.dart';
 import 'package:nutriapp/theme_nutri.dart';
+import 'cartella_font.dart';
 
-const _fontCache = r'C:\Users\ismai\flutter\bin\cache\artifacts\material_fonts';
-
-Future<void> _caricaFont() async {
-  final roboto = FontLoader('Roboto');
-  for (final f in ['roboto-regular.ttf', 'roboto-medium.ttf', 'roboto-bold.ttf']) {
-    roboto.addFont(File('$_fontCache/$f').readAsBytes().then((b) => ByteData.view(b.buffer)));
-  }
-  await roboto.load();
-  final icons = FontLoader('MaterialIcons')
-    ..addFont(File('$_fontCache/materialicons-regular.otf').readAsBytes().then((b) => ByteData.view(b.buffer)));
-  await icons.load();
-}
+const _caricaFont = caricaFontDiProva;
 
 class _UtenteFinto extends UserNotifier {
   @override

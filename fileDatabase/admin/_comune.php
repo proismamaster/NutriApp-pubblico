@@ -313,6 +313,7 @@ function pagina(string $titolo, string $contenuto, string $attiva = ''): void
     // perche' e' li' che si lavora; il cruscotto e' dove si guarda.
     $voci = [
         'segnalazioni.php' => 'Segnalazioni',
+        'segnalazioni_ricette.php' => 'Segn. ricette',
         'problemi.php' => 'Problemi app',
         'index.php' => 'Cruscotto',
         'alimenti.php' => 'Alimenti',

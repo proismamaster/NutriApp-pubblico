@@ -22,6 +22,16 @@ const NA_STATI_CONDIVISIONE = ['private', 'pending', 'approved', 'rejected'];
 const NA_TIPI_SEGNALAZIONE = ['valori', 'nome', 'categoria', 'immagine', 'duplicato', 'altro'];
 
 /**
+ * Tipi di problema segnalabili su una RICETTA pubblica (21/09).
+ *
+ * Lista sua e non quella degli alimenti: su una ricetta non ha senso
+ * "duplicato di un barcode" ne' "categoria sbagliata", mentre servono i casi
+ * che su un testo scritto da una persona esistono davvero — copiato da
+ * qualcun altro, consigli pericolosi, pubblicita'.
+ */
+const NA_TIPI_SEGNALAZIONE_RICETTA = ['contenuto', 'valori', 'copia', 'pericolosa', 'spam', 'altro'];
+
+/**
  * Intestazione JSON + rete di sicurezza sugli errori fatali.
  *
  * Perche' 200 e non 500: il client legge il messaggio dal corpo, e con un 500
@@ -136,12 +146,23 @@ function communityColonnaEsiste(mysqli $conn, string $tabella, string $colonna):
     return $esiste;
 }
 
-/** Ferma lo script con un messaggio utile se la migrazione non e' stata eseguita. */
-function communityRichiediMigrazione(mysqli $conn, string $tabella, string $colonna): void {
+/**
+ * Ferma lo script con un messaggio utile se la migrazione non e' stata eseguita.
+ *
+ * `$file` dice QUALE file eseguire: dal 21/09 le tabelle della collaborazione
+ * arrivano da migrazioni diverse, e un messaggio che ne nomina sempre una
+ * sola manda chi carica a eseguire il file sbagliato.
+ */
+function communityRichiediMigrazione(
+    mysqli $conn,
+    string $tabella,
+    string $colonna,
+    string $file = '2026-09-12_collaborazione_community.sql'
+): void {
     if (!communityColonnaEsiste($conn, $tabella, $colonna)) {
         communityErrore(
             "Migrazione mancante: $tabella non ha la colonna $colonna. " .
-            'Eseguire fileDatabase/migrations/2026-09-12_collaborazione_community.sql su phpMyAdmin.'
+            "Eseguire fileDatabase/migrations/$file su phpMyAdmin."
         );
     }
 }

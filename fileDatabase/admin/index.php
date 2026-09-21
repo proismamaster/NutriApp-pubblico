@@ -27,6 +27,10 @@ function conta(mysqli $conn, string $sql): int
 }
 
 $segnalazioni = conta($conn, "SELECT COUNT(*) FROM na_food_reports WHERE status = 'pending'");
+// Segnalazioni sulle ricette pubbliche (21/09): `conta` risponde 0 se la
+// tabella non c'e' ancora, quindi il cruscotto regge un server a meta'
+// migrazione senza mostrare un errore.
+$segnRicette = conta($conn, "SELECT COUNT(*) FROM na_recipe_reports WHERE status = 'pending'");
 $alimenti = conta($conn, "SELECT COUNT(*) FROM na_custom_foods WHERE shared_status = 'pending'");
 $ricette = conta($conn, "SELECT COUNT(*) FROM na_recipes WHERE shared_status = 'pending'");
 
@@ -38,6 +42,7 @@ $riquadro = static function (string $file, int $n, string $etichetta): string {
 
 $html = '<div class="contatori">'
     . $riquadro('segnalazioni.php', $segnalazioni, $segnalazioni === 1 ? 'segnalazione aperta' : 'segnalazioni aperte')
+    . $riquadro('segnalazioni_ricette.php', $segnRicette, $segnRicette === 1 ? 'ricetta segnalata' : 'ricette segnalate')
     . $riquadro('alimenti.php', $alimenti, $alimenti === 1 ? 'alimento in attesa' : 'alimenti in attesa')
     . $riquadro('ricette.php', $ricette, $ricette === 1 ? 'ricetta in attesa' : 'ricette in attesa')
     . '</div>';

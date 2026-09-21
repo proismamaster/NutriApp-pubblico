@@ -83,5 +83,13 @@ $user_mail = emailAutenticata($conn, (string) ($data['user_mail'] ?? ''));
         ? (int)$data['nova_group'] : null;
     $environmental_score_grade = isset($data['environmental_score_grade']) && $data['environmental_score_grade'] !== ''
         ? strtolower((string)$data['environmental_score_grade']) : null;
+    // Foto della VOCE di diario (21/09, migrations/2026-09-21_voce_diario_immagine.sql):
+    // prima la foto di un alimento viveva solo in libreria, e cambiarla dal
+    // diario la cambiava anche li' senza chiederlo. Stringa vuota = nessuna
+    // foto; la colonna e' NOT NULL DEFAULT ''.
+    $image_url = trim((string)($data['image_url'] ?? ''));
+    if (mb_strlen($image_url) > 500) {
+        $image_url = '';
+    }
 }
 ?>

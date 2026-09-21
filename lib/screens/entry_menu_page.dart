@@ -21,6 +21,7 @@ import '../services/local_food_cache.dart';
 import '../providers/locale_provider.dart';
 import '../dictionary/translations.dart';
 import '../widgets/stato_condivisione.dart';
+import '../widgets/immagine_zoomabile.dart';
 
 class EntryMenuPage extends ConsumerStatefulWidget {
   final String? initialMealType;
@@ -1310,21 +1311,28 @@ class _EntryMenuPageState extends ConsumerState<EntryMenuPage>
       ),
     );
     if (imageUrl.isEmpty) return fallback;
-    return ClipOval(
-      child: Image.network(
-        imageUrl,
-        width: 40,
-        height: 40,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => fallback,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return SizedBox(
-            width: 40,
-            height: 40,
-            child: fallback,
-          );
-        },
+    // Toccando la miniatura si apre la foto intera (21/09): in un elenco di
+    // risultati e' spesso l'unico modo per capire se il prodotto e' proprio
+    // quello che si ha in mano.
+    return ImmagineZoomabile(
+      immagine: nutriImageProvider(imageUrl),
+      titolo: (product['food_name'] ?? '').toString(),
+      child: ClipOval(
+        child: Image.network(
+          imageUrl,
+          width: 40,
+          height: 40,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => fallback,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return SizedBox(
+              width: 40,
+              height: 40,
+              child: fallback,
+            );
+          },
+        ),
       ),
     );
   }
@@ -1778,18 +1786,22 @@ class _EntryMenuPageState extends ConsumerState<EntryMenuPage>
               // diversi a seconda da dove ci si arriva.
               final fotoRicetta = nutriImageProvider(recipe.imageUrl);
               return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                  backgroundImage: fotoRicetta,
-                  onBackgroundImageError:
-                      fotoRicetta == null ? null : (_, _) {},
-                  child: fotoRicetta != null
-                      ? null
-                      : Icon(
-                          Icons.restaurant_menu,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 18,
-                        ),
+                leading: ImmagineZoomabile(
+                  immagine: fotoRicetta,
+                  titolo: recipe.name,
+                  child: CircleAvatar(
+                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                    backgroundImage: fotoRicetta,
+                    onBackgroundImageError:
+                        fotoRicetta == null ? null : (_, _) {},
+                    child: fotoRicetta != null
+                        ? null
+                        : Icon(
+                            Icons.restaurant_menu,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 18,
+                          ),
+                  ),
                 ),
                 title: Text(
                   recipe.name,
@@ -1897,6 +1909,10 @@ class _EntryMenuPageState extends ConsumerState<EntryMenuPage>
                       isAddingFromLibrary: true,
                       initialMealType: mealType,
                       returnAsIngredient: widget.returnAsIngredient,
+                      // Questo alimento arriva davvero dalla libreria
+                      // personale (21/09): salvandolo di nuovo si aggiorna
+                      // questa riga invece di aggiungerne una uguale.
+                      idLibreria: int.tryParse('${food['id']}'),
                     ),
                   ),
                 );

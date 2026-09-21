@@ -2,6 +2,10 @@
 require 'db_config.php';    // Configura database
 require 'extract_data.php'; // Carica i dati nutrizionali
 
+// `image_url` e' la foto di QUESTA voce di diario, aggiunta il 21/09 con
+// migrations/2026-09-21_voce_diario_immagine.sql: prima la foto di un alimento
+// esisteva solo in libreria, quindi cambiarla dal diario cambiava anche quella.
+
 // Query per salvare il nuovo pasto nel database
 $sql = "INSERT INTO na_nutri_entries (
     user_mail, food_name, meal_type, entry_date, weight_g,
@@ -12,8 +16,8 @@ $sql = "INSERT INTO na_nutri_entries (
     arsenic, biotin, boron, calcium, chloride, choline, chromium, cobalt, copper, fluoride,
     fluorine, iodine, iron, magnesium, manganese, molybdenum, phosphorus, potassium,
     selenium, silicon, sulfur, tin, vanadium, zinc,
-    nutriscore_grade, nova_group, environmental_score_grade
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    nutriscore_grade, nova_group, environmental_score_grade, image_url
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 // Prepara la query
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
@@ -21,7 +25,7 @@ if (!$stmt) {
 }
 
 // Definiamo i tipi di dati (s = string, d = double, i = int)
-$types = "ssssd".str_repeat("d", 51)."sis";
+$types = "ssssd".str_repeat("d", 51)."siss";
 
 // Associa i valori ai parametri
 $stmt->bind_param($types, $user_mail,
@@ -32,7 +36,7 @@ $stmt->bind_param($types, $user_mail,
     $vit_c, $vit_d, $vit_e, $vit_k, $arsenic, $biotin, $boron, $calcium, $chloride, $choline, $chromium, $cobalt, $copper, $fluoride,
     $fluorine, $iodine, $iron, $magnesium, $manganese, $molybdenum, $phosphorus, $potassium,
     $selenium, $silicon, $sulfur, $tin, $vanadium, $zinc,
-    $nutriscore_grade, $nova_group, $environmental_score_grade
+    $nutriscore_grade, $nova_group, $environmental_score_grade, $image_url
 );
 
 // Invio della risposta in formato JSON

@@ -14,6 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../logic/pasto_attuale.dart';
 import '../widgets/auth_style.dart';
 import '../widgets/categorie_ricetta.dart';
+import '../widgets/copia_ricetta_pubblica.dart';
+import '../widgets/segnala_ricetta.dart';
 import '../widgets/stato_condivisione.dart';
 
 // Pagina per gestire le ricette salvate dell'utente
@@ -160,9 +162,11 @@ class RecipeListaPageState extends ConsumerState<RecipeListaPage> with SingleTic
   // Modifica una ricetta esistente
   Future<void> _editRecipe(int index) async {
     final Recipe original = _recipes[index];
-    // Una ricetta approvata non si modifica piu' (15/09): si spiega perche'.
+    // Una ricetta approvata e' del database e non si riscrive (15/09), ma da
+    // oggi non e' piu' un vicolo cieco: se ne fa una copia privata con le
+    // modifiche, e quella pubblica resta com'e' (richiesta di Ismail, 21/09).
     if (original.sharedStatus == 'approved') {
-      await mostraContenutoBloccato(context, ref.read(appSettingsProvider).language);
+      await _copiaRicettaPubblica(original);
       return;
     }
 
@@ -178,6 +182,19 @@ class RecipeListaPageState extends ConsumerState<RecipeListaPage> with SingleTic
     if (result == true) {
       _loadRecipes();
     }
+  }
+
+  /// Copia privata di una ricetta pubblica: il popup e la copia stanno in
+  /// [copiaRicettaPubblica], qui resta solo cosa farne dopo (ricaricare
+  /// l'elenco e dirlo). La stessa strada parte anche dal dettaglio ricetta.
+  Future<void> _copiaRicettaPubblica(Recipe pubblica) async {
+    final lang = ref.read(appSettingsProvider).language;
+    final salvata = await copiaRicettaPubblica(context, ricetta: pubblica, lang: lang);
+    if (!salvata || !mounted) return;
+    _loadRecipes();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(Translations.get(lang, 'recipe_public_copy_done'))),
+    );
   }
 
   @override
@@ -492,6 +509,14 @@ class RecipeListaPageState extends ConsumerState<RecipeListaPage> with SingleTic
             likeTooltip: recipe.likedByMe
                 ? Translations.get(lang, 'like_remove')
                 : Translations.get(lang, 'like_add'),
+            // Matita anche qui (21/09): non modifica la ricetta pubblica,
+            // ne fa una copia privata — il popup lo dice prima di aprirla.
+            onCopy: () => _copiaRicettaPubblica(recipe),
+            copyTooltip: Translations.get(lang, 'recipe_public_copy_action'),
+            // Segnalare ha senso solo su quelle degli altri: la propria si
+            // modifica o si ritira.
+            onReport: recipe.isMine ? null : () => mostraSegnalaRicetta(context, recipe: recipe),
+            reportTooltip: recipe.isMine ? null : Translations.get(lang, 'report_recipe_action'),
             onTap: () async {
               await Navigator.push(
                 context,
@@ -517,30 +542,40 @@ class RecipeListaPageState extends ConsumerState<RecipeListaPage> with SingleTic
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Titolo e conteggio incolonnati (richiesta di Ismail,
+                // 21/09): affiancati sulla stessa riga erano due testi che si
+                // contendevano lo spazio — il titolo grosso a sinistra e un
+                // numero appeso a destra, che su schermi stretti si
+                // accorciava con i puntini. Ora il conteggio sta sotto, dove
+                // si legge come una didascalia del titolo e non come una
+                // seconda intestazione.
+                Text(
+                  Translations.get(
+                    ref.watch(appSettingsProvider).language,
+                    'Le Tue Ricette',
+                  ),
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    height: 1.1,
+                    letterSpacing: -0.4,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 4),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
                   children: [
-                    Expanded(
-                      child: Text(
-                        Translations.get(
-                          ref.watch(appSettingsProvider).language,
-                          'Le Tue Ricette',
-                        ),
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
+                    Icon(
+                      Icons.bookmark_outline,
+                      size: 15,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
-                    const SizedBox(width: 8),
-                    // Stretto in fondo alla riga: a 320 px sforava, e con una
-                    // sola ricetta diceva "1 ricette salvate".
+                    const SizedBox(width: 5),
+                    // Singolare e plurale restano distinti: con una sola
+                    // ricetta diceva "1 ricette salvate".
                     Flexible(
                       child: Text(
                         '${_recipes.length} ${Translations.get(ref.watch(appSettingsProvider).language, _recipes.length == 1 ? 'ricetta salvata' : 'ricette salvate')}',
-                        textAlign: TextAlign.end,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -551,7 +586,7 @@ class RecipeListaPageState extends ConsumerState<RecipeListaPage> with SingleTic
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 18),
                 Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,

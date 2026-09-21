@@ -22,6 +22,7 @@ import '../widgets/auth_style.dart';
 import '../widgets/category_picker.dart';
 import '../widgets/nutri_select.dart';
 import '../widgets/translated_text.dart';
+import '../widgets/immagine_zoomabile.dart';
 import '../logic/portion_parser.dart';
 
 class ManualEntryPage extends ConsumerStatefulWidget {
@@ -41,6 +42,17 @@ class ManualEntryPage extends ConsumerStatefulWidget {
   /// peso, matita ne' pulsante per salvare.
   final bool soloLettura;
 
+  /// Id della riga di `na_custom_foods` da cui arriva questa scheda, quando
+  /// arriva DAVVERO dalla libreria personale (21/09).
+  ///
+  /// Serve a distinguere "aggiorna quell'alimento" da "creane uno nuovo":
+  /// senza, salvando in libreria un alimento aperto dalla libreria si
+  /// inseriva ogni volta un doppione. Non si ricava da `prefillData['id']`,
+  /// che a seconda di chi apre la scheda e' l'id di una VOCE DI DIARIO o di
+  /// un prodotto esterno: scambiarli vorrebbe dire riscrivere la riga
+  /// sbagliata.
+  final int? idLibreria;
+
   const ManualEntryPage({
     super.key,
     this.initialMealType,
@@ -52,6 +64,7 @@ class ManualEntryPage extends ConsumerStatefulWidget {
     this.barcode,
     this.dataVoce,
     this.soloLettura = false,
+    this.idLibreria,
   });
 
   @override
@@ -247,7 +260,13 @@ class ManualEntryPageState extends ConsumerState<ManualEntryPage> {
     if (kcal <= 0) {
       setState(() {
         _isDataIncomplete = true;
-        _saveToLibrary = true; // Consigliamo il salvataggio per correggere il database
+        // Consigliamo il salvataggio per correggere il database — ma NON
+        // mentre si corregge una voce gia' registrata nel diario (21/09):
+        // li' l'interruttore acceso da solo finirebbe per riscrivere
+        // l'alimento in libreria senza che nessuno l'abbia chiesto, che e' il
+        // difetto segnalato da Ismail. Su una voce nuova resta un consiglio:
+        // l'interruttore si vede, e si puo' spegnere prima di salvare.
+        if (widget.foodEntry == null) _saveToLibrary = true;
       });
     }
   }
@@ -785,7 +804,8 @@ class ManualEntryPageState extends ConsumerState<ManualEntryPage> {
               if (!widget.isEditingMaster && !isIng)
                 SwitchListTile(
                   title: Text(
-                    Translations.get(lang, 'Salva nella mia libreria'),
+                    Translations.get(lang,
+                        _vieneDallaLibreria ? 'Aggiorna nella mia libreria' : 'Salva nella mia libreria'),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   // Didascalia dinamica (mockup Manual Entry): spiega la
@@ -794,7 +814,9 @@ class ManualEntryPageState extends ConsumerState<ManualEntryPage> {
                     Translations.get(
                       lang,
                       _saveToLibrary
-                          ? 'Riusalo senza doverlo riscrivere'
+                          ? (_vieneDallaLibreria
+                              ? 'Le modifiche valgono anche per le prossime volte'
+                              : 'Riusalo senza doverlo riscrivere')
                           : 'Registralo una volta, senza conservarlo',
                     ),
                   ),
@@ -1010,7 +1032,8 @@ class ManualEntryPageState extends ConsumerState<ManualEntryPage> {
                 if (!widget.isEditingMaster && !isIng)
                   SwitchListTile(
                     title: Text(
-                      Translations.get(lang, 'Salva nella mia libreria'),
+                      Translations.get(lang,
+                          _vieneDallaLibreria ? 'Aggiorna nella mia libreria' : 'Salva nella mia libreria'),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     value: _saveToLibrary,
@@ -1060,26 +1083,33 @@ class ManualEntryPageState extends ConsumerState<ManualEntryPage> {
       children: [
         Stack(
           children: [
-            Container(
-              width: double.infinity,
-              height: 150,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: theme.colorScheme.outlineVariant),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: imageUrl.isEmpty
-                  ? Center(
-                      child: Icon(Icons.image_outlined, color: Colors.grey.shade400, size: 32),
-                    )
-                  : Image.network(
-                      imageUrl,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => Center(
-                        child: Icon(Icons.broken_image_outlined, color: Colors.grey.shade400, size: 32),
+            // Toccandola si apre intera, con lo zoom (21/09): qui dentro
+            // sta una foto di etichetta, e leggerne gli ingredienti a 150 px
+            // di altezza non si puo'.
+            ImmagineZoomabile(
+              immagine: imageUrl.isEmpty ? null : nutriImageProvider(imageUrl),
+              titolo: name,
+              child: Container(
+                width: double.infinity,
+                height: 150,
+                decoration: BoxDecoration(
+                  color: sfondoImmagine(context),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: theme.colorScheme.outlineVariant),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: imageUrl.isEmpty
+                    ? Center(
+                        child: Icon(Icons.image_outlined, color: Colors.grey.shade400, size: 32),
+                      )
+                    : Image.network(
+                        imageUrl,
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, _, _) => Center(
+                          child: Icon(Icons.broken_image_outlined, color: Colors.grey.shade400, size: 32),
+                        ),
                       ),
-                    ),
+              ),
             ),
             // In modalità modifica si può cambiare/aggiungere la foto anche
             // quando il prodotto non ne ha una (richiesta 2026-07-24).
@@ -1815,6 +1845,10 @@ class ManualEntryPageState extends ConsumerState<ManualEntryPage> {
   // punto in cui si è già annidato due volte lo stesso bug — lì è coperta
   // dai test (test/portion_parser_test.dart).
 
+  /// Vero quando questa scheda e' stata aperta da un alimento della libreria:
+  /// li' salvare vuol dire AGGIORNARE quell'alimento, non aggiungerne uno.
+  bool get _vieneDallaLibreria => widget.idLibreria != null;
+
   /// Popup di conferma "salva in libreria?" mostrato quando si salva dopo
   /// aver personalizzato i valori senza aver attivato lo switch libreria.
   Future<bool?> _askSaveToLibrary() async {
@@ -1822,8 +1856,10 @@ class ManualEntryPageState extends ConsumerState<ManualEntryPage> {
     return showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(Translations.get(lang, 'save_library_nudge_title')),
-        content: Text(Translations.get(lang, 'save_library_nudge_body')),
+        title: Text(Translations.get(
+            lang, _vieneDallaLibreria ? 'update_library_nudge_title' : 'save_library_nudge_title')),
+        content: Text(Translations.get(
+            lang, _vieneDallaLibreria ? 'update_library_nudge_body' : 'save_library_nudge_body')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
@@ -2013,23 +2049,25 @@ class ManualEntryPageState extends ConsumerState<ManualEntryPage> {
     setState(() => _isSaving = false);
 
     if (esito.url != null) {
-      setState(() {
-        _imageUrlController.text = esito.url!;
-        // La foto descrive l'ALIMENTO, non la singola voce di diario: vive su
-        // na_custom_foods, che e' la libreria personale. na_nutri_entries non
-        // ha (e non deve avere) una colonna immagine, altrimenti la stessa
-        // foto verrebbe duplicata a ogni volta che registri quel cibo.
-        //
-        // Quindi senza la libreria attiva la foto verrebbe scartata in
-        // silenzio: chi la aggiunge sta dicendo "questo alimento mi serve
-        // ancora", e l'interruttore si accende da solo invece di far sparire
-        // il lavoro appena fatto.
-        if (!_saveToLibrary && !widget.isEditingMaster) _saveToLibrary = true;
-      });
+      // La foto resta su quello che si sta modificando, e basta (21/09).
+      //
+      // PRIMA: `na_nutri_entries` non aveva una colonna immagine, quindi la
+      // foto poteva vivere solo in libreria — e per non buttarla via l'app
+      // accendeva da sola l'interruttore "salva nella mia libreria". Cambiare
+      // la foto di un alimento aperto dal diario finiva quindi per cambiare
+      // anche la copia in libreria, senza che nessuno l'avesse chiesto
+      // (segnalazione di Ismail, 21/09). Modificando una voce gia' registrata
+      // quel ramo non partiva nemmeno e la foto veniva persa in silenzio.
+      //
+      // ORA la voce di diario ha la sua `image_url`
+      // (migrations/2026-09-21_voce_diario_immagine.sql): la foto si salva da
+      // sola con la voce, e toccare la libreria torna a essere una scelta
+      // dell'utente — l'interruttore qui sotto, o il popup al salvataggio.
+      setState(() => _imageUrlController.text = esito.url!);
       if (!widget.isEditingMaster) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(Translations.get(lang, 'Foto aggiunta: questo alimento viene salvato nella tua libreria, così la ritrovi quando lo riusi.')),
+            content: Text(Translations.get(lang, 'photo_added_here_only')),
             duration: const Duration(seconds: 5),
           ),
         );
@@ -3208,6 +3246,9 @@ class ManualEntryPageState extends ConsumerState<ManualEntryPage> {
           final customFood = CustomFood.fromJson({
             ...data,
             'base_weight_g': data['weight_g'],
+            // Come sopra: si aggiorna l'alimento di libreria solo se la
+            // scheda arriva da li', altrimenti se ne crea uno nuovo.
+            'id': widget.idLibreria,
           });
           _libreriaFallita = !await ApiServices.saveCustomFood(customFood);
         }
@@ -3240,9 +3281,20 @@ class ManualEntryPageState extends ConsumerState<ManualEntryPage> {
           ? await ApiServices.updateFoodEntry(entry)
           : await ApiServices.sendFoodEntry(entry);
           
-      if (success && _saveToLibrary && widget.foodEntry == null) {
+      // Anche modificando una voce gia' registrata (21/09): prima la
+      // condizione era `widget.foodEntry == null`, quindi chi rispondeva "si'"
+      // al popup "salvo nella tua libreria?" mentre correggeva una voce del
+      // diario non salvava niente, senza nessun messaggio. Ora la libreria si
+      // tocca sempre e solo su richiesta esplicita, ma quando e' richiesta si
+      // tocca davvero.
+      if (success && _saveToLibrary) {
         data['base_weight_g'] = data['weight_g'];
-        final customFood = CustomFood.fromJson(data);
+        // La copia in libreria e' un'ALTRA riga: `data['id']`, se c'e', e'
+        // l'id della VOCE DI DIARIO e qui sarebbe la riga sbagliata da
+        // riscrivere. Si aggiorna l'alimento di libreria solo quando la
+        // scheda arriva davvero da li' (idLibreria); altrimenti se ne crea
+        // uno nuovo, com'e' sempre stato.
+        final customFood = CustomFood.fromJson({...data, 'id': widget.idLibreria});
         // L'esito non si butta piu' via (2026-09-09): la voce di diario puo'
         // riuscire e la copia in libreria no, e prima l'utente vedeva solo
         // "salvato" per poi non ritrovare l'alimento fra i suoi. Due

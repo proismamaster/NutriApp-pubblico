@@ -21,7 +21,17 @@ import '../widgets/modern_loader.dart';
 
 class CreaRicettaPage extends ConsumerStatefulWidget {
   final Recipe? initialRecipe;
-  const CreaRicettaPage({super.key, this.initialRecipe});
+
+  /// Si sta scrivendo una COPIA di una ricetta pubblica (21/09).
+  ///
+  /// [initialRecipe] arriva pieno come in una modifica — stessi ingredienti,
+  /// stesse note, stessa foto — ma senza `id`: salvando nasce una ricetta
+  /// nuova e quella pubblica resta com'era. Questo flag cambia solo cio' che
+  /// si vede (titolo, niente cestino), non cosa si salva: a decidere fra
+  /// inserimento e aggiornamento e' l'id, che e' il dato vero.
+  final bool comeCopia;
+
+  const CreaRicettaPage({super.key, this.initialRecipe, this.comeCopia = false});
 
   @override
   ConsumerState<CreaRicettaPage> createState() => CreaRicettaPageState();
@@ -106,7 +116,12 @@ class CreaRicettaPageState extends ConsumerState<CreaRicettaPage> {
     );
 
     bool success;
-    if (widget.initialRecipe != null) {
+    // L'aggiornamento si decide dall'ID, non dal fatto che ci sia una ricetta
+    // di partenza (21/09): la copia di una ricetta pubblica parte da una
+    // ricetta piena ma senza id, e va INSERITA — aggiornare vorrebbe dire
+    // riscrivere quella degli altri, che e' esattamente cio' che non deve
+    // succedere.
+    if (widget.initialRecipe?.id != null) {
       final esito = await ApiServices.updateRecipeDetailed(userEmail, newRecipe);
       success = esito.ok;
       _ultimoErrore = esito.errore;
@@ -138,6 +153,63 @@ class CreaRicettaPageState extends ConsumerState<CreaRicettaPage> {
         );
       }
     }
+  }
+
+  /// Scorciatoie per il peso dell'ingrediente aperto: scrivono quel valore
+  /// nel campo qui sopra. Quella che combacia col peso attuale resta accesa,
+  /// cosi' si vede che sono scelte e non dati.
+  Widget _pesiRapidi(String lang, int index, RecipeIngredient ing) {
+    return Row(
+      children: [
+        Text(
+          '${Translations.get(lang, 'quick_weights_label')}:',
+          style: TextStyle(fontSize: 12, color: Nutri.muted),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                for (final p in const [50.0, 100.0, 250.0])
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: _pesoRapido(index, p, scelto: (ing.weight_g - p).abs() < 0.01),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _pesoRapido(int index, double peso, {required bool scelto}) {
+    return Material(
+      color: scelto ? Nutri.greenSoft : const Color(0xFFF8FBF6),
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: () => _setIngredientWeight(index, peso),
+        child: Container(
+          height: 32,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: scelto ? Nutri.green : Nutri.fieldBorder),
+          ),
+          child: Text(
+            UnitFormat.p(peso),
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: scelto ? FontWeight.bold : FontWeight.w500,
+              color: Nutri.green,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _showEditDialog(int index, RecipeIngredient current) async {
@@ -253,9 +325,11 @@ class CreaRicettaPageState extends ConsumerState<CreaRicettaPage> {
           ),
           Expanded(
             child: Text(
-              widget.initialRecipe == null
-                  ? Translations.get(lang, 'Crea Ricetta')
-                  : Translations.get(lang, 'Modifica Ricetta'),
+              widget.comeCopia
+                  ? Translations.get(lang, 'recipe_copy_title')
+                  : widget.initialRecipe == null
+                      ? Translations.get(lang, 'Crea Ricetta')
+                      : Translations.get(lang, 'Modifica Ricetta'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 21,
@@ -268,7 +342,10 @@ class CreaRicettaPageState extends ConsumerState<CreaRicettaPage> {
           SizedBox(
             width: 44,
             height: 44,
-            child: widget.initialRecipe == null
+            // Niente cestino su una copia: non esiste ancora niente da
+            // cancellare, e il solo id in giro e' quello della ricetta
+            // pubblica di qualcun altro.
+            child: widget.initialRecipe?.id == null
                 ? null
                 : IconButton(
                     icon: const Icon(Icons.delete_outline, color: Color(0xFFB4553C), size: 22),
@@ -504,34 +581,18 @@ class CreaRicettaPageState extends ConsumerState<CreaRicettaPage> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 6),
-                for (final p in const [50.0, 100.0, 250.0]) ...[
-                  GestureDetector(
-                    onTap: () => _setIngredientWeight(index, p),
-                    child: Container(
-                      height: 38,
-                      margin: const EdgeInsets.only(left: 5),
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF8FBF6),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Nutri.fieldBorder),
-                      ),
-                      child: Text(
-                        UnitFormat.p(p),
-                        style: TextStyle(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w500,
-                          color: Nutri.green,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
+            // I tre pesi rapidi su una riga loro, con l'etichetta che dice
+            // cosa sono (richiesta di Ismail, 21/09).
+            //
+            // PRIMA stavano in coda alla riga del peso, attaccati al campo e
+            // senza nessuna scritta: tre riquadri con dentro "50 g", "100 g",
+            // "250 g" che non dicevano 50 grammi DI COSA ne' che toccandoli
+            // scrivevano quel valore nel campo accanto. Sembravano
+            // informazioni sull'ingrediente, non comandi.
+            _pesiRapidi(lang, index, ing),
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(

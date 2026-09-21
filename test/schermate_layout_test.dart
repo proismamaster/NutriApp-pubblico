@@ -8,12 +8,10 @@
 // Entrambi i test fanno girare le SCHERMATE VERE, non una copia della loro
 // struttura: e' la lezione dell'08/09 (una prova sui pezzi estratti non
 // passava dal `require` e non poteva vedere il difetto).
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart' show FontLoader, MethodChannel;
+import 'package:flutter/services.dart' show MethodChannel;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,22 +23,12 @@ import 'package:nutriapp/models/user_model.dart';
 import 'package:nutriapp/screens/profile_page.dart';
 import 'package:nutriapp/widgets/segnala_alimento.dart';
 import 'package:nutriapp/theme_nutri.dart';
-
-const _fontCache = r'C:\Users\ismai\flutter\bin\cache\artifacts\material_fonts';
+import 'cartella_font.dart';
 
 /// Senza font veri il binding headless disegna ogni glifo come un quadrato,
 /// e le altezze del testo (da cui dipende la riduzione della Home) non sono
 /// quelle dell'app.
-Future<void> _caricaFont() async {
-  final roboto = FontLoader('Roboto');
-  for (final f in ['roboto-regular.ttf', 'roboto-medium.ttf', 'roboto-bold.ttf']) {
-    roboto.addFont(File('$_fontCache/$f').readAsBytes().then((b) => ByteData.view(b.buffer)));
-  }
-  await roboto.load();
-  final icons = FontLoader('MaterialIcons')
-    ..addFont(File('$_fontCache/materialicons-regular.otf').readAsBytes().then((b) => ByteData.view(b.buffer)));
-  await icons.load();
-}
+const _caricaFont = caricaFontDiProva;
 
 final _utenteFinto = UserModel(
   id: 1,

@@ -3,6 +3,10 @@
 require 'db_config.php';
 require 'extract_data.php';
 
+// `image_url` e' la foto di QUESTA voce di diario, aggiunta il 21/09 con
+// migrations/2026-09-21_voce_diario_immagine.sql: prima la foto di un alimento
+// esisteva solo in libreria, quindi cambiarla dal diario cambiava anche quella.
+
 if (!$id || !$data) {
     die(json_encode(["status" => "error", "message" => "Dati o ID mancanti"]));
 }
@@ -16,7 +20,7 @@ $sql = "UPDATE na_nutri_entries SET
     arsenic = ?, boron = ?, calcium = ?, chloride = ?, choline = ?, chromium = ?, cobalt = ?, copper = ?, fluoride = ?,
     fluorine = ?, iodine = ?, iron = ?, magnesium = ?, manganese = ?, molybdenum = ?, phosphorus = ?, potassium = ?, 
     selenium = ?, silicon = ?, sulfur = ?, tin = ?, vanadium = ?, zinc = ?,
-    nutriscore_grade = ?, nova_group = ?, environmental_score_grade = ?
+    nutriscore_grade = ?, nova_group = ?, environmental_score_grade = ?, image_url = ?
     WHERE id = ? AND user_mail = ?";
 
 $stmt = $conn->prepare($sql);
@@ -25,7 +29,7 @@ if (!$stmt) {
     die(json_encode(["status" => "error", "message" => "Errore SQL: " . $conn->error]));
 }
 
-$types = "sssd" . str_repeat("d", 51) . "sisis";
+$types = "sssd" . str_repeat("d", 51) . "sissis";
 
 $stmt->bind_param($types,
     $food_name, $meal_type, $entry_date, $weight_g,
@@ -39,7 +43,7 @@ $stmt->bind_param($types,
     $vit_c, $vit_d, $vit_e, $vit_k, $biotin, $arsenic, $boron, $calcium, $chloride, $choline, $chromium, $cobalt, $copper, $fluoride,
     $fluorine, $iodine, $iron, $magnesium, $manganese, $molybdenum, $phosphorus, $potassium,
     $selenium, $silicon, $sulfur, $tin, $vanadium, $zinc,
-    $nutriscore_grade, $nova_group, $environmental_score_grade, $id, $user_mail
+    $nutriscore_grade, $nova_group, $environmental_score_grade, $image_url, $id, $user_mail
 );
 
 if ($stmt->execute()) {

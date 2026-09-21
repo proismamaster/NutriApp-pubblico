@@ -11,6 +11,7 @@
  * Ismail), quindi la risposta porta anche:
  *   app_reports  i problemi dell'app mandati da "Segnala un problema", con lo
  *                stato e la risposta di chi li ha gestiti;
+ *   recipe_reports  le ricette pubbliche di altri che si sono segnalate (21/09);
  *   foods        i propri alimenti proposti al database (non i privati);
  *   recipes      le proprie ricette proposte per "Consigliate".
  * Alimenti e ricette tolti dalla libreria dopo l'approvazione ci sono lo
@@ -126,6 +127,36 @@ if (!$migrazioneMancante) {
 }
 
 // ---------------------------------------------------------------------------
+// Segnalazioni su una ricetta pubblica (21/09)
+// ---------------------------------------------------------------------------
+$segnalazioniRicette = [];
+if (communityColonnaEsiste($conn, 'na_recipe_reports', 'status')) {
+    $stmt = $conn->prepare(
+        'SELECT id, recipe_id, recipe_name, issue, note, status, created_at, reviewed_at, review_note
+           FROM na_recipe_reports WHERE user_mail = ? ORDER BY created_at DESC LIMIT 100'
+    );
+    $stmt->bind_param('s', $userMail);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    while ($r = $res->fetch_assoc()) {
+        $segnalazioniRicette[] = [
+            'id'          => (int) $r['id'],
+            'recipe_id'   => (int) $r['recipe_id'],
+            'recipe_name' => $r['recipe_name'],
+            'issue'       => $r['issue'],
+            'note'        => $r['note'],
+            'status'      => $r['status'],
+            'created_at'  => $r['created_at'],
+            'reviewed_at' => $r['reviewed_at'],
+            'review_note' => $r['review_note'],
+        ];
+        // L'autore della ricetta NON esce da qui: chi ha segnalato non deve
+        // sapere di chi e' la ricetta piu' di quanto gia' vedesse in app.
+    }
+    $stmt->close();
+}
+
+// ---------------------------------------------------------------------------
 // Problemi dell'app (15/09)
 // ---------------------------------------------------------------------------
 $problemi = [];
@@ -223,11 +254,12 @@ if (communityColonnaEsiste($conn, 'na_recipes', 'shared_status')) {
 $conn->close();
 
 $risposta = [
-    'status'      => 'success',
-    'reports'     => array_values($segnalazioni),
-    'app_reports' => $problemi,
-    'foods'       => $alimenti,
-    'recipes'     => $ricette,
+    'status'         => 'success',
+    'reports'        => array_values($segnalazioni),
+    'recipe_reports' => $segnalazioniRicette,
+    'app_reports'    => $problemi,
+    'foods'          => $alimenti,
+    'recipes'        => $ricette,
 ];
 if ($migrazioneMancante) {
     $risposta['migration_missing'] = true;

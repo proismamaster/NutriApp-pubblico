@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../dictionary/translations.dart';
+import 'auth_style.dart';
+import 'immagine_zoomabile.dart';
 import 'segnala_alimento.dart';
 import 'translated_text.dart';
 
@@ -248,14 +250,19 @@ class ProductInfoSheetContent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (imageUrl.isNotEmpty) ...[
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      imageUrl,
-                      width: 56,
-                      height: 56,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const SizedBox(width: 56, height: 56),
+                  // Apribile con un tocco come le altre foto dell'app (21/09).
+                  ImmagineZoomabile(
+                    immagine: nutriImageProvider(imageUrl),
+                    titolo: foodName,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        imageUrl,
+                        width: 56,
+                        height: 56,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => const SizedBox(width: 56, height: 56),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),

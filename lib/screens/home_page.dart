@@ -138,8 +138,15 @@ class HomePageState extends ConsumerState<HomePage> {
     final user = ref.read(userProvider);
     if (user == null) return;
 
+    final giorno = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+    );
+    // Si parte dal peso DI QUEL GIORNO, non da quello di oggi: il +/- muove il
+    // numero che si sta guardando (richiesta di Ismail, 21/09).
     final newWeight = double.parse(
-      (user.currentWeight + delta).toStringAsFixed(1),
+      (_pesoDelGiorno(user.currentWeight) + delta).toStringAsFixed(1),
     );
     // Fuori dai limiti non si chiede nemmeno al server: il pulsante +/- non
     // deve portare il peso dove la registrazione non lo ammetterebbe.
@@ -152,9 +159,17 @@ class HomePageState extends ConsumerState<HomePage> {
       return;
     }
 
+    // Il peso sul profilo e' l'ultima pesata conosciuta: si aggiorna solo se
+    // il giorno che stiamo correggendo e' l'ultimo. Correggendo un giorno gia'
+    // passato il peso di oggi resta quello che e' — era questo il motivo per
+    // cui il 20/09 i pulsanti erano stati spenti sui giorni diversi da oggi,
+    // e ora non serve piu' spegnerli (richiesta di Ismail, 21/09).
     // Solo il peso (15/09): con updateGoals partivano anche gli obiettivi, e
     // un peso obiettivo vecchio fuori limite faceva rifiutare tutto.
-    final error = await ref.read(userProvider.notifier).updateWeight(newWeight);
+    String? error;
+    if (!_esistePesataDopo(giorno)) {
+      error = await ref.read(userProvider.notifier).updateWeight(newWeight);
+    }
 
     // Oltre allo scalare sul profilo (sopra, invariato), registriamo anche
     // una misurazione datata: senza uno storico il trend a 7 giorni non è
@@ -163,7 +178,7 @@ class HomePageState extends ConsumerState<HomePage> {
     // nessuna UI (richiesta 2026-08-23, mockup Home Final).
     if (error == null) {
       await ApiServices.savePhysicalMeasurement(
-        PhysicalMeasurement(date: DateTime.now(), weight: newWeight),
+        PhysicalMeasurement(date: giorno, weight: newWeight),
         user.email,
       );
     }
@@ -178,9 +193,6 @@ class HomePageState extends ConsumerState<HomePage> {
       );
     }
   }
-
-  static bool _stessoGiorno(DateTime a, DateTime b) =>
-      a.year == b.year && a.month == b.month && a.day == b.day;
 
   /// Il peso che valeva nel giorno mostrato: l'ultima pesata registrata fino a
   /// quel giorno compreso. Senza pesate di quel periodo resta [diProfilo].
@@ -201,6 +213,12 @@ class HomePageState extends ConsumerState<HomePage> {
     }
     return trovato ?? diProfilo;
   }
+
+  /// Vero se esiste una pesata registrata dopo [giorno]: in quel caso il peso
+  /// del profilo appartiene a un giorno piu' recente e non va toccato.
+  bool _esistePesataDopo(DateTime giorno) => _weightHistory.any(
+        (m) => DateTime(m.date.year, m.date.month, m.date.day).isAfter(giorno),
+      );
 
   /// Differenza di peso fra oggi e la misurazione più vicina a 7 giorni fa.
   /// null se non c'è abbastanza storico (serve almeno una misurazione
@@ -334,9 +352,9 @@ class HomePageState extends ConsumerState<HomePage> {
 
     // Il peso DI QUEL GIORNO, non quello di oggi: cambiando il peso oggi si
     // riscriveva anche il passato, e un giorno gia' chiuso deve restare com'e'
-    // (richiesta di Ismail, 20/09). Si tocca solo il peso di oggi.
+    // (richiesta di Ismail, 20/09). Il +/- resta pero' sempre attivo e scrive
+    // sul giorno mostrato (richiesta di Ismail, 21/09).
     final double currentWeight = _pesoDelGiorno(user?.currentWeight ?? 70.0);
-    final bool pesoModificabile = _stessoGiorno(_selectedDate, DateTime.now());
     final double? trend = _weightTrendKg(currentWeight);
     final bool trendDown = (trend ?? 0) <= 0;
 
@@ -350,25 +368,13 @@ class HomePageState extends ConsumerState<HomePage> {
             // ripetere un nome che l'utente conosce gia', spingendo i pasti
             // sotto la piega. Lo spazio recuperato serve a far stare tutto a
             // schermo senza scorrere.
-            // Il giorno che si sta guardando e' un comando, non contenuto:
-            // staccato dal resto da una superficie sua e da un filo d'ombra,
-            // perche' attaccato al cerchio delle calorie sembrava tutt'uno
-            // (richiesta di Ismail, 20/09).
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-              decoration: BoxDecoration(
-                color: scheme.surface,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: scheme.outlineVariant.withValues(alpha: .6)),
-                boxShadow: [
-                  BoxShadow(
-                    color: scheme.shadow.withValues(alpha: .06),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
+            // Il selettore del giorno senza riquadro (richiesta di Ismail,
+            // 21/09): il 20/09 gli era stata data una superficie sua con bordo
+            // e ombra per staccarlo dal cerchio delle calorie, ma il riquadro
+            // pesa piu' di quello che separa. Restano contenuto e frecce
+            // identici, cambia solo la cornice.
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               child: DaySelector(
                 date: _selectedDate,
                 onDateChanged: (newDate) {
@@ -636,7 +642,6 @@ class HomePageState extends ConsumerState<HomePage> {
                     Icons.remove,
                     () => _updateWeight(-0.1),
                     filled: false,
-                    attivo: pesoModificabile,
                   ),
                   Expanded(
                     child: Column(
@@ -706,7 +711,6 @@ class HomePageState extends ConsumerState<HomePage> {
                     Icons.add,
                     () => _updateWeight(0.1),
                     filled: true,
-                    attivo: pesoModificabile,
                   ),
                 ],
               ),
@@ -787,33 +791,26 @@ class HomePageState extends ConsumerState<HomePage> {
     IconData icon,
     VoidCallback onTap, {
     required bool filled,
-    bool attivo = true,
   }) {
     final scheme = Theme.of(context).colorScheme;
     return Material(
-      color: attivo && filled ? scheme.primaryContainer : Colors.transparent,
+      color: filled ? scheme.primaryContainer : Colors.transparent,
       shape: CircleBorder(
         side: BorderSide(
-          color: !attivo
-              ? scheme.outlineVariant.withValues(alpha: .5)
-              : filled
-                  ? scheme.primary.withValues(alpha: .4)
-                  : scheme.outlineVariant,
+          color: filled
+              ? scheme.primary.withValues(alpha: .4)
+              : scheme.outlineVariant,
         ),
       ),
       child: InkWell(
         customBorder: const CircleBorder(),
-        onTap: attivo ? onTap : null,
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(11),
           child: Icon(
             icon,
             size: 20,
-            color: !attivo
-                ? scheme.onSurfaceVariant.withValues(alpha: .4)
-                : filled
-                    ? scheme.primary
-                    : scheme.onSurfaceVariant,
+            color: filled ? scheme.primary : scheme.onSurfaceVariant,
           ),
         ),
       ),

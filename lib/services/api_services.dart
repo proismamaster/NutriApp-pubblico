@@ -137,6 +137,10 @@ class ApiServices {
   // PHP omonimi piu' community_comune.php caricati via FTP.
   static const String _urlServerSaveFoodReport =
       '${base}save_food_report.php';
+  // Segnalazione di una ricetta pubblica (21/09): tabella `na_recipe_reports`,
+  // migrazione 2026-09-21_segnalazioni_ricette.sql.
+  static const String _urlServerSaveRecipeReport =
+      '${base}save_recipe_report.php';
   static const String _urlServerSetSharingPreference =
       '${base}set_sharing_preference.php';
   static const String _urlServerShareCustomFood =
@@ -2114,6 +2118,43 @@ class ApiServices {
           if (proposed != null && proposed.isNotEmpty) 'proposed': proposed,
           if (photos != null && photos.isNotEmpty) 'photos': photos,
           'kind': kind,
+        }),
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      }
+      return {'status': 'error', 'message': 'Errore del server'};
+    } catch (e) {
+      return {'status': 'error', 'message': e.toString()};
+    }
+  }
+
+  /// Segnala una ricetta pubblica (21/09).
+  ///
+  /// [issue] e' una delle voci ammesse dal server: contenuto, valori, copia,
+  /// pericolosa, spam, altro. Come per gli alimenti, la voce fuori elenco la
+  /// rifiuta il server e non l'app: l'elenco valido e' quello del database, e
+  /// tenerne una copia in Dart vorrebbe dire avere due elenchi che divergono.
+  ///
+  /// Non cambia niente nella ricetta: la segnalazione nasce in attesa e la
+  /// guarda chi rivede i contenuti.
+  static Future<Map<String, dynamic>> saveRecipeReport({
+    required String userEmail,
+    required int recipeId,
+    required String issue,
+    String note = '',
+  }) async {
+    try {
+      final response = await _rete.post(
+        Uri.parse(_urlServerSaveRecipeReport),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'user_mail': userEmail,
+          'recipe_id': recipeId,
+          'issue': issue,
+          // La nota vuota non parte affatto: sul server diventa NULL, e una
+          // colonna piena di '' non si distingue da una risposta cancellata.
+          if (note.isNotEmpty) 'note': note,
         }),
       );
       if (response.statusCode == 200) {

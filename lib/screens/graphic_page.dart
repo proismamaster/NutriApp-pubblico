@@ -139,7 +139,7 @@ class _GraphicPageState extends ConsumerState<GraphicPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-                child: _selettorePeriodo(lang),
+                child: _rigaTempo(lang),
               ),
               _rigaMetriche(lang),
               Expanded(
@@ -150,6 +150,111 @@ class _GraphicPageState extends ConsumerState<GraphicPage> {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Una riga sola per TUTTI i filtri di tempo (richiesta di Ismail, 21/09):
+  /// giornaliero, settimanale, mensile, annuale e "Periodo".
+  ///
+  /// Prima "Periodo" stava in fondo alla riga delle metriche, cioe' in mezzo a
+  /// carboidrati, proteine e grassi: un filtro di tempo messo fra i filtri di
+  /// nutriente. Chi cercava l'intervallo di date lo trovava dopo aver fatto
+  /// scorrere una riga che parla d'altro.
+  ///
+  /// COME CI STA: i quattro periodi prendono lo spazio che avanza, il
+  /// pulsante del periodo personalizzato occupa quel che gli serve fino a un
+  /// tetto. Sotto i 360 px resta la sola icona del calendario — a quella
+  /// larghezza l'etichetta ruberebbe ai quattro periodi lo spazio per essere
+  /// leggibili, e il calendario da solo si capisce.
+  Widget _rigaTempo(String lang) {
+    return LayoutBuilder(
+      builder: (context, vincoli) {
+        final stretto = vincoli.maxWidth < 360;
+        return Row(
+          children: [
+            Expanded(child: _selettorePeriodo(lang)),
+            const SizedBox(width: 8),
+            _bottonePeriodo(lang, soloIcona: stretto),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Il pulsante "Periodo": apre la scelta dell'intervallo di date, e quando
+  /// un intervallo e' scelto lo mostra con la X per toglierlo.
+  ///
+  /// La X sta DENTRO il pulsante (prima era un tasto separato in fondo a una
+  /// riga che scorreva, e per toglierlo bisognava indovinare che ci fosse
+  /// altro a destra — test di release 19/09).
+  Widget _bottonePeriodo(String lang, {required bool soloIcona}) {
+    final intervallo = _customRange;
+    final bool attivo = intervallo != null;
+    final Color primoPiano = attivo ? Colors.white : Nutri.label;
+    final String etichetta =
+        attivo ? _windowRangeLabel(intervallo) : Translations.get(lang, 'Periodo');
+
+    return Tooltip(
+      message: etichetta,
+      child: Material(
+        color: attivo ? Nutri.greenFill : Nutri.card,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () => _pickCustomRange(context),
+          child: Container(
+            height: 48,
+            // Stessa altezza del selettore accanto (4 di padding + 40 di
+            // linguetta): le due parti della riga devono sembrare una cosa
+            // sola, non due controlli appoggiati vicini.
+            constraints: const BoxConstraints(maxWidth: 148),
+            padding: EdgeInsets.symmetric(horizontal: soloIcona && !attivo ? 12 : 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: attivo ? Nutri.greenFill : Nutri.hairline),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.date_range, size: 17, color: primoPiano),
+                if (!soloIcona || attivo) ...[
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        etichetta,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: attivo ? FontWeight.bold : FontWeight.w500,
+                          color: primoPiano,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                if (attivo) ...[
+                  const SizedBox(width: 4),
+                  InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: _clearCustomRange,
+                    child: Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: Semantics(
+                        button: true,
+                        label: Translations.get(lang, 'public_filters_clear'),
+                        child: Icon(Icons.close, size: 16, color: primoPiano),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
         ),
       ),
@@ -195,55 +300,72 @@ class _GraphicPageState extends ConsumerState<GraphicPage> {
     );
   }
 
-  /// Metrica e intervallo di date, sempre in vista (prima stavano in un
-  /// pannello da aprire).
+  /// Le quattro metriche: calorie, carboidrati, proteine, grassi.
+  ///
+  /// TUTTI DELLA STESSA MISURA (richiesta di Ismail, 21/09): prima erano
+  /// pastiglie larghe quanto la parola che contenevano, quindi "Calorie" era
+  /// un terzo di "Carboidrati" e cambiando lingua cambiava anche la
+  /// disposizione. Ora ogni riquadro e' [_latoMetrica] x [_altezzaMetrica],
+  /// con la stessa cornice del riquadro che mostra il valore grande piu'
+  /// sotto, e il testo si rimpicciolisce dentro invece di allargare il
+  /// riquadro.
+  ///
+  /// La riga continua a scorrere in orizzontale: a misura fissa i quattro
+  /// riquadri stanno su uno schermo normale e scorrono su uno stretto, invece
+  /// di stringersi fino a diventare illeggibili.
   Widget _rigaMetriche(String lang) {
-    final intervallo = _customRange;
     return SizedBox(
-      height: 56,
+      height: _altezzaMetrica + 16,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         children: [
-          if (intervallo != null) ...[
-            NutriChip(
-              height: 40,
-              leading: Icons.date_range,
-              label: _windowRangeLabel(intervallo),
-              selected: true,
-              onTap: () => _pickCustomRange(context),
-            ),
-            IconButton(
-              tooltip: Translations.get(lang, 'public_filters_clear'),
-              icon: Icon(Icons.close, size: 20, color: Nutri.muted),
-              onPressed: _clearCustomRange,
-            ),
-          ],
           for (final metrica in MetricType.values)
             Padding(
               padding: const EdgeInsets.only(right: 8),
-              child: NutriChip(
-                height: 40,
-                label: Translations.get(lang, metrica.label),
-                selected: _selectedMetric == metrica,
-                onTap: () => setState(() => _selectedMetric = metrica),
-              ),
-            ),
-          // Con un intervallo scelto la pastiglia e la sua X stanno in fondo
-          // a una riga che scorre: per toglierlo bisognava indovinare che
-          // c'era altro a destra (test di release 19/09). Vanno in testa.
-          if (intervallo == null)
-            Padding(
-              padding: const EdgeInsets.only(left: 4, right: 4),
-              child: NutriChip(
-                height: 40,
-                leading: Icons.date_range,
-                label: Translations.get(lang, 'Periodo'),
-                selected: false,
-                onTap: () => _pickCustomRange(context),
-              ),
+              child: _riquadroMetrica(lang, metrica),
             ),
         ],
+      ),
+    );
+  }
+
+  /// Misura di un riquadro-metrica. Fissa di proposito: e' cio' che li rende
+  /// tutti uguali indipendentemente dalla parola e dalla lingua.
+  static const double _latoMetrica = 92;
+  static const double _altezzaMetrica = 44;
+
+  Widget _riquadroMetrica(String lang, MetricType metrica) {
+    final bool scelto = _selectedMetric == metrica;
+    return Material(
+      color: scelto ? Nutri.greenFill : Nutri.card,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: () => setState(() => _selectedMetric = metrica),
+        child: Container(
+          width: _latoMetrica,
+          height: _altezzaMetrica,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            // Stessa cornice del riquadro del valore grande (vedi _riquadro).
+            border: Border.all(color: scelto ? Nutri.greenFill : Nutri.hairline),
+          ),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              Translations.get(lang, metrica.label),
+              maxLines: 1,
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: scelto ? FontWeight.bold : FontWeight.w500,
+                color: scelto ? Colors.white : Nutri.label,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
