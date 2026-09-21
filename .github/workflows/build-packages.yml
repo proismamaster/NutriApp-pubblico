@@ -199,3 +199,35 @@ jobs:
             echo ""
             echo "Pagina della release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ steps.nome.outputs.tag }}"
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # iOS (21/09): da Windows non si compila, quindi la prova sta qui, su un
+  # runner macOS. Serve a sapere che il progetto iOS compila davvero, non a
+  # consegnare un'app installabile: senza un certificato dell'Apple Developer
+  # Program l'app non si firma, e senza firma non si mette su un iPhone ne'
+  # su TestFlight. Quello che esce e' un Runner.app da Simulatore.
+  ios:
+    if: github.event_name != 'workflow_dispatch' || inputs.solo_apk == false
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # `--no-codesign` e' obbligatorio: il runner non ha certificati, e senza
+      # questo la compilazione si ferma sulla firma.
+      - name: Build iOS release (senza firma)
+        run: flutter build ios --release --no-codesign --dart-define=USDA_API_KEY=${{ secrets.USDA_API_KEY }}
+
+      - name: Zip del Runner.app
+        run: cd build/ios/iphoneos && zip -ry ../../../NutriApp-ios-unsigned.zip Runner.app
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nutriapp-ios-unsigned
+          path: NutriApp-ios-unsigned.zip
+          if-no-files-found: error
