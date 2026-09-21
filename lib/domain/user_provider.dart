@@ -50,10 +50,21 @@ class UserNotifier extends Notifier<UserModel?> {
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) return (error: 'Accesso annullato', isNew: false);
 
+      // Il server vuole il token firmato da Google: senza, rifiuta.
+      final autenticazione = await googleUser.authentication;
+      final idToken = autenticazione.idToken;
+      if (idToken == null || idToken.isEmpty) {
+        return (
+          error: 'Google non ha rilasciato il token di accesso. Riprova.',
+          isNew: false,
+        );
+      }
+
       final response = await ApiServices.socialLogin(
         email: googleUser.email,
         provider: 'google',
         providerId: googleUser.id,
+        idToken: idToken,
         firstName: googleUser.displayName?.split(' ').first,
         lastName: googleUser.displayName?.contains(' ') == true
             ? googleUser.displayName?.split(' ').last

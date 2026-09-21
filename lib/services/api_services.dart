@@ -287,10 +287,14 @@ class ApiServices {
         if (newPassword == null) 'check_only': '1' else 'new_password': newPassword,
       });
 
+  /// Accesso con Google. `idToken` e' quello firmato da Google: il server
+  /// lo verifica e da quello ricava l'identita', quindi senza token non
+  /// si entra (21/09).
   static Future<Map<String, dynamic>?> socialLogin({
     required String email,
     required String provider,
     required String providerId,
+    String? idToken,
     String? firstName,
     String? lastName,
   }) async {
@@ -302,12 +306,15 @@ class ApiServices {
           'email': email,
           'provider': provider,
           'provider_id': providerId,
+          'id_token': idToken,
           'first_name': firstName,
           'last_name': lastName,
         }),
       );
-      if (response.statusCode == 200) return jsonDecode(response.body);
-      return null;
+      // Anche il rifiuto va letto: dentro c'e' il motivo, e dirlo e' piu'
+      // utile di un generico "errore di rete".
+      final corpo = jsonDecode(response.body);
+      return corpo is Map<String, dynamic> ? corpo : null;
     } catch (e) {
       return null;
     }

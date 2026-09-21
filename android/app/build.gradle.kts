@@ -1,9 +1,21 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     id("com.google.gms.google-services")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// Il keystore di release non sta in git: il percorso e la password
+// arrivano da android/key.properties, che e' ignorato. Senza quel file
+// si compila con la chiave di debug, come prima.
+val chiaviRelease = Properties()
+val fileChiavi = rootProject.file("key.properties")
+if (fileChiavi.exists()) {
+    chiaviRelease.load(FileInputStream(fileChiavi))
 }
 
 android {
@@ -33,11 +45,27 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (fileChiavi.exists()) {
+            create("release") {
+                storeFile = file(chiaviRelease["storeFile"] as String)
+                storePassword = chiaviRelease["storePassword"] as String
+                keyAlias = chiaviRelease["keyAlias"] as String
+                keyPassword = chiaviRelease["keyPassword"] as String
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // La chiave di release serve anche a Google Sign-In: la sua
+            // SHA-1 e' quella registrata su Firebase. Con la chiave di
+            // debug l'accesso con Google viene rifiutato.
+            signingConfig = if (fileChiavi.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }

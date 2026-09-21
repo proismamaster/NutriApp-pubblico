@@ -2,19 +2,53 @@
 // social_login.php
 require 'db_config.php';
 require_once 'auth.php';
+require_once 'verifica_social.php';
 
 // Leggi il body JSON
 $input = json_decode(file_get_contents('php://input'), true);
 
-$email       = $input['email'] ?? '';
 $provider    = $input['provider'] ?? '';
-$provider_id = $input['provider_id'] ?? '';
+$id_token    = $input['id_token'] ?? '';
 $first_name  = $input['first_name'] ?? '';
 $last_name   = $input['last_name'] ?? '';
 
-if (empty($email)) {
-    echo json_encode(["status" => "error", "message" => "Email mancante"]);
+// Apple: l'accesso resta chiuso finche' non c'e' l'account sviluppatore,
+// perche' senza quello il suo token non e' verificabile. Aperto senza
+// verifica sarebbe una porta di servizio per entrare come chiunque.
+if ($provider !== 'google') {
+    http_response_code(400);
+    echo json_encode([
+        "status"  => "error",
+        "code"    => $provider === 'apple' ? 'apple_non_configurato' : 'provider_non_valido',
+        "message" => "Accesso con $provider non disponibile.",
+    ]);
     exit;
+}
+
+// L'identita' esce dal token firmato da Google, non da cio' che manda il
+// client: e' tutta la differenza fra un accesso e una dichiarazione.
+$verifica = verificaTokenGoogle((string) $id_token);
+if (is_string($verifica)) {
+    http_response_code($verifica === 'verifica_non_disponibile' ? 503 : 401);
+    echo json_encode([
+        "status"  => "error",
+        "code"    => $verifica,
+        "message" => $verifica === 'verifica_non_disponibile'
+            ? "Non riesco a verificare l'accesso con Google. Riprova."
+            : "Accesso con Google rifiutato.",
+    ]);
+    exit;
+}
+
+$email       = $verifica['email'];
+$provider_id = $verifica['sub'];
+// Nome e cognome: quelli del token valgono piu' di quelli del client, ma
+// Google non li manda sempre.
+if ($verifica['nome'] !== '') {
+    $first_name = $verifica['nome'];
+}
+if ($verifica['cognome'] !== '') {
+    $last_name = $verifica['cognome'];
 }
 
 // Controlla se l'utente esiste già

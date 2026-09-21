@@ -92,3 +92,6 @@ app.*.map.json
 # Copia google-services.json.example e riempilo con i tuoi valori.
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+
+# Firma di release: percorso e password del keystore, mai in git.
+android/key.properties
