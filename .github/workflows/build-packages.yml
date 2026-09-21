@@ -1,13 +1,33 @@
 name: Build installers
 
+# NOTA (21/09): il lavoro Android pubblica l'APK come ASSET DI UNA RELEASE,
+# non piu' solo come artifact. Un artifact si scarica solo da loggati e arriva
+# dentro uno zip: da telefono e' inutilizzabile. Un asset di release su un
+# repository pubblico ha un indirizzo diretto che finisce in `.apk`, quindi si
+# tocca dal browser del telefono e si installa. L'artifact resta comunque,
+# perche' per chi lavora da computer e' piu' comodo.
+
 on:
   workflow_dispatch:
+    inputs:
+      solo_apk:
+        description: "Compila solo l'APK Android (salta Windows)"
+        type: boolean
+        default: true
   push:
     tags:
       - "v*"
 
+# Serve al lavoro Android per creare la release con l'APK dentro.
+permissions:
+  contents: write
+
 jobs:
   windows:
+    # Su richiesta manuale di solito serve solo l'APK: il lavoro Windows sono
+    # altri minuti di attesa per un file che in quel momento non si sta
+    # provando. Sui tag `v*` gira sempre, come prima.
+    if: github.event_name != 'workflow_dispatch' || inputs.solo_apk == false
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -56,14 +76,105 @@ jobs:
           yes | sdkmanager --licenses || true
           sdkmanager "platforms;android-36" "build-tools;36.0.0" || sdkmanager "platforms;android-36"
 
+      # `android/app/google-services.json` non e' nel repository (porta la
+      # chiave API Android, vedi .gitignore), ma il plugin
+      # `com.google.gms.google-services` e' applicato e senza quel file il
+      # build si ferma.
+      #
+      # Se c'e' il segreto GOOGLE_SERVICES_JSON si usa quello, e l'APK e'
+      # identico a uno compilato in locale. Altrimenti si scrive un file
+      # SEGNAPOSTO: ha la forma giusta e il `package_name` giusto, quindi il
+      # plugin lo accetta e Firebase si inizializza, ma non punta a nessun
+      # progetto vero — l'unica cosa che non funziona e' l'invio delle
+      # statistiche, che in una prova non serve. I valori sono finti di
+      # proposito e non danno accesso a niente.
+      - name: Prepara google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            printf '%s' "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+            echo "google-services.json preso dal segreto del repository."
+          else
+            cat > android/app/google-services.json <<'JSON'
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "project_id": "nutriapp-prova-locale",
+              "storage_bucket": "nutriapp-prova-locale.appspot.com"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+                  "android_client_info": { "package_name": "me.ismail.nutriapp" }
+                },
+                "oauth_client": [],
+                "api_key": [ { "current_key": "AIzaSyAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" } ],
+                "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          JSON
+            echo "::warning::google-services.json segnaposto: l'APK si compila e funziona, ma le statistiche Firebase non vengono inviate. Per averlo vero, aggiungi il segreto GOOGLE_SERVICES_JSON."
+          fi
+
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build APK release
         run: flutter build apk --release --dart-define=USDA_API_KEY=${{ secrets.USDA_API_KEY }}
 
+      # Nome parlante: dall'elenco delle release si deve capire da quale ramo
+      # e da quale commit viene, senza aprire niente.
+      - name: Dai un nome all'APK
+        id: nome
+        run: |
+          ramo=$(echo "${GITHUB_REF_NAME}" | tr '/' '-')
+          breve=$(git rev-parse --short HEAD)
+          etichetta="apk-$(date -u +%Y%m%d-%H%M)-${breve}"
+          mv build/app/outputs/flutter-apk/app-release.apk "NutriApp-${ramo}-${breve}.apk"
+          {
+            echo "file=NutriApp-${ramo}-${breve}.apk"
+            echo "tag=${etichetta}"
+            echo "ramo=${ramo}"
+            echo "breve=${breve}"
+          } >> "$GITHUB_OUTPUT"
+
       - uses: actions/upload-artifact@v4
         with:
           name: nutriapp-android
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: ${{ steps.nome.outputs.file }}
           if-no-files-found: error
+
+      # `gh` e' gia' sul runner: niente azioni di terze parti per una cosa che
+      # e' una chiamata sola.
+      # Sempre, senza condizioni: se l'avvio manuale non passa gli input (capita
+      # quando il ramo scelto ha un file diverso da quello del ramo
+      # principale) una condizione su `inputs` risulterebbe falsa, e salterebbe
+      # proprio il passo per cui si e' lanciato il giro.
+      - name: Pubblica l'APK come release scaricabile
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.nome.outputs.tag }}" \
+            "${{ steps.nome.outputs.file }}" \
+            --title "APK di prova — ${{ steps.nome.outputs.ramo }} (${{ steps.nome.outputs.breve }})" \
+            --notes "APK di prova compilato da GitHub Actions dal ramo \`${{ steps.nome.outputs.ramo }}\`, commit \`${{ steps.nome.outputs.breve }}\`.
+
+          Firmato con la chiave di **debug** (\`signingConfig = signingConfigs.getByName(\"debug\")\` in \`android/app/build.gradle.kts\`): si installa a mano dopo aver consentito le origini sconosciute, non e' un APK da Play Store.
+
+          Per installarlo dal telefono: tocca il file \`.apk\` qui sotto." \
+            --prerelease
+          # L'indirizzo di scarico si compone da se': e' sempre
+          # /releases/download/<etichetta>/<file>. Costruirlo qui evita di
+          # dipendere da come `gh` chiama i campi nel suo JSON.
+          diretto="${{ github.server_url }}/${{ github.repository }}/releases/download/${{ steps.nome.outputs.tag }}/${{ steps.nome.outputs.file }}"
+          {
+            echo "### APK pronto"
+            echo ""
+            echo "Da telefono, tocca qui: [${{ steps.nome.outputs.file }}]($diretto)"
+            echo ""
+            echo "Pagina della release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ steps.nome.outputs.tag }}"
+          } >> "$GITHUB_STEP_SUMMARY"
