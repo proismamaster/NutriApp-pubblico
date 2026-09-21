@@ -67,14 +67,35 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - uses: android-actions/setup-android@v3
-
-      # compileSdk/targetSdk = 36 in android/app/build.gradle: make sure that platform + matching
-      # build-tools are installed, same fix BaseFlow's CI needed for its Capacitor Android build.
-      - name: Install Android SDK platform matching the project
+      # NIENTE `android-actions/setup-android@v3` (tolta il 21/09): quell'azione
+      # come prima cosa lancia `sdkmanager tools`, e il pacchetto `tools` e'
+      # stato ritirato da Google. Risultato: "Failed to find package 'tools'",
+      # exit 1, e il lavoro muore al quinto passo senza aver compilato niente
+      # (run #1). L'immagine `ubuntu-latest` l'SDK ce l'ha gia' dentro, quindi
+      # l'azione non serviva nemmeno: bastano le licenze e la piattaforma
+      # giusta.
+      #
+      # compileSdk/targetSdk = 36 in android/app/build.gradle.kts: qui si
+      # installa quella piattaforma e le build-tools che le corrispondono.
+      - name: Licenze e piattaforma dell Android SDK
         run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-36" "build-tools;36.0.0" || sdkmanager "platforms;android-36"
+          set -uo pipefail
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          SDKMANAGER=$(find "$SDK/cmdline-tools" -name sdkmanager -type f 2>/dev/null | sort | tail -1)
+          if [ -z "$SDKMANAGER" ]; then
+            echo "::error::sdkmanager non trovato sotto $SDK/cmdline-tools"
+            exit 1
+          fi
+          echo "sdkmanager: $SDKMANAGER"
+          # `yes` muore di SIGPIPE quando sdkmanager chiude lo stdin: non e' un
+          # errore, ma con pipefail farebbe cadere il passo.
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" "platforms;android-36" "build-tools;36.0.0" \
+            || "$SDKMANAGER" "platforms;android-36"
+          {
+            echo "ANDROID_SDK_ROOT=$SDK"
+            echo "ANDROID_HOME=$SDK"
+          } >> "$GITHUB_ENV"
 
       # `android/app/google-services.json` non e' nel repository (porta la
       # chiave API Android, vedi .gitignore), ma il plugin
